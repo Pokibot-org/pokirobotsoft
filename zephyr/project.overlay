@@ -1,0 +1,13 @@
+/ {
+    aliases {
+            camsense-uart-1 = &usart1;
+    };
+
+    soc {
+
+    };
+};
+
+&usart1 {
+        status = "okay";
+};
