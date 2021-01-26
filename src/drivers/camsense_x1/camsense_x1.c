@@ -27,8 +27,18 @@ Format of frames:
 
 LOG_MODULE_REGISTER(camsense_x1_driver);
 
-// DEFINES PRE VARIABLES
+// DEFINES  
 #define CAMSENSE_X1_FRAME_SIZE 36
+#define CAMSENSE_X1_SPEED_L_INDEX 0
+#define CAMSENSE_X1_SPEED_H_INDEX 1
+#define CAMSENSE_X1_START_ANGLE_L_INDEX 2
+#define CAMSENSE_X1_START_ANGLE_H_INDEX 3
+#define CAMSENSE_X1_FIRST_POINT_INDEX 4
+#define CAMSENSE_X1_POINT_DISTANCE_L_RELATIVE_INDEX 0
+#define CAMSENSE_X1_POINT_DISTANCE_H_RELATIVE_INDEX 1
+#define CAMSENSE_X1_POINT_QUALITY_RELATIVE_INDEX 2
+#define CAMSENSE_X1_END_ANGLE_L_INDEX 28
+#define CAMSENSE_X1_END_ANGLE_H_INDEX 29
 
 typedef enum
 {
@@ -41,12 +51,34 @@ static const struct device *uart_dev;
 static const uint8_t camsense_x1_header[] = {0x55, 0xAA, 0x03, 0x08};
 #define CAMSENSE_X1_HEADER_SIZE ARRAY_SIZE(camsense_x1_header)
 
+K_MSGQ_DEFINE(lidar_msgq, sizeof(lidar_message_t), 10, 1);
+
 static uint8_t frame_buffer[CAMSENSE_X1_FRAME_SIZE - CAMSENSE_X1_HEADER_SIZE];
 
+static float camsense_x1_speed = 0;
 // PRIVATE FUNC
 void process_recived_frame(uint8_t *recived_frame)
 {
-    
+    camsense_x1_speed = ((uint16_t)(recived_frame[CAMSENSE_X1_SPEED_H_INDEX] << 8) | recived_frame[CAMSENSE_X1_SPEED_L_INDEX]) / 3840.0; // 3840.0 = (64 * 60)
+    lidar_message_t message = {0};
+    message.start_angle = (recived_frame[CAMSENSE_X1_START_ANGLE_H_INDEX] << 8 | recived_frame[CAMSENSE_X1_START_ANGLE_L_INDEX]) / 64.0 - 640.0;
+    message.end_angle = (recived_frame[CAMSENSE_X1_END_ANGLE_H_INDEX] << 8 | recived_frame[CAMSENSE_X1_END_ANGLE_L_INDEX]) / 64.0 - 640.0;
+
+    for (int point_index = 0; point_index < CAMSENSE_X1_NUMBER_OF_POINT; point_index++) // for each of the 8 samples
+    {
+
+        uint8_t distance_l = recived_frame[CAMSENSE_X1_FIRST_POINT_INDEX + CAMSENSE_X1_POINT_DISTANCE_L_RELATIVE_INDEX + (point_index * 3)];
+        uint8_t distance_h = recived_frame[CAMSENSE_X1_FIRST_POINT_INDEX + CAMSENSE_X1_POINT_DISTANCE_H_RELATIVE_INDEX + (point_index * 3)];
+        uint8_t quality = recived_frame[CAMSENSE_X1_FIRST_POINT_INDEX + CAMSENSE_X1_POINT_QUALITY_RELATIVE_INDEX + (point_index * 3)];
+
+        message.points[point_index].distance = ((uint16_t)distance_h << 8) | distance_l;
+        message.points[point_index].quality = quality;
+    }
+
+    while(k_msgq_put(&lidar_msgq, &message, K_NO_WAIT)){
+        k_msgq_purge(&lidar_msgq);
+        LOG_ERR("Queue to full, purging");
+    }
 }
 
 void uart_rx_callback(const struct device *dev, void *user_data)
@@ -135,4 +167,13 @@ int camsense_x1_init()
 
     LOG_INF("Camsense init done!");
     return -2;
+}
+
+float camsense_x1_get_sensor_speed()
+{
+    return camsense_x1_speed;
+}
+
+void camsense_x1_read_sensor(lidar_message_t *message){
+    k_msgq_get(&lidar_msgq, &message, K_FOREVER);
 }
