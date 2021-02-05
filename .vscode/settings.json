@@ -4,6 +4,8 @@
         "random": "cpp",
         "pathfinding.h": "c",
         "*.tcc": "c",
-        "pathfinding_types.h": "c"
+        "pathfinding_types.h": "c",
+        "pathfinding_utils.h": "c",
+        "stdlib.h": "c"
     }
 }

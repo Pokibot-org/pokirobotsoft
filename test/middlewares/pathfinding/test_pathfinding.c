@@ -1,12 +1,14 @@
 #include <unity.h>
 #include "pathfinding.h"
-
+#include "stdlib.h"
+#include "time.h"
 
 void setUp(void) {
     pathfinding_configuration_t config;
     config.field_boundaries.x = 2000;
     config.field_boundaries.y = 3000;
     pathfinding_configure(&config);
+    srand(time(NULL));
 }
 
 void tearDown(void) {

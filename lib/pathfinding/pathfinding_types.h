@@ -11,6 +11,13 @@ typedef struct coordinates
     point_t y;
 }coordinates_t;
 
+typedef struct vector
+{
+    int32_t x;
+    int32_t y;
+}vector_t;
+
+
 typedef struct path_node
 {
     struct path_node * parent_node;
