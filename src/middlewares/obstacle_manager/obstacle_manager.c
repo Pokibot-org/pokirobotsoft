@@ -14,7 +14,6 @@ static void obstacle_manager_task(){
     {
         camsense_x1_read_sensor(&message);
     }
-    
 }
 
 K_THREAD_DEFINE(obstacle_manager_task_name, 1024, obstacle_manager_task, NULL, NULL, NULL,

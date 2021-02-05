@@ -1,3 +1,9 @@
 {
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "files.associations": {
+        "random": "cpp",
+        "pathfinding.h": "c",
+        "*.tcc": "c",
+        "pathfinding_types.h": "c"
+    }
 }
