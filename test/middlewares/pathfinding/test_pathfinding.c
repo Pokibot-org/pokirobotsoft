@@ -2,42 +2,63 @@
 #include "pathfinding.h"
 #include "stdlib.h"
 #include "time.h"
+#include "string.h"
 
 pathfinding_object_t pathfinding_obj;
 
-void setUp(void) {
+void setUp(void)
+{
     pathfinding_configuration_t config;
-    config.field_boundaries.x = 2000;
-    config.field_boundaries.y = 3000;
-    config.delta_distance = 40;
-    config.distance_to_destination = 20;
-    pathfinding_object_configure(&pathfinding_obj , &config);
+    config.field_boundaries.x = 3000;
+    config.field_boundaries.y = 2000;
+    config.delta_distance = 80;
+    config.distance_to_destination = 100;
+    memset(&pathfinding_obj.nodes, 0, PATHFINDING_MAX_NUM_OF_NODES * sizeof(path_node_t));
+    pathfinding_object_configure(&pathfinding_obj, &config);
     srand(time(NULL));
 }
 
-void tearDown(void) {
+void tearDown(void)
+{
     // clean stuff up here
 }
 
-void test_get_closest_node(void){
-
+void test_get_closest_node(void)
+{
 }
 
-void test_in_free_space_path_must_be_found(void) {
+void test_in_free_space_path_must_be_found_simple_config(void)
+{
     coordinates_t start = {
-        .x = 10,
-        .y = 10,
+        .x = pathfinding_obj.config.field_boundaries.x / 2,
+        .y = pathfinding_obj.config.field_boundaries.y / 2,
     };
     coordinates_t end = {
-        .x = 1000,
-        .y = 1000,
+        .x = 50,
+        .y = 50,
     };
     int err = pathfinding_find_path(&pathfinding_obj, &start, &end);
     pathfinding_debug_print(&pathfinding_obj);
     TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
 }
 
-void test_get_new_valid_coordinates(){
+void test_in_free_space_path_must_be_found_hard_config(void)
+{
+    coordinates_t start = {
+        .x = 10,
+        .y = 10,
+    };
+    coordinates_t end = {
+        .x = pathfinding_obj.config.field_boundaries.x - 10,
+        .y = 10,
+    };
+    int err = pathfinding_find_path(&pathfinding_obj, &start, &end);
+    pathfinding_debug_print(&pathfinding_obj);
+    TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
+}
+
+void test_get_new_valid_coordinates()
+{
     coordinates_t start = {
         .x = 10,
         .y = 10,
@@ -48,34 +69,42 @@ void test_get_new_valid_coordinates(){
     };
     coordinates_t must_be_crd = {
         .x = 10,
-        .y = 10 + pathfinding_obj.config.delta_distance
-    };
+        .y = 10 + pathfinding_obj.config.delta_distance};
     coordinates_t new;
     TEST_ASSERT_EQUAL(0, get_new_valid_coordinates(&pathfinding_obj, &start, &end, &new));
-    TEST_ASSERT_EQUAL(must_be_crd.y, new.y);
-    TEST_ASSERT_EQUAL(must_be_crd.x, new.x);
+    TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.y, new.y, "Y");
+    TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.x, new.x, "X");
 
     // DIAGONAL
-    end = (coordinates_t){1000,1000};
-    must_be_crd = (coordinates_t){10 + pathfinding_obj.config.delta_distance* M_SQRT2/2,10 + pathfinding_obj.config.delta_distance* M_SQRT2/2};
+    end = (coordinates_t){1000, 1000};
+    must_be_crd = (coordinates_t){10 + pathfinding_obj.config.delta_distance * M_SQRT2 / 2, 10 + pathfinding_obj.config.delta_distance * M_SQRT2 / 2};
     TEST_ASSERT_EQUAL(0, get_new_valid_coordinates(&pathfinding_obj, &start, &end, &new));
-    TEST_ASSERT_EQUAL(must_be_crd.y, new.y);
-    TEST_ASSERT_EQUAL(must_be_crd.x, new.x);
+    TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.y, new.y, "Y");
+    TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.x, new.x, "X");
 
+    // DIAGONAL 2
+    start = (coordinates_t){500, 500};
+    end = (coordinates_t){10, 10};
+    must_be_crd = (coordinates_t){500 - pathfinding_obj.config.delta_distance * M_SQRT2 / 2,
+                                  500 - pathfinding_obj.config.delta_distance * M_SQRT2 / 2};
+    TEST_ASSERT_EQUAL(0, get_new_valid_coordinates(&pathfinding_obj, &start, &end, &new));
+    TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.y, new.y, "Y");
+    TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.x, new.x, "X");
     // TO CLOSE
-
+    start = (coordinates_t){10, 10};
     end = (coordinates_t){20, 20};
     must_be_crd = (coordinates_t){20, 20};
     TEST_ASSERT_EQUAL(0, get_new_valid_coordinates(&pathfinding_obj, &start, &end, &new));
-    TEST_ASSERT_EQUAL(must_be_crd.y, new.y);
-    TEST_ASSERT_EQUAL(must_be_crd.x, new.x);
+    TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.y, new.y, "Y");
+    TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.x, new.x, "X");
 }
 
-
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     UNITY_BEGIN();
     RUN_TEST(test_get_closest_node);
-    RUN_TEST(test_in_free_space_path_must_be_found);
+    RUN_TEST(test_in_free_space_path_must_be_found_simple_config);
+    RUN_TEST(test_in_free_space_path_must_be_found_hard_config);
     RUN_TEST(test_get_new_valid_coordinates);
     return UNITY_END();
 }

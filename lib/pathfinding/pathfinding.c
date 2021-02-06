@@ -2,12 +2,14 @@
 #include "stdio.h"
 #include "pathfinding_utils.h"
 #include "stdlib.h"
+#include "math.h"
 
 #define DEBUG_TAB_SIZE_X 120
 #define DEBUG_TAB_SIZE_Y 40
 
 int pathfinding_object_configure(pathfinding_object_t *obj, pathfinding_configuration_t *config)
 {
+    // TODO: Check if delta is under distance to goal
     obj->config = *config;
     if ((obj->config.field_boundaries.x == obj->config.field_boundaries.y) && (obj->config.field_boundaries.x == 0))
     {
@@ -53,12 +55,16 @@ int get_new_valid_coordinates(pathfinding_object_t *obj, coordinates_t *crd_tree
         return PATHFINDING_ERROR_NONE;
     }
 
-    vector_t vector = {
-        .x = crd_random_node->x - crd_tree_node->x,
-        .y = crd_random_node->y - crd_tree_node->y};
-    uint32_t max_vec = utils_max(vector.x, vector.y);
-    crd_new_node->x = crd_tree_node->x + vector.x * obj->config.delta_distance / max_vec;
-    crd_new_node->y = crd_tree_node->y + vector.y * obj->config.delta_distance / max_vec;
+    // FIXME: VERRY UNEFFICIENT 
+    // printf("vector x:%d,y:%d\n", vector.x, vector.y);
+    float angle, coeffa, coeffb;
+    angle = atan2f(crd_random_node->x - crd_tree_node->x, crd_random_node->y - crd_tree_node->y);
+    // printf("angle %f\n", angle);
+    coeffa = sinf(angle);
+    coeffb = cosf(angle);
+    // printf("x %d y %d, Coeff : %f\n", vector.x, vector.y, coeff);
+    crd_new_node->x = crd_tree_node->x + coeffa* obj->config.delta_distance;
+    crd_new_node->y = crd_tree_node->y + coeffb* obj->config.delta_distance;
     return PATHFINDING_ERROR_NONE;
 }
 
@@ -77,7 +83,10 @@ int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coord
         path_node_t *current_node = &obj->nodes[i];
         if (current_node->is_used)
         {
-            // ?
+            // FIXME: not to suer about that, we need to check the path integrity 
+            if (utils_distance(current_node->coordinate, *end) <= obj->config.distance_to_destination){
+                return PATHFINDING_ERROR_NONE;
+            }
         }
         else
         {
@@ -85,13 +94,22 @@ int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coord
             rand_coordinates.x = utils_get_rand32() % obj->config.field_boundaries.x;
             rand_coordinates.y = utils_get_rand32() % obj->config.field_boundaries.y;
             path_node_t *closest_node_p = get_closest_node(obj, &rand_coordinates);
-            // check if collision
+            // printf("rand crd x:%d y:%d\n Closest node x:%d y:%d\n", rand_coordinates.x, rand_coordinates.y, 
+            // closest_node_p->coordinate.x, closest_node_p->coordinate.y);
+
+            // TODO: check if collision
             coordinates_t new_coordinates;
             get_new_valid_coordinates(obj, &(closest_node_p->coordinate), &rand_coordinates, &new_coordinates);
+            // printf("New crd x:%d y:%d\n", new_coordinates.x, new_coordinates.y);
             current_node->is_used = 1;
             current_node->coordinate = new_coordinates;
             current_node->parent_node = closest_node_p;
             closest_node_p->son_node = current_node;
+
+            // TODO: check for obstacle between the last point and goal
+            if (utils_distance(current_node->coordinate, *end) <= obj->config.distance_to_destination){
+                return PATHFINDING_ERROR_NONE;
+            }
             // printf("New node<x:%d,y%d>\n", new_coordinates.x, new_coordinates.y);
         }
     }

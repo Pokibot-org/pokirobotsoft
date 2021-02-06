@@ -9,17 +9,17 @@
 uint32_t utils_distance(coordinates_t a, coordinates_t b)
 {
     // TODO: only safe is output is at least 33 bit
-    return sqrtf(SQUARE((uint32_t)a.x - b.x) + SQUARE((uint32_t)a.y - b.y));
+    return sqrtf(SQUARE((int32_t)a.x - b.x) + SQUARE((int32_t)a.y - b.y));
 }
 
 uint32_t utils_distance_squared(coordinates_t a, coordinates_t b)
 {
-    return SQUARE((uint32_t)a.x - b.x) + SQUARE((uint32_t)a.y - b.y);
+    return SQUARE((int32_t)a.x - b.x) + SQUARE((int32_t)a.y - b.y);
 }
 
 uint32_t utils_distance_summed(coordinates_t a, coordinates_t b)
 {
-    return abs((uint32_t)a.x - b.x) + abs((uint32_t)a.y - b.y);
+    return abs((int32_t)a.x - b.x) + abs((int32_t)a.y - b.y);
 }
 
 
