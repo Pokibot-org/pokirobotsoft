@@ -9,7 +9,7 @@
 int pathfinding_object_configure(pathfinding_object_t *obj, pathfinding_configuration_t *config)
 {
     obj->config = config;
-    if ((obj->config->field_boundaries.x == obj->config->field_boundaries.x) && (obj->config->field_boundaries.x == 0))
+    if ((obj->config->field_boundaries.x == obj->config->field_boundaries.y) && (obj->config->field_boundaries.x == 0))
     {
         obj->config->field_boundaries = (boundaries_t){UINT16_MAX, UINT16_MAX};
     }
