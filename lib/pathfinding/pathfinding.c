@@ -1,6 +1,6 @@
 #include "pathfinding.h"
 #include "stdio.h"
-#include "pathfinding_utils.h"
+#include "utils.h"
 #include "stdlib.h"
 #include "math.h"
 
@@ -152,7 +152,6 @@ void pathfinding_debug_print_found_path(pathfinding_object_t *obj, path_node_t *
         printf("end_node is NULL! \n");
         return;
     }
-    printf("TOTO\n");
     uint8_t tab[DEBUG_TAB_SIZE_Y][DEBUG_TAB_SIZE_X] = {0};
     uint8_t path_valid = 0;
     path_node_t *current_node = end_node;

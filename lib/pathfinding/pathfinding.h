@@ -27,6 +27,7 @@ int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coord
     int get_new_valid_coordinates(pathfinding_object_t *obj, coordinates_t *crd_tree_node, coordinates_t *crd_random_node, coordinates_t *crd_new_node);
     void pathfinding_debug_print(pathfinding_object_t *obj);
     void pathfinding_debug_print_found_path(pathfinding_object_t *obj, path_node_t *end_node);
+    path_node_t *get_closest_node(pathfinding_object_t *obj, coordinates_t *crd);
 #endif
 
 #endif

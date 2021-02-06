@@ -26,6 +26,7 @@ void tearDown(void)
 
 void test_get_closest_node(void)
 {
+    
 }
 
 void test_in_free_space_path_must_be_found_simple_config(void)

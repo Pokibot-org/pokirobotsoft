@@ -1,5 +1,5 @@
 #include <math.h>
-#include "pathfinding_utils.h"
+#include "utils.h"
 #ifdef UNIT_TEST
     #include "stdlib.h"
 #else
