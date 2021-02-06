@@ -1,14 +1,15 @@
 #include <zephyr.h>
 #include <logging/log.h>
 #include "camsense_x1.h"
+#include "obstacle.h"
 
 LOG_MODULE_REGISTER(obstacle_manager);
 
-
+obstacle_holder_t ob_holder = {0};
 
 static void obstacle_manager_task(){
     camsense_x1_init();
-
+     
     lidar_message_t message;
     while (true)
     {

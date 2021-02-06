@@ -16,6 +16,8 @@
         "utility": "cpp",
         "valarray": "cpp",
         "string": "cpp",
-        "utils.h": "c"
+        "utils.h": "c",
+        "math.h": "c",
+        "zephyr.h": "c"
     }
 }

@@ -3,8 +3,28 @@
 #ifdef UNIT_TEST
     #include "stdlib.h"
 #else
-    #include <zephyr>
+    #include <zephyr.h>
+    #include <random/rand32.h>
 #endif
+
+/*
+if opti needed
+double fsqrt (double y) {
+    double x, z, tempf;
+    unsigned long *tfptr = ((unsigned long *)&tempf) + 1;
+
+	tempf = y;
+	*tfptr = (0xbfcdd90a - *tfptr)>>1;
+	x =  tempf;
+	z =  y*0.5;                        
+	x = (1.5*x) - (x*x)*(x*z);         
+	x = (1.5*x) – (x*x)*(x*z);
+	x = (1.5*x) – (x*x)*(x*z);
+	x = (1.5*x) – (x*x)*(x*z);
+	x = (1.5*x) – (x*x)*(x*z);
+	return x*y;
+    }
+*/
 
 uint32_t utils_distance(coordinates_t a, coordinates_t b)
 {
