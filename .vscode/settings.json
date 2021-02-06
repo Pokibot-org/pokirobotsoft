@@ -6,6 +6,7 @@
         "*.tcc": "c",
         "pathfinding_types.h": "c",
         "pathfinding_utils.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "time.h": "c"
     }
 }

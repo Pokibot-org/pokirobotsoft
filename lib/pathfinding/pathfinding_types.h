@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 typedef uint16_t point_t;
-
+typedef uint16_t distance_t;
 typedef struct coordinates
 {
     point_t x;
