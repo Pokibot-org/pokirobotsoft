@@ -68,8 +68,9 @@ int get_new_valid_coordinates(pathfinding_object_t *obj, coordinates_t *crd_tree
     return PATHFINDING_ERROR_NONE;
 }
 
-int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coordinates_t *end)
+int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coordinates_t *end, path_node_t **end_node)
 {
+    *end_node = NULL;
     // TODO: Check input validity, must be between 0 and pathfinding_boundaries
     // Init start node
     //TODO :must be bound to current tree if existing
@@ -85,6 +86,7 @@ int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coord
         {
             // FIXME: not to suer about that, we need to check the path integrity 
             if (utils_distance(current_node->coordinate, *end) <= obj->config.distance_to_destination){
+                *end_node = current_node;
                 return PATHFINDING_ERROR_NONE;
             }
         }
@@ -108,6 +110,7 @@ int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coord
 
             // TODO: check for obstacle between the last point and goal
             if (utils_distance(current_node->coordinate, *end) <= obj->config.distance_to_destination){
+                *end_node = current_node;
                 return PATHFINDING_ERROR_NONE;
             }
             // printf("New node<x:%d,y%d>\n", new_coordinates.x, new_coordinates.y);
@@ -129,6 +132,44 @@ void pathfinding_debug_print(pathfinding_object_t *obj)
             // printf("%d %d | %d %d\n", y, x, obj->nodes[i].coordinate.y, obj->nodes[i].coordinate.x);
             tab[y][x] = 1;
         }
+    }
+    // printf("FB: %d %d\n", obj->config.field_boundaries.x, obj->config.field_boundaries.y);
+    for (size_t y = 0; y < DEBUG_TAB_SIZE_Y; y++)
+    {
+        for (size_t x = 0; x < DEBUG_TAB_SIZE_X; x++)
+        {
+            char c = tab[y][x] ? 'X' : '.';
+            printf("%c", c);
+        }
+        printf("\n");
+    }
+};
+
+void pathfinding_debug_print_found_path(pathfinding_object_t *obj, path_node_t *end_node)
+{
+    if (end_node == NULL)
+    {
+        printf("end_node is NULL! \n");
+        return;
+    }
+    printf("TOTO\n");
+    uint8_t tab[DEBUG_TAB_SIZE_Y][DEBUG_TAB_SIZE_X] = {0};
+    uint8_t path_valid = 0;
+    path_node_t *current_node = end_node;
+    for (size_t i = 0; i < PATHFINDING_MAX_NUM_OF_NODES; i++)
+    {
+        uint16_t y = current_node->coordinate.y * DEBUG_TAB_SIZE_Y / obj->config.field_boundaries.y;
+        uint16_t x = current_node->coordinate.x * DEBUG_TAB_SIZE_X / obj->config.field_boundaries.x;
+        tab[y][x] = 1;
+        if (current_node->parent_node == NULL){
+            path_valid = 1;
+            break;
+        }
+        current_node = current_node->parent_node;
+    }
+    if (!path_valid){
+        printf("Not a valid path!\n");
+        return;
     }
     // printf("FB: %d %d\n", obj->config.field_boundaries.x, obj->config.field_boundaries.y);
     for (size_t y = 0; y < DEBUG_TAB_SIZE_Y; y++)

@@ -2,6 +2,7 @@
 #include "pathfinding.h"
 #include "stdlib.h"
 #include "time.h"
+#include "stdio.h"
 #include "string.h"
 
 pathfinding_object_t pathfinding_obj;
@@ -29,6 +30,7 @@ void test_get_closest_node(void)
 
 void test_in_free_space_path_must_be_found_simple_config(void)
 {
+    path_node_t *end_node;
     coordinates_t start = {
         .x = pathfinding_obj.config.field_boundaries.x / 2,
         .y = pathfinding_obj.config.field_boundaries.y / 2,
@@ -37,13 +39,15 @@ void test_in_free_space_path_must_be_found_simple_config(void)
         .x = 50,
         .y = 50,
     };
-    int err = pathfinding_find_path(&pathfinding_obj, &start, &end);
+    int err = pathfinding_find_path(&pathfinding_obj, &start, &end, &end_node);
     pathfinding_debug_print(&pathfinding_obj);
     TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
+    pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
 }
 
 void test_in_free_space_path_must_be_found_hard_config(void)
 {
+    path_node_t *end_node;
     coordinates_t start = {
         .x = 10,
         .y = 10,
@@ -52,9 +56,10 @@ void test_in_free_space_path_must_be_found_hard_config(void)
         .x = pathfinding_obj.config.field_boundaries.x - 10,
         .y = 10,
     };
-    int err = pathfinding_find_path(&pathfinding_obj, &start, &end);
+    int err = pathfinding_find_path(&pathfinding_obj, &start, &end, &end_node);
     pathfinding_debug_print(&pathfinding_obj);
     TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
+    pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
 }
 
 void test_get_new_valid_coordinates()
