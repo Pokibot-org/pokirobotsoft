@@ -117,14 +117,17 @@ void test_object_holder(){
         }
     };
 
-    TEST_ASSERT_EQUAL_MESSAGE(0,obstacle_holder_push(&holder, &ob), "Push is valid");
+    TEST_ASSERT_EQUAL_MESSAGE(0,obstacle_holder_push(&holder, &ob), "Push is not valid");
+    TEST_ASSERT_EQUAL_MESSAGE(0,obstacle_holder_push(&holder, &ob), "Push is not valid");
+    TEST_ASSERT_EQUAL_MEMORY_MESSAGE(&ob, &holder.obstacles[1], sizeof(obstacle_t), "Store object is not valid");
+    
 }
 
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();
     RUN_TEST(test_collision_circles);
-    RUN_TEST(test_collision_rectangles);
+    // RUN_TEST(test_collision_rectangles);
     RUN_TEST(test_collision_rectangles_and_circles);
     RUN_TEST(test_object_holder);
     return UNITY_END();

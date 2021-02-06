@@ -39,6 +39,8 @@ uint8_t obstacle_holder_push(obstacle_holder_t *obj, obstacle_t *obstacle)
         }
     }
     obj->obstacles[obj->most_left_known_free_item] = *obstacle;
+    obj->most_left_known_free_item += 1;
+    return OBSTACLE_HOLDER_ERROR_NONE;
 }
 
 uint8_t obstacle_holder_delete_index(obstacle_holder_t *obj, uint16_t index)
