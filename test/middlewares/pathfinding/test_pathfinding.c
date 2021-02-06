@@ -3,10 +3,10 @@
 #include "stdlib.h"
 #include "time.h"
 
-pathfinding_configuration_t config;
 pathfinding_object_t pathfinding_obj;
 
 void setUp(void) {
+    pathfinding_configuration_t config;
     config.field_boundaries.x = 2000;
     config.field_boundaries.y = 3000;
     config.delta_distance = 40;
@@ -17,6 +17,10 @@ void setUp(void) {
 
 void tearDown(void) {
     // clean stuff up here
+}
+
+void test_get_closest_node(void){
+
 }
 
 void test_in_free_space_path_must_be_found(void) {
@@ -44,7 +48,7 @@ void test_get_new_valid_coordinates(){
     };
     coordinates_t must_be_crd = {
         .x = 10,
-        .y = 10 + pathfinding_obj.config->delta_distance
+        .y = 10 + pathfinding_obj.config.delta_distance
     };
     coordinates_t new;
     TEST_ASSERT_EQUAL(0, get_new_valid_coordinates(&pathfinding_obj, &start, &end, &new));
@@ -53,7 +57,7 @@ void test_get_new_valid_coordinates(){
 
     // DIAGONAL
     end = (coordinates_t){1000,1000};
-    must_be_crd = (coordinates_t){10 + pathfinding_obj.config->delta_distance* M_SQRT2/2,10 + pathfinding_obj.config->delta_distance* M_SQRT2/2};
+    must_be_crd = (coordinates_t){10 + pathfinding_obj.config.delta_distance* M_SQRT2/2,10 + pathfinding_obj.config.delta_distance* M_SQRT2/2};
     TEST_ASSERT_EQUAL(0, get_new_valid_coordinates(&pathfinding_obj, &start, &end, &new));
     TEST_ASSERT_EQUAL(must_be_crd.y, new.y);
     TEST_ASSERT_EQUAL(must_be_crd.x, new.x);
@@ -70,6 +74,7 @@ void test_get_new_valid_coordinates(){
 
 int main(int argc, char **argv) {
     UNITY_BEGIN();
+    RUN_TEST(test_get_closest_node);
     RUN_TEST(test_in_free_space_path_must_be_found);
     RUN_TEST(test_get_new_valid_coordinates);
     return UNITY_END();

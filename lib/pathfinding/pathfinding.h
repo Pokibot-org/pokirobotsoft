@@ -17,7 +17,7 @@ typedef struct pathfinding_configuration {
 typedef struct pathfinding_object
 {
     path_node_t nodes[PATHFINDING_MAX_NUM_OF_NODES];
-    pathfinding_configuration_t *config;
+    pathfinding_configuration_t config;
 }pathfinding_object_t;
 
 
