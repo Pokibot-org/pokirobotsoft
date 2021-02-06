@@ -1,5 +1,65 @@
 #include "obstacle.h"
 
+uint8_t obstacle_holder_compact(obstacle_holder_t *obj)
+{
+    int32_t head = -1;
+    for (uint32_t i = 0; i < OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE; i++)
+    {
+        if (obj->obstacles[i].type != obstacle_type_none)
+        {
+            if (head >= 0)
+            {
+                obj->obstacles[head] = obj->obstacles[i];
+                obj->obstacles[i].type = obstacle_type_none;
+                head++;
+            }
+        }
+        else
+        {
+            if (head == -1)
+            {
+                head = i;
+            }
+        }
+    }
+    if (head >= 0)
+    {
+        obj->most_left_known_free_item = head;
+    }
+}
+
+uint8_t obstacle_holder_push(obstacle_holder_t *obj, obstacle_t *obstacle)
+{
+    if (obj->most_left_known_free_item == OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE)
+    {
+        obstacle_holder_compact(obj);
+        if (obj->most_left_known_free_item == OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE)
+        {
+            return OBSTACLE_HOLDER_ERROR_TO_FULL;
+        }
+    }
+    obj->obstacles[obj->most_left_known_free_item] = *obstacle;
+}
+
+uint8_t obstacle_holder_delete_index(obstacle_holder_t *obj, uint16_t index)
+{
+    if (index >= OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE)
+    {
+        return OBSTACLE_HOLDER_ERROR_INVALID_INDEX;
+    }
+    obj->obstacles[index].type = obstacle_type_none;
+}
+
+/**
+ * @brief Delete the obtacle object from the obstacle_holder object.
+ * THE OBSTACLE OBJECT ADRESS MUST BE IN THE obstacle_holder_t OBJECT
+ */
+uint8_t obstacle_holder_delete(obstacle_holder_t *obj, obstacle_t *obstacle)
+{
+    uint32_t index = (obstacle - obj->obstacles) / sizeof(obstacle_t);
+    return obstacle_holder_delete_index(obj, index);
+}
+
 uint8_t are_rectangle_and_circle_colliding(rectangle_t *rec, circle_t *cir)
 {
     uint32_t circle_distance_x = ABS((int32_t)cir->coordinates.x - (int32_t)rec->coordinates.x);
@@ -33,7 +93,7 @@ uint8_t obstacle_are_they_colliding(obstacle_t *a, obstacle_t *b)
 {
     if ((a->type == obstacle_type_none) || (b->type == obstacle_type_none))
     {
-        return 255;
+        return OBSTACLE_COLLISION_ERROR_UNSUPPORTED;
     }
     if (a->type == b->type)
     {
@@ -43,7 +103,7 @@ uint8_t obstacle_are_they_colliding(obstacle_t *a, obstacle_t *b)
         }
         else
         {
-            return 255; // FIXME: NOT SUPPORTED
+            return OBSTACLE_COLLISION_ERROR_UNSUPPORTED; // FIXME: NOT SUPPORTED
         }
     }
 
@@ -55,5 +115,5 @@ uint8_t obstacle_are_they_colliding(obstacle_t *a, obstacle_t *b)
     {
         return are_rectangle_and_circle_colliding(&a->data.rectangle, &b->data.circle);
     }
-    return 255;
+    return OBSTACLE_COLLISION_ERROR_UNSUPPORTED;
 }

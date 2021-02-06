@@ -104,11 +104,28 @@ void test_collision_rectangles_and_circles(void)
     TEST_ASSERT_EQUAL_MESSAGE(0, obstacle_are_they_colliding(&b, &a), "A and B must not collide");
 }
 
+void test_object_holder(){
+    obstacle_holder_t holder = {0};
+    obstacle_t ob = {
+        .type = obstacle_type_circle,
+        .data.circle = {
+            .coordinates = {
+                .x = 60,
+                .y = 50
+            },
+        .diameter = 20
+        }
+    };
+
+    TEST_ASSERT_EQUAL_MESSAGE(0,obstacle_holder_push(&holder, &ob), "Push is valid");
+}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();
     RUN_TEST(test_collision_circles);
     RUN_TEST(test_collision_rectangles);
     RUN_TEST(test_collision_rectangles_and_circles);
+    RUN_TEST(test_object_holder);
     return UNITY_END();
 }

@@ -5,6 +5,8 @@
 #include "stdio.h"
 #include "string.h"
 
+//#define PRINT_DEBUG
+
 pathfinding_object_t pathfinding_obj;
 
 void setUp(void)
@@ -26,7 +28,6 @@ void tearDown(void)
 
 void test_get_closest_node(void)
 {
-    
 }
 
 void test_in_free_space_path_must_be_found_simple_config(void)
@@ -41,9 +42,13 @@ void test_in_free_space_path_must_be_found_simple_config(void)
         .y = 50,
     };
     int err = pathfinding_find_path(&pathfinding_obj, &start, &end, &end_node);
+#ifdef PRINT_DEBUG
     pathfinding_debug_print(&pathfinding_obj);
+#endif
     TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
+#ifdef PRINT_DEBUG
     pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
+#endif
 }
 
 void test_in_free_space_path_must_be_found_hard_config(void)
@@ -58,9 +63,13 @@ void test_in_free_space_path_must_be_found_hard_config(void)
         .y = 10,
     };
     int err = pathfinding_find_path(&pathfinding_obj, &start, &end, &end_node);
+#ifdef PRINT_DEBUG
     pathfinding_debug_print(&pathfinding_obj);
+#endif
     TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
+#ifdef PRINT_DEBUG
     pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
+#endif
 }
 
 void test_get_new_valid_coordinates()
