@@ -108,11 +108,11 @@ void pathfinding_debug_print(pathfinding_object_t *obj)
         {
             uint16_t y = obj->nodes[i].coordinate.y * DEBUG_TAB_SIZE_Y / obj->config->field_boundaries.y;
             uint16_t x = obj->nodes[i].coordinate.x * DEBUG_TAB_SIZE_X / obj->config->field_boundaries.x;
-            // printf("%d %d | %d %d\n", y, x, nodes[i].coordinate.y, nodes[i].coordinate.x);
+            // printf("%d %d | %d %d\n", y, x, obj->nodes[i].coordinate.y, obj->nodes[i].coordinate.x);
             tab[y][x] = 1;
         }
     }
-
+    // printf("FB: %d %d\n", obj->config->field_boundaries.x, obj->config->field_boundaries.y);
     for (size_t y = 0; y < DEBUG_TAB_SIZE_Y; y++)
     {
         for (size_t x = 0; x < DEBUG_TAB_SIZE_X; x++)
