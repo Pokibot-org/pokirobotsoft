@@ -1,4 +1,11 @@
+#ifdef UNIT_TEST
 #include <math.h>
+#else
+#include <zephyr.h>
+#define M_PI		3.14159265358979323846
+#define M_PI_2		1.57079632679489661923
+#define M_PI_4		0.78539816339744830962
+#endif
 #include "relative_obstacle_storing.h"
 
 uint8_t relative_obstacle_storing_lidar_points_relative_to_robot(obstacle_holder_t *holder, lidar_message_t *message, robot_t * robot, float center_offset_degre)

@@ -1,6 +1,6 @@
 #ifndef CAMSENSE_X1_H
 #define CAMSENSE_X1_H
-#include "lidar_messages.h"
+#include <lidar_message.h>
 
 int camsense_x1_init();
 float camsense_x1_get_sensor_speed();

@@ -3,6 +3,7 @@
 #include "camsense_x1.h"
 #include "obstacle.h"
 #include "relative_obstacle_storing.h"
+#include "robot.h"
 
 LOG_MODULE_REGISTER(obstacle_manager);
 
@@ -19,7 +20,7 @@ static void obstacle_manager_task()
     while (true)
     {
         camsense_x1_read_sensor(&message);
-        err = obstacle_manager_store_lidar_points(&ob_holder, &message);
+        err = relative_obstacle_storing_lidar_points_relative_to_robot(&ob_holder, &message, robot_get_obj(), CAMNSENSE_CENTER_OFFSET_DEG);
         if (err)
         {
             LOG_ERR("obstacle_manager_task error when calling obstacle_manager_store_lidar_points %d", err);
