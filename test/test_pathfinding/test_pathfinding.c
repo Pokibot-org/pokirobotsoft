@@ -101,15 +101,18 @@ void test_with_obstacle_path_must_be_found_hard_config(void)
     coordinates_t end = {
         .x = pathfinding_obj.config.field_boundaries.max_x - 10,
         .y = 10,
-    };
+    };    
+    clock_t begin_clk = clock();
     int err = pathfinding_find_path(&pathfinding_obj, &ob_hold, &start, &end, &end_node);
+    clock_t end_clk = clock();
 #ifdef PRINT_DEBUG
     pathfinding_debug_print(&pathfinding_obj);
 #endif
     TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
 #ifdef PRINT_DEBUG
     pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
-    printf("Found in %d nodes!\n", pathfinding_get_number_of_used_nodes(&pathfinding_obj));
+    float time_spent = (float)(end_clk - begin_clk) / CLOCKS_PER_SEC * 1000;
+    printf("Found in %d nodes! Time : %f ms\n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent);
 #endif
 }
 
