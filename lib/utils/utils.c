@@ -1,4 +1,6 @@
 #include <math.h>
+#include <stdlib.h>
+
 #include "utils.h"
 #ifdef UNIT_TEST
     #include "stdlib.h"

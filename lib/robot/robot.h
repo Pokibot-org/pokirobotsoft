@@ -5,7 +5,7 @@
 typedef struct robot
 {
     coordinates_t position;
-    uint16_t angle_degree_times_hundred;
+    float angle_rad;
 }robot_t;
 
 

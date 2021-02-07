@@ -24,24 +24,58 @@ uint8_t obstacle_holder_compact(obstacle_holder_t *obj)
     }
     if (head >= 0)
     {
-        obj->most_left_known_free_item = head;
+        obj->write_head = head;
     }
+    return OBSTACLE_HOLDER_ERROR_NONE;
 }
 
 uint8_t obstacle_holder_push(obstacle_holder_t *obj, obstacle_t *obstacle)
 {
-    if (obj->most_left_known_free_item == OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE)
+    if (obj->write_head == OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE)
+    {
+        return OBSTACLE_HOLDER_ERROR_TO_FULL;
+    }
+    obj->obstacles[obj->write_head] = *obstacle;
+    obj->write_head += 1;
+    if (obj->write_head == OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE)
     {
         obstacle_holder_compact(obj);
-        if (obj->most_left_known_free_item == OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE)
-        {
-            return OBSTACLE_HOLDER_ERROR_TO_FULL;
-        }
     }
-    obj->obstacles[obj->most_left_known_free_item] = *obstacle;
-    obj->most_left_known_free_item += 1;
     return OBSTACLE_HOLDER_ERROR_NONE;
 }
+
+uint8_t obstacle_holder_get(obstacle_holder_t *obj, obstacle_t **obstacle){ 
+    while (1)
+    {
+        if (obj->read_head == obj->write_head)
+        {
+            return OBSTACLE_HOLDER_ERROR_NO_OBSTACLE_FOUND;
+        }
+        if (obj->obstacles[obj->read_head].type != obstacle_type_none)
+        {
+            *obstacle = &obj->obstacles[obj->read_head];
+            return OBSTACLE_HOLDER_ERROR_NONE;
+        }
+        obj->read_head += 1;
+        if (obj->read_head == OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE)
+        {
+            obj->read_head = 0;
+        }
+    }
+}
+
+
+uint8_t obstacle_holder_push_circular_buffer_mode(obstacle_holder_t *obj, obstacle_t *obstacle)
+{
+    obj->obstacles[obj->write_head] = *obstacle;
+    obj->write_head += 1;
+    if (obj->write_head == OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE)
+    {
+        obj->write_head = 0;
+    }
+    return OBSTACLE_HOLDER_ERROR_NONE;
+}
+
 
 uint8_t obstacle_holder_delete_index(obstacle_holder_t *obj, uint16_t index)
 {
@@ -50,6 +84,7 @@ uint8_t obstacle_holder_delete_index(obstacle_holder_t *obj, uint16_t index)
         return OBSTACLE_HOLDER_ERROR_INVALID_INDEX;
     }
     obj->obstacles[index].type = obstacle_type_none;
+    return OBSTACLE_HOLDER_ERROR_NONE;
 }
 
 /**
