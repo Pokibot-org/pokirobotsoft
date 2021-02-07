@@ -3,9 +3,23 @@
 #include "utils.h"
 #include "stdlib.h"
 #include "math.h"
+#include "obstacle.h"
 
 #define DEBUG_TAB_SIZE_X 120
 #define DEBUG_TAB_SIZE_Y 40
+
+uint16_t pathfinding_get_number_of_used_nodes(pathfinding_object_t *obj)
+{
+    uint16_t res = 0;
+    for (uint16_t i = 0; i < PATHFINDING_MAX_NUM_OF_NODES; i++)
+    {
+        if (obj->nodes[i].is_used)
+        {
+            res += 1;
+        }
+    }
+    return res;
+}
 
 int pathfinding_object_configure(pathfinding_object_t *obj, pathfinding_configuration_t *config)
 {
@@ -22,6 +36,10 @@ int pathfinding_object_configure(pathfinding_object_t *obj, pathfinding_configur
     if (!obj->config.delta_distance)
     {
         obj->config.delta_distance = obj->config.distance_to_destination * 2;
+    }
+    if (!obj->config.radius_of_security)
+    {
+        obj->config.radius_of_security = 10;
     }
 
     return PATHFINDING_ERROR_NONE;
@@ -55,7 +73,7 @@ int get_new_valid_coordinates(pathfinding_object_t *obj, coordinates_t *crd_tree
         return PATHFINDING_ERROR_NONE;
     }
 
-    // FIXME: VERRY UNEFFICIENT 
+    // FIXME: VERRY UNEFFICIENT
     // printf("vector x:%d,y:%d\n", vector.x, vector.y);
     float angle, coeffa, coeffb;
     angle = atan2f(crd_random_node->x - crd_tree_node->x, crd_random_node->y - crd_tree_node->y);
@@ -63,12 +81,12 @@ int get_new_valid_coordinates(pathfinding_object_t *obj, coordinates_t *crd_tree
     coeffa = sinf(angle);
     coeffb = cosf(angle);
     // printf("x %d y %d, Coeff : %f\n", vector.x, vector.y, coeff);
-    crd_new_node->x = crd_tree_node->x + coeffa* obj->config.delta_distance;
-    crd_new_node->y = crd_tree_node->y + coeffb* obj->config.delta_distance;
+    crd_new_node->x = crd_tree_node->x + coeffa * obj->config.delta_distance;
+    crd_new_node->y = crd_tree_node->y + coeffb * obj->config.delta_distance;
     return PATHFINDING_ERROR_NONE;
 }
 
-int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coordinates_t *end, path_node_t **end_node)
+int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, coordinates_t *start, coordinates_t *end, path_node_t **end_node)
 {
     *end_node = NULL;
     // TODO: Check input validity, must be between 0 and pathfinding_boundaries
@@ -84,8 +102,9 @@ int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coord
         path_node_t *current_node = &obj->nodes[i];
         if (current_node->is_used)
         {
-            // FIXME: not to suer about that, we need to check the path integrity 
-            if (utils_distance(current_node->coordinate, *end) <= obj->config.distance_to_destination){
+            // FIXME: not to suer about that, we need to check the path integrity
+            if (utils_distance(current_node->coordinate, *end) <= obj->config.distance_to_destination)
+            {
                 *end_node = current_node;
                 return PATHFINDING_ERROR_NONE;
             }
@@ -96,12 +115,40 @@ int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coord
             rand_coordinates.x = utils_get_rand32() % obj->config.field_boundaries.max_x;
             rand_coordinates.y = utils_get_rand32() % obj->config.field_boundaries.max_y;
             path_node_t *closest_node_p = get_closest_node(obj, &rand_coordinates);
-            // printf("rand crd x:%d y:%d\n Closest node x:%d y:%d\n", rand_coordinates.x, rand_coordinates.y, 
+            // printf("rand crd x:%d y:%d\n Closest node x:%d y:%d\n", rand_coordinates.x, rand_coordinates.y,
             // closest_node_p->coordinate.x, closest_node_p->coordinate.y);
 
+            coordinates_t path_free_crd = rand_coordinates;
+            coordinates_t obstacle_checked_crd = {0};
+            uint8_t to_close_to_obstacle = 0;
+            for (size_t index_obstacle = 0; index_obstacle < OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE; index_obstacle++)
+            {
+                obstacle_t *current_ob = &ob_hold->obstacles[index_obstacle];
+                if (current_ob->type != obstacle_type_none)
+                {
+                    int status = obstacle_get_point_of_collision_with_segment(&closest_node_p->coordinate, &rand_coordinates, current_ob, &obj->config.radius_of_security, &obstacle_checked_crd);
+                    if (status == 1)
+                    {
+                        // check if it is the closest intersection point
+                        path_free_crd = obstacle_checked_crd;
+                        // printf("status %d, HOY seg : x:%d y:%d | x:%d y:%d\n goal x:%d y:%d\n",status, closest_node_p->coordinate.x, closest_node_p->coordinate.y,
+                        // rand_coordinates.x, rand_coordinates.y, path_free_crd.x, path_free_crd.y);
+                    }
+                    else if (status == 2)
+                    {
+                        to_close_to_obstacle = 1;
+                        break;
+                    }
+                }
+            }
+            if (to_close_to_obstacle)
+            {
+                // i -= 1; // TODO: need compating the path_node array and retry if path not found
+                continue;
+            }
             // TODO: check if collision
             coordinates_t new_coordinates;
-            get_new_valid_coordinates(obj, &(closest_node_p->coordinate), &rand_coordinates, &new_coordinates);
+            get_new_valid_coordinates(obj, &(closest_node_p->coordinate), &path_free_crd, &new_coordinates);
             // printf("New crd x:%d y:%d\n", new_coordinates.x, new_coordinates.y);
             current_node->is_used = 1;
             current_node->coordinate = new_coordinates;
@@ -109,7 +156,8 @@ int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coord
             closest_node_p->son_node = current_node;
 
             // TODO: check for obstacle between the last point and goal
-            if (utils_distance(current_node->coordinate, *end) <= obj->config.distance_to_destination){
+            if (utils_distance(current_node->coordinate, *end) <= obj->config.distance_to_destination)
+            {
                 *end_node = current_node;
                 return PATHFINDING_ERROR_NONE;
             }
@@ -160,13 +208,15 @@ void pathfinding_debug_print_found_path(pathfinding_object_t *obj, path_node_t *
         uint16_t y = current_node->coordinate.y * DEBUG_TAB_SIZE_Y / obj->config.field_boundaries.max_y;
         uint16_t x = current_node->coordinate.x * DEBUG_TAB_SIZE_X / obj->config.field_boundaries.max_x;
         tab[y][x] = 1;
-        if (current_node->parent_node == NULL){
+        if (current_node->parent_node == NULL)
+        {
             path_valid = 1;
             break;
         }
         current_node = current_node->parent_node;
     }
-    if (!path_valid){
+    if (!path_valid)
+    {
         printf("Not a valid path!\n");
         return;
     }

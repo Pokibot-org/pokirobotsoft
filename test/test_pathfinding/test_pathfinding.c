@@ -4,18 +4,20 @@
 #include "time.h"
 #include "stdio.h"
 #include "string.h"
+#include "obstacle.h"
 
-//#define PRINT_DEBUG
+#define PRINT_DEBUG
 
 pathfinding_object_t pathfinding_obj;
 
 void setUp(void)
 {
     pathfinding_configuration_t config;
-    config.field_boundaries.max_x = 3000;
-    config.field_boundaries.max_y = 2000;
-    config.delta_distance = 80;
-    config.distance_to_destination = 100;
+    config.field_boundaries.max_x = 3000; // 3m
+    config.field_boundaries.max_y = 2000; // 2m
+    config.delta_distance = 50; // jump of 5cm
+    config.distance_to_destination = 60; // stop when less than 6 cm close tho goal
+    config.radius_of_security = 300; // 300 mm
     memset(&pathfinding_obj.nodes, 0, PATHFINDING_MAX_NUM_OF_NODES * sizeof(path_node_t));
     pathfinding_object_configure(&pathfinding_obj, &config);
     srand(time(NULL));
@@ -32,6 +34,7 @@ void test_get_closest_node(void)
 
 void test_in_free_space_path_must_be_found_simple_config(void)
 {
+    obstacle_holder_t ob_hold = {0};
     path_node_t *end_node;
     coordinates_t start = {
         .x = pathfinding_obj.config.field_boundaries.max_x / 2,
@@ -41,18 +44,20 @@ void test_in_free_space_path_must_be_found_simple_config(void)
         .x = 50,
         .y = 50,
     };
-    int err = pathfinding_find_path(&pathfinding_obj, &start, &end, &end_node);
+    int err = pathfinding_find_path(&pathfinding_obj, &ob_hold, &start, &end, &end_node);
 #ifdef PRINT_DEBUG
     pathfinding_debug_print(&pathfinding_obj);
 #endif
     TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
 #ifdef PRINT_DEBUG
     pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
+    printf("Found in %d nodes!\n", pathfinding_get_number_of_used_nodes(&pathfinding_obj));
 #endif
 }
 
 void test_in_free_space_path_must_be_found_hard_config(void)
 {
+    obstacle_holder_t ob_hold = {0};
     path_node_t *end_node;
     coordinates_t start = {
         .x = 10,
@@ -62,13 +67,49 @@ void test_in_free_space_path_must_be_found_hard_config(void)
         .x = pathfinding_obj.config.field_boundaries.max_x - 10,
         .y = 10,
     };
-    int err = pathfinding_find_path(&pathfinding_obj, &start, &end, &end_node);
+    int err = pathfinding_find_path(&pathfinding_obj, &ob_hold, &start, &end, &end_node);
 #ifdef PRINT_DEBUG
     pathfinding_debug_print(&pathfinding_obj);
 #endif
     TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
 #ifdef PRINT_DEBUG
     pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
+    printf("Found in %d nodes!\n", pathfinding_get_number_of_used_nodes(&pathfinding_obj));
+#endif
+}
+
+void test_with_obstacle_path_must_be_found_hard_config(void)
+{
+    obstacle_holder_t ob_hold = {0};
+    obstacle_t rec = {
+        .type = obstacle_type_rectangle,
+        .data.rectangle = {
+            .coordinates = {
+                .x = 600,
+                .y = 500
+            },
+            .height = 1000,
+            .width = 200,
+        }
+    };
+    obstacle_holder_push(&ob_hold, &rec);
+    path_node_t *end_node;
+    coordinates_t start = {
+        .x = 10,
+        .y = 10,
+    };
+    coordinates_t end = {
+        .x = pathfinding_obj.config.field_boundaries.max_x - 10,
+        .y = 10,
+    };
+    int err = pathfinding_find_path(&pathfinding_obj, &ob_hold, &start, &end, &end_node);
+#ifdef PRINT_DEBUG
+    pathfinding_debug_print(&pathfinding_obj);
+#endif
+    TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
+#ifdef PRINT_DEBUG
+    pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
+    printf("Found in %d nodes!\n", pathfinding_get_number_of_used_nodes(&pathfinding_obj));
 #endif
 }
 
@@ -120,6 +161,7 @@ int main(int argc, char **argv)
     RUN_TEST(test_get_closest_node);
     RUN_TEST(test_in_free_space_path_must_be_found_simple_config);
     RUN_TEST(test_in_free_space_path_must_be_found_hard_config);
+    RUN_TEST(test_with_obstacle_path_must_be_found_hard_config);
     RUN_TEST(test_get_new_valid_coordinates);
     return UNITY_END();
 }

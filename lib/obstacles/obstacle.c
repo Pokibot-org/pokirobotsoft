@@ -1,5 +1,16 @@
 #include "obstacle.h"
 
+int16_t obstacle_holder_get_number_of_obstacles(obstacle_holder_t *obj){
+    uint16_t res = 0;
+    for (uint16_t i = 0; i < OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE; i++)
+    {
+        if (obj->obstacles[i].type != obstacle_type_none){
+            res += 1;
+        }
+    }
+    return res;
+}
+
 uint8_t obstacle_holder_compact(obstacle_holder_t *obj)
 {
     int32_t head = -1;
@@ -44,7 +55,8 @@ uint8_t obstacle_holder_push(obstacle_holder_t *obj, obstacle_t *obstacle)
     return OBSTACLE_HOLDER_ERROR_NONE;
 }
 
-uint8_t obstacle_holder_get(obstacle_holder_t *obj, obstacle_t **obstacle){ 
+uint8_t obstacle_holder_get(obstacle_holder_t *obj, obstacle_t **obstacle)
+{
     while (1)
     {
         if (obj->read_head == obj->write_head)
@@ -64,7 +76,6 @@ uint8_t obstacle_holder_get(obstacle_holder_t *obj, obstacle_t **obstacle){
     }
 }
 
-
 uint8_t obstacle_holder_push_circular_buffer_mode(obstacle_holder_t *obj, obstacle_t *obstacle)
 {
     obj->obstacles[obj->write_head] = *obstacle;
@@ -75,7 +86,6 @@ uint8_t obstacle_holder_push_circular_buffer_mode(obstacle_holder_t *obj, obstac
     }
     return OBSTACLE_HOLDER_ERROR_NONE;
 }
-
 
 uint8_t obstacle_holder_delete_index(obstacle_holder_t *obj, uint16_t index)
 {
@@ -153,4 +163,53 @@ uint8_t obstacle_are_they_colliding(obstacle_t *a, obstacle_t *b)
         return are_rectangle_and_circle_colliding(&a->data.rectangle, &b->data.circle);
     }
     return OBSTACLE_COLLISION_ERROR_UNSUPPORTED;
+}
+
+uint8_t obstacle_get_point_of_collision_with_segment(coordinates_t *start_point, coordinates_t *end_point, obstacle_t *obstacle, uint16_t *seg_diameter, coordinates_t *out_crd)
+{
+    *out_crd = *start_point;
+    obstacle_t fake_obs = {0};
+    fake_obs.type = obstacle_type_circle;
+    fake_obs.data.circle.coordinates.x = start_point->x;
+    fake_obs.data.circle.coordinates.y = start_point->y;
+    fake_obs.data.circle.diameter = *seg_diameter; // Precision, smaller is better but slower
+
+    if (obstacle->type != obstacle_type_none)
+    {
+        uint32_t len_seg = utils_distance(*start_point, *end_point);
+        uint16_t steps = len_seg * 10 / (fake_obs.data.circle.diameter);
+        if (!steps)
+        {
+            return 2; // TODO: is the other check to do ?
+        }
+        int16_t step_x = (end_point->x - start_point->x) / steps;
+        int16_t step_y = (end_point->y - start_point->y) / steps;
+        uint8_t collision_happend = 0;
+        for (uint16_t i = 0; i <= steps; i++)
+        {
+            if (obstacle_are_they_colliding(&fake_obs, obstacle))
+            {
+                collision_happend = 1;
+                break;
+            }
+            *out_crd = fake_obs.data.circle.coordinates;
+            //increment;
+            fake_obs.data.circle.coordinates.x += step_x;
+            fake_obs.data.circle.coordinates.y += step_y;
+        }
+        if (!collision_happend)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+    else
+    {
+        return OBSTACLE_COLLISION_ERROR_UNSUPPORTED;
+    }
+
+    return 0; // NO COLLISION
 }

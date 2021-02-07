@@ -156,6 +156,69 @@ void test_object_holder_relative_storing(){
     TEST_ASSERT_EQUAL(expected_result.data.circle.coordinates.x, result->data.circle.coordinates.x);
 }
 
+void test_object_collision_with_seg_and_circle(){
+
+    coordinates_t start = {
+        .x = 10,
+        .y = 10,
+    };
+    coordinates_t end = {
+        .x = 10,
+        .y = 1000,
+    };
+
+    obstacle_t ob = {
+        .type = obstacle_type_circle,
+        .data.circle.coordinates = {
+            .x = 10,
+            .y = 500
+        },
+        .data.circle.diameter = 20,
+    };
+
+    uint16_t robot_diameter = 20;
+    coordinates_t intersection_pt = {0};
+    int rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
+    TEST_ASSERT_EQUAL_MESSAGE(1, rcode, "Intersection not found");
+
+    ob.data.circle.coordinates.x = end.x + (ob.data.circle.diameter + robot_diameter)/2; 
+    // FIXME: current method is aproximate even working with ob.data.circle.coordinates.x -= 1
+    rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
+    TEST_ASSERT_EQUAL_MESSAGE(0, rcode, "Intersection found");
+}
+
+void test_object_collision_with_seg_and_rectangle(){
+
+    coordinates_t start = {
+        .x = 10,
+        .y = 10,
+    };
+    coordinates_t end = {
+        .x = 10,
+        .y = 1000,
+    };
+
+    obstacle_t ob = {
+        .type = obstacle_type_rectangle,
+        .data.rectangle.coordinates = {
+            .x = 10,
+            .y = 500
+        },
+        .data.rectangle.width = 10,
+        .data.rectangle.height = 10,
+    };
+
+    uint16_t robot_diameter = 20;
+    coordinates_t intersection_pt = {0};
+    int rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
+    TEST_ASSERT_EQUAL_MESSAGE(1, rcode, "Intersection not found");
+
+    ob.data.rectangle.coordinates.x = end.x + (ob.data.rectangle.width + robot_diameter)/2; 
+    // FIXME: current method is aproximate even working with ob.data.circle.coordinates.x -= 1
+    rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
+    TEST_ASSERT_EQUAL_MESSAGE(0, rcode, "Intersection found");
+}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();
@@ -164,5 +227,7 @@ int main(int argc, char **argv)
     RUN_TEST(test_collision_rectangles_and_circles);
     RUN_TEST(test_object_holder);
     RUN_TEST(test_object_holder_relative_storing);
+    RUN_TEST(test_object_collision_with_seg_and_circle);
+    RUN_TEST(test_object_collision_with_seg_and_rectangle);
     return UNITY_END();
 }
