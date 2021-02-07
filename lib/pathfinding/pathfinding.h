@@ -5,7 +5,7 @@
 #include "pathfinding_types.h"
 #include "pathfinding_errors.h"
 
-#define PATHFINDING_MAX_NUM_OF_NODES 2048
+#define PATHFINDING_MAX_NUM_OF_NODES 4096
 #define PATHFINDING_MAX_BOUNDARIES UINT16_MAX
 
 typedef struct pathfinding_configuration {

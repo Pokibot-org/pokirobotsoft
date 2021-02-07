@@ -20,8 +20,9 @@ typedef struct path_node
  */
 typedef struct boundaries
 {
-    uint32_t x;
-    uint32_t y;
+    int32_t max_x;
+    int32_t max_y;
+    // TODO: add min boundaries
 }boundaries_t;
 
 #endif

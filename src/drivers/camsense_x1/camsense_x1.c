@@ -64,7 +64,7 @@ void process_recived_frame(uint8_t *recived_frame)
     message.start_angle = (recived_frame[CAMSENSE_X1_START_ANGLE_H_INDEX] << 8 | recived_frame[CAMSENSE_X1_START_ANGLE_L_INDEX]) / 64.0 - 640.0;
     message.end_angle = (recived_frame[CAMSENSE_X1_END_ANGLE_H_INDEX] << 8 | recived_frame[CAMSENSE_X1_END_ANGLE_L_INDEX]) / 64.0 - 640.0;
 
-    for (int point_index = 0; point_index < CAMSENSE_X1_NUMBER_OF_POINT; point_index++) // for each of the 8 samples
+    for (int point_index = 0; point_index < LIDAR_MESSAGE_NUMBER_OF_POINT; point_index++) // for each of the 8 samples
     {
 
         uint8_t distance_l = recived_frame[CAMSENSE_X1_FIRST_POINT_INDEX + CAMSENSE_X1_POINT_DISTANCE_L_RELATIVE_INDEX + (point_index * 3)];

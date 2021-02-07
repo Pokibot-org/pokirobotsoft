@@ -18,6 +18,8 @@
         "string": "cpp",
         "utils.h": "c",
         "math.h": "c",
-        "zephyr.h": "c"
+        "zephyr.h": "c",
+        "limits": "c",
+        "relative_obstacle_storing.h": "c"
     }
 }

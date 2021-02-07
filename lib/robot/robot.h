@@ -5,8 +5,10 @@
 typedef struct robot
 {
     coordinates_t position;
-    float angle_rad;
+    // angle_rad is in range <-PI,PI>
+    float angle_rad; 
 }robot_t;
 
+robot_t *robot_get_obj();
 
 #endif

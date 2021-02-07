@@ -12,8 +12,8 @@ pathfinding_object_t pathfinding_obj;
 void setUp(void)
 {
     pathfinding_configuration_t config;
-    config.field_boundaries.x = 3000;
-    config.field_boundaries.y = 2000;
+    config.field_boundaries.max_x = 3000;
+    config.field_boundaries.max_y = 2000;
     config.delta_distance = 80;
     config.distance_to_destination = 100;
     memset(&pathfinding_obj.nodes, 0, PATHFINDING_MAX_NUM_OF_NODES * sizeof(path_node_t));
@@ -34,8 +34,8 @@ void test_in_free_space_path_must_be_found_simple_config(void)
 {
     path_node_t *end_node;
     coordinates_t start = {
-        .x = pathfinding_obj.config.field_boundaries.x / 2,
-        .y = pathfinding_obj.config.field_boundaries.y / 2,
+        .x = pathfinding_obj.config.field_boundaries.max_x / 2,
+        .y = pathfinding_obj.config.field_boundaries.max_y / 2,
     };
     coordinates_t end = {
         .x = 50,
@@ -59,7 +59,7 @@ void test_in_free_space_path_must_be_found_hard_config(void)
         .y = 10,
     };
     coordinates_t end = {
-        .x = pathfinding_obj.config.field_boundaries.x - 10,
+        .x = pathfinding_obj.config.field_boundaries.max_x - 10,
         .y = 10,
     };
     int err = pathfinding_find_path(&pathfinding_obj, &start, &end, &end_node);

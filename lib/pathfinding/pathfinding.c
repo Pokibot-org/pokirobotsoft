@@ -11,13 +11,13 @@ int pathfinding_object_configure(pathfinding_object_t *obj, pathfinding_configur
 {
     // TODO: Check if delta is under distance to goal
     obj->config = *config;
-    if ((obj->config.field_boundaries.x == obj->config.field_boundaries.y) && (obj->config.field_boundaries.x == 0))
+    if ((obj->config.field_boundaries.max_x == obj->config.field_boundaries.max_y) && (obj->config.field_boundaries.max_x == 0))
     {
-        obj->config.field_boundaries = (boundaries_t){UINT16_MAX, UINT16_MAX};
+        obj->config.field_boundaries = (boundaries_t){INT32_MAX, INT32_MAX};
     }
     if (!obj->config.distance_to_destination)
     {
-        obj->config.distance_to_destination = (obj->config.field_boundaries.x + obj->config.field_boundaries.y) / 200;
+        obj->config.distance_to_destination = (obj->config.field_boundaries.max_x + obj->config.field_boundaries.max_y) / 200;
     }
     if (!obj->config.delta_distance)
     {
@@ -93,8 +93,8 @@ int pathfinding_find_path(pathfinding_object_t *obj, coordinates_t *start, coord
         else
         {
             coordinates_t rand_coordinates;
-            rand_coordinates.x = utils_get_rand32() % obj->config.field_boundaries.x;
-            rand_coordinates.y = utils_get_rand32() % obj->config.field_boundaries.y;
+            rand_coordinates.x = utils_get_rand32() % obj->config.field_boundaries.max_x;
+            rand_coordinates.y = utils_get_rand32() % obj->config.field_boundaries.max_y;
             path_node_t *closest_node_p = get_closest_node(obj, &rand_coordinates);
             // printf("rand crd x:%d y:%d\n Closest node x:%d y:%d\n", rand_coordinates.x, rand_coordinates.y, 
             // closest_node_p->coordinate.x, closest_node_p->coordinate.y);
@@ -127,8 +127,8 @@ void pathfinding_debug_print(pathfinding_object_t *obj)
     {
         if (obj->nodes[i].is_used)
         {
-            uint16_t y = obj->nodes[i].coordinate.y * DEBUG_TAB_SIZE_Y / obj->config.field_boundaries.y;
-            uint16_t x = obj->nodes[i].coordinate.x * DEBUG_TAB_SIZE_X / obj->config.field_boundaries.x;
+            uint16_t y = obj->nodes[i].coordinate.y * DEBUG_TAB_SIZE_Y / obj->config.field_boundaries.max_y;
+            uint16_t x = obj->nodes[i].coordinate.x * DEBUG_TAB_SIZE_X / obj->config.field_boundaries.max_x;
             // printf("%d %d | %d %d\n", y, x, obj->nodes[i].coordinate.y, obj->nodes[i].coordinate.x);
             tab[y][x] = 1;
         }
@@ -157,8 +157,8 @@ void pathfinding_debug_print_found_path(pathfinding_object_t *obj, path_node_t *
     path_node_t *current_node = end_node;
     for (size_t i = 0; i < PATHFINDING_MAX_NUM_OF_NODES; i++)
     {
-        uint16_t y = current_node->coordinate.y * DEBUG_TAB_SIZE_Y / obj->config.field_boundaries.y;
-        uint16_t x = current_node->coordinate.x * DEBUG_TAB_SIZE_X / obj->config.field_boundaries.x;
+        uint16_t y = current_node->coordinate.y * DEBUG_TAB_SIZE_Y / obj->config.field_boundaries.max_y;
+        uint16_t x = current_node->coordinate.x * DEBUG_TAB_SIZE_X / obj->config.field_boundaries.max_x;
         tab[y][x] = 1;
         if (current_node->parent_node == NULL){
             path_valid = 1;

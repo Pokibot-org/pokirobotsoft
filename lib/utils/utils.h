@@ -5,7 +5,7 @@
 #define SQUARE(a) ((a)*(a))
 #define ABS(a) ((a) < 0 ? -(a) : (a))
 
-typedef uint16_t point_t;
+typedef int16_t point_t;
 typedef uint16_t distance_t;
 typedef struct coordinates
 {
