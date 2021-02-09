@@ -7,7 +7,7 @@
 #include "obstacle.h"
 
 #define PATHFINDING_MAX_NUM_OF_NODES 4096
-#define PATHFINDING_MAX_BOUNDARIES UINT16_MAX
+#define PATHFINDING_MAX_BOUNDARIES INT16_MAX
 
 typedef struct pathfinding_configuration {
     boundaries_t field_boundaries;

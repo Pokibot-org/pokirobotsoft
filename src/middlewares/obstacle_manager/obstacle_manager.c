@@ -23,7 +23,6 @@ uint8_t get_obstacle_snaphot(obstacle_holder_t *obj){
     return 0;
 }
 
-
 static void obstacle_manager_task()
 {
     camsense_x1_init();
