@@ -146,7 +146,7 @@ uint8_t obstacle_are_they_colliding(obstacle_t *a, obstacle_t *b)
     {
         if (a->type == obstacle_type_circle)
         {
-            return utils_distance(a->data.circle.coordinates, b->data.circle.coordinates) <= ((a->data.circle.diameter + b->data.circle.diameter) / 2);
+            return utils_distance(&a->data.circle.coordinates, &b->data.circle.coordinates) <= ((a->data.circle.diameter + b->data.circle.diameter) / 2);
         }
         else
         {
@@ -176,7 +176,7 @@ uint8_t obstacle_get_point_of_collision_with_segment(coordinates_t *start_point,
 
     if (obstacle->type != obstacle_type_none)
     {
-        uint32_t len_seg = utils_distance(*start_point, *end_point);
+        uint32_t len_seg = utils_distance(start_point, end_point);
         uint16_t steps = len_seg * 10 / (fake_obs.data.circle.diameter);
         if (!steps)
         {

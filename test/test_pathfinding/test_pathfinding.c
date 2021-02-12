@@ -15,7 +15,7 @@ void setUp(void)
     pathfinding_configuration_t config;
     config.field_boundaries.max_x = 3000; // 3m
     config.field_boundaries.max_y = 2000; // 2m
-    config.delta_distance = 50; // jump of 5cm
+    config.delta_distance = 200; // jump of 5cm
     config.distance_to_destination = 60; // stop when less than 6 cm close tho goal
     config.radius_of_security = 300; // 300 mm
     memset(&pathfinding_obj.nodes, 0, PATHFINDING_MAX_NUM_OF_NODES * sizeof(path_node_t));

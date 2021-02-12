@@ -7,9 +7,9 @@
 typedef struct path_node
 {
     struct path_node * parent_node;
-    struct path_node * son_node;
     coordinates_t coordinate;
     uint8_t is_used;
+    long_distance_t distance_to_start;
 }path_node_t;
 
 /**
