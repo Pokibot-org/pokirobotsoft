@@ -20,6 +20,8 @@
         "math.h": "c",
         "zephyr.h": "c",
         "limits": "c",
-        "relative_obstacle_storing.h": "c"
+        "relative_obstacle_storing.h": "c",
+        "chrono": "c",
+        "algorithm": "c"
     }
 }
