@@ -9,7 +9,7 @@
 #define DEBUG_TAB_SIZE_X 120
 #define DEBUG_TAB_SIZE_Y 40
 
-#define PATHFINDING_GET_ARRAY_OF_CLOSEST_NODES_MAX_NUM 6
+#define PATHFINDING_GET_ARRAY_OF_CLOSEST_NODES_MAX_NUM 16
 
 // DEFINES 
 
@@ -256,7 +256,7 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
 
 int pathfinding_optimize_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, uint16_t nb_of_nodes_to_add)
 {
-
+    uint16_t counter = 0;
     for (size_t i = 1; i < PATHFINDING_MAX_NUM_OF_NODES; i++)
     {
         path_node_t *current_node = &obj->nodes[i];
@@ -294,8 +294,13 @@ int pathfinding_optimize_path(pathfinding_object_t *obj, obstacle_holder_t *ob_h
         current_node->distance_to_start = closest_node_p->distance_to_start + utils_distance(&closest_node_p->coordinate, &current_node->coordinate);
 
         remap_nodes_to_new_node_if_closer_to_start(obj, ob_hold, to_be_remaped_nodes, nb_of_to_be_remaped_nodes, current_node);
-
+        counter++;
+        if (counter >= nb_of_nodes_to_add)
+        {
+            break;
+        }       
     }
+    return PATHFINDING_ERROR_NONE;
 }
 
 
