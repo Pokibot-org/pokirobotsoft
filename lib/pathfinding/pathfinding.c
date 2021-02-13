@@ -89,7 +89,6 @@ uint8_t get_array_of_closest_node(pathfinding_object_t *obj, coordinates_t *crd,
         if (current_node->is_used)
         {
             long_distance_t distance = utils_distance(&current_node->coordinate, crd);
-            // TODO: check collision
             for (uint8_t index_stored_nodes = 0; index_stored_nodes < PATHFINDING_GET_ARRAY_OF_CLOSEST_NODES_MAX_NUM; index_stored_nodes++)
             {
                 if (distance < closest_node_distance[index_stored_nodes])
@@ -113,25 +112,21 @@ uint8_t get_array_of_closest_node(pathfinding_object_t *obj, coordinates_t *crd,
     return found_nodes;
 }
 
-void find_and_remap_as_father_closest_node_to_start(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, path_node_t **nodes, uint8_t nb_nodes, path_node_t *goal_node)
+void remap_nodes_to_new_node_if_closer_to_start(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, path_node_t **nodes, uint8_t nb_nodes, path_node_t *new_node)
 {
-    goal_node->distance_to_start = UINT32_MAX;
     for (size_t i = 0; i < nb_nodes; i++)
     {
-        if (nodes[i]->is_used && (goal_node != nodes[i]))
-        {
-            coordinates_t out_crd;
-            int err = check_collision(obj, ob_hold, &goal_node->coordinate, nodes[i], &out_crd);
-            if(err){
-                continue;
-            }
-            long_distance_t total_distance = utils_distance(&goal_node->coordinate, &nodes[i]->coordinate) + nodes[i]->distance_to_start;
+        coordinates_t out_crd;
+        int err = check_collision(obj, ob_hold, &new_node->coordinate, nodes[i], &out_crd);
+        if(err){
+            continue;
+        }
+        long_distance_t total_distance = utils_distance(&new_node->coordinate, &nodes[i]->coordinate) + new_node->distance_to_start;
 
-            if (total_distance <= goal_node->distance_to_start)
-            {
-                goal_node->distance_to_start = total_distance;
-                goal_node->parent_node = nodes[i];
-            }
+        if (total_distance < nodes[i]->distance_to_start)
+        {
+            nodes[i]->distance_to_start = total_distance;
+            nodes[i]->parent_node = new_node;
         }
     }
 }
@@ -232,19 +227,16 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
             coordinates_t new_coordinates;
             get_new_valid_coordinates(obj, &(closest_node_p->coordinate), &path_free_crd, &new_coordinates);
 
+            // Remaping nodes for RRT*
+            path_node_t * to_be_remaped_nodes[PATHFINDING_GET_ARRAY_OF_CLOSEST_NODES_MAX_NUM] = {0};
+            uint8_t nb_of_to_be_remaped_nodes = get_array_of_closest_node(obj, &new_coordinates, to_be_remaped_nodes);
+
             current_node->is_used = 1;
             current_node->coordinate = new_coordinates;
             current_node->parent_node = closest_node_p;
             current_node->distance_to_start = closest_node_p->distance_to_start + utils_distance(&closest_node_p->coordinate, &current_node->coordinate);
 
-            // Remaping nodes for RRT*
-            path_node_t * to_be_remaped_nodes[PATHFINDING_GET_ARRAY_OF_CLOSEST_NODES_MAX_NUM] = {0};
-            uint8_t nb_of_to_be_remaped_nodes = get_array_of_closest_node(obj, &new_coordinates, to_be_remaped_nodes);
-
-            for (size_t x = 0; x < nb_of_to_be_remaped_nodes; x++)
-            {
-                find_and_remap_as_father_closest_node_to_start(obj, ob_hold, to_be_remaped_nodes, nb_of_to_be_remaped_nodes, to_be_remaped_nodes[x]);
-            }
+            remap_nodes_to_new_node_if_closer_to_start(obj, ob_hold, to_be_remaped_nodes, nb_of_to_be_remaped_nodes, current_node);
             
             // TODO: check for obstacle between the last point and goal
             if (utils_distance(&current_node->coordinate, end) <= obj->config.distance_to_destination)
@@ -291,20 +283,18 @@ int pathfinding_optimize_path(pathfinding_object_t *obj, obstacle_holder_t *ob_h
         coordinates_t new_coordinates;
         get_new_valid_coordinates(obj, &(closest_node_p->coordinate), &path_free_crd, &new_coordinates);
 
+        // Remaping nodes for RRT*
+        path_node_t * to_be_remaped_nodes[PATHFINDING_GET_ARRAY_OF_CLOSEST_NODES_MAX_NUM] = {0};
+        uint8_t nb_of_to_be_remaped_nodes = get_array_of_closest_node(obj, &new_coordinates, to_be_remaped_nodes);
+
 
         current_node->is_used = 1;
         current_node->coordinate = new_coordinates;
         current_node->parent_node = closest_node_p;
         current_node->distance_to_start = closest_node_p->distance_to_start + utils_distance(&closest_node_p->coordinate, &current_node->coordinate);
 
-        // Remaping nodes for RRT*
-        path_node_t * to_be_remaped_nodes[PATHFINDING_GET_ARRAY_OF_CLOSEST_NODES_MAX_NUM] = {0};
-        uint8_t nb_of_to_be_remaped_nodes = get_array_of_closest_node(obj, &new_coordinates, to_be_remaped_nodes);
+        remap_nodes_to_new_node_if_closer_to_start(obj, ob_hold, to_be_remaped_nodes, nb_of_to_be_remaped_nodes, current_node);
 
-        for (size_t x = 0; x < nb_of_to_be_remaped_nodes; x++)
-        {
-            find_and_remap_as_father_closest_node_to_start(obj, ob_hold, to_be_remaped_nodes, nb_of_to_be_remaped_nodes, to_be_remaped_nodes[x]);
-        }
     }
 }
 
