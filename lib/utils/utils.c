@@ -51,10 +51,22 @@ uint32_t utils_get_rand32()
 {
     return rand();
 }
+
+point_t utils_get_rand_point()
+{
+    int pt = rand();
+    return *(point_t *)&pt;
+}
 #else
 uint32_t utils_get_rand32()
 {
     return sys_rand32_get();
+}
+
+point_t utils_get_rand_point()
+{
+    int pt = sys_rand32_get();
+    return *(point_t *)&pt;
 }
 #endif
 

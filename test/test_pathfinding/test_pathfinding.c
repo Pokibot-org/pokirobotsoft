@@ -15,7 +15,7 @@ void setUp(void)
     pathfinding_configuration_t config;
     config.field_boundaries.max_x = 3000; // 3m
     config.field_boundaries.max_y = 2000; // 2m
-    config.delta_distance = 200; // jump of Xcm
+    config.delta_distance = 100; // jump of Xcm
     config.distance_to_destination = 60; // stop when less than 6 cm close tho goal
     config.radius_of_security = 300; // 300 mm
     memset(&pathfinding_obj.nodes, 0, PATHFINDING_MAX_NUM_OF_NODES * sizeof(path_node_t));
@@ -74,7 +74,9 @@ void test_in_free_space_path_must_be_found_hard_config(void)
     TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
 #ifdef PRINT_DEBUG
     pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
-    printf("Found in %d nodes!\n", pathfinding_get_number_of_used_nodes(&pathfinding_obj));
+    printf("Found in %d nodes!\n Now optimizing path : \n", pathfinding_get_number_of_used_nodes(&pathfinding_obj));
+    pathfinding_optimize_path(&pathfinding_obj, &ob_hold, PATHFINDING_MAX_NUM_OF_NODES);
+    pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
 #endif
 }
 
