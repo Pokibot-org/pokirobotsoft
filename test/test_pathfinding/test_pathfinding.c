@@ -6,7 +6,13 @@
 #include "string.h"
 #include "obstacle.h"
 
+#ifndef M_SQRT2
+#define M_SQRT2		1.41421356237309504880
+#endif
+
+
 #define PRINT_DEBUG
+
 
 pathfinding_object_t pathfinding_obj;
 

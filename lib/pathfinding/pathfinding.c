@@ -184,7 +184,7 @@ uint8_t check_collision(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, c
     return collision_happened;
 }
 
-int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, coordinates_t *start, coordinates_t *end, path_node_t **end_node)
+int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, const coordinates_t *start, const coordinates_t *end, path_node_t **end_node)
 {
     *end_node = NULL;
     // TODO: Check input validity, must be between 0 and pathfinding_boundaries
