@@ -367,3 +367,79 @@ void pathfinding_debug_print_found_path(pathfinding_object_t *obj, path_node_t *
         printf("\n");
     }
 };
+
+
+void pathfinding_debug_write_found_path(pathfinding_object_t *obj, path_node_t *end_node, char* file_path)
+{
+    if (end_node == NULL)
+    {
+        printf("end_node is NULL! \n");
+        return;
+    }
+    FILE *fd = fopen(file_path, "w+");
+    uint8_t (*tab)[obj->config.field_boundaries.max_x] = malloc(obj->config.field_boundaries.max_y * obj->config.field_boundaries.max_x * sizeof(uint8_t));
+    uint8_t path_valid = 0;
+    path_node_t *current_node = end_node;
+    for (size_t i = 0; i < PATHFINDING_MAX_NUM_OF_NODES; i++)
+    {
+        uint16_t y = current_node->coordinate.y;
+        uint16_t x = current_node->coordinate.x;
+        tab[y][x] = 1;
+        if (current_node->parent_node == NULL)
+        {
+            path_valid = 1;
+            break;
+        }
+        current_node = current_node->parent_node;
+    }
+    if (!path_valid)
+    {
+        fprintf(fd,"Not a valid path!\n");
+        fclose(fd);
+        free(tab);
+        return;
+    }
+    // printf("FB: %d %d\n", obj->config.field_boundaries.x, obj->config.field_boundaries.y);
+    for (size_t y = 0; y < obj->config.field_boundaries.max_y; y++)
+    {
+        for (size_t x = 0; x < obj->config.field_boundaries.max_x; x++)
+        {
+            char c = tab[y][x] ? 'X' : '.';
+            fprintf(fd, "%c", c);
+        }
+        fprintf(fd, "\n");
+    }
+
+    fclose(fd);
+    free(tab);
+};
+
+
+void pathfinding_debug_write_found_path_list(pathfinding_object_t *obj, path_node_t *end_node, char* file_path)
+{
+    if (end_node == NULL)
+    {
+        printf("end_node is NULL! \n");
+        return;
+    }
+    FILE *fd = fopen(file_path, "w+");
+    uint8_t path_valid = 0;
+    path_node_t *current_node = end_node;
+    fprintf(fd, "[");
+    for (size_t i = 0; i < PATHFINDING_MAX_NUM_OF_NODES; i++)
+    {
+        uint16_t y = current_node->coordinate.y;
+        uint16_t x = current_node->coordinate.x;
+        fprintf(fd, "(%d,%d)", x, y);
+        if (current_node->parent_node == NULL)
+        {
+            path_valid = 1;
+            break;
+        }
+        fprintf(fd, ",");
+        current_node = current_node->parent_node;
+    }
+
+    fprintf(fd, "]");
+    fclose(fd);
+};
