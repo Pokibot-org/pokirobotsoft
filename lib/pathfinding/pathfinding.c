@@ -80,8 +80,10 @@ path_node_t *get_closest_node(pathfinding_object_t *obj, coordinates_t *crd)
 uint8_t get_array_of_closest_node(pathfinding_object_t *obj, coordinates_t *crd, path_node_t **out_nodes)
 {
     long_distance_t closest_node_distance[PATHFINDING_GET_ARRAY_OF_CLOSEST_NODES_MAX_NUM];
-    memset(closest_node_distance, UINT32_MAX, PATHFINDING_GET_ARRAY_OF_CLOSEST_NODES_MAX_NUM * sizeof(long_distance_t));
-    
+    for (size_t i = 0; i < PATHFINDING_GET_ARRAY_OF_CLOSEST_NODES_MAX_NUM; i++)
+    {
+        closest_node_distance[i] = UINT32_MAX;
+    }    
     uint8_t found_nodes = 0;
     for (size_t i = 0; i < PATHFINDING_MAX_NUM_OF_NODES; i++)
     {
@@ -213,7 +215,7 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
             rand_coordinates.x = utils_get_rand32() % obj->config.field_boundaries.max_x;
             rand_coordinates.y = utils_get_rand32() % obj->config.field_boundaries.max_y;
             path_node_t *closest_node_p = get_closest_node(obj, &rand_coordinates);
-            // printf("rand crd x:%d y:%d\n Closest node x:%d y:%d\n", rand_coordinates.x, rand_coordinates.y,
+            // printk("rand crd x:%d y:%d\n Closest node x:%d y:%d\n", rand_coordinates.x, rand_coordinates.y,
             // closest_node_p->coordinate.x, closest_node_p->coordinate.y);
 
             coordinates_t path_free_crd;
@@ -223,7 +225,6 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
                 // i -= 1; // TODO: need compating the path_node array and retry if path not found
                 continue;
             }
-            // TODO: check if collision
             coordinates_t new_coordinates;
             get_new_valid_coordinates(obj, &(closest_node_p->coordinate), &path_free_crd, &new_coordinates);
 
@@ -239,12 +240,13 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
             remap_nodes_to_new_node_if_closer_to_start(obj, ob_hold, to_be_remaped_nodes, nb_of_to_be_remaped_nodes, current_node);
             
             // TODO: check for obstacle between the last point and goal
-            if (utils_distance(&current_node->coordinate, end) <= obj->config.distance_to_destination)
+            long_distance_t dist_to_goal = utils_distance(&current_node->coordinate, end);
+
+            if (dist_to_goal <= obj->config.distance_to_destination)
             {
                 *end_node = current_node;
                 return PATHFINDING_ERROR_NONE;
             }
-            // printf("New node<x:%d,y%d>\n", new_coordinates.x, new_coordinates.y);
         }
     }
 
