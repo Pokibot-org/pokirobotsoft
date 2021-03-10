@@ -13,10 +13,14 @@ include_directories(
     ../src/
     ../src/ledinfo
     ../src/drivers/camsense_x1/
+    ../src/middlewares/obstacle_manager/
+    ../src/middlewares/path_manager/
 )
 
 FILE(GLOB app_sources 
     ../src/*.c*
     ../src/ledinfo/*.c*
-    ../src/drivers/camsense_x1/*.c*)
+    ../src/drivers/camsense_x1/*.c*
+    ../src/middlewares/obstacle_manager/*.c*
+    ../src/middlewares/path_manager/*.c*)
 target_sources(app PRIVATE ${app_sources})

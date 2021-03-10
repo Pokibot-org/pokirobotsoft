@@ -10,15 +10,15 @@ LOG_MODULE_REGISTER(obstacle_manager);
 
 // PRIVATE VAR
 static obstacle_holder_t ob_holder = {0};
-K_SEM_DEFINE(obsacle_holder_lock, 0, 1);
+K_SEM_DEFINE(obsacle_holder_lock, 1, 1);
 // PRIVATE DEF
 #define CAMNSENSE_CENTER_OFFSET_DEG 16.0f
 
 // FUNC
 
-uint8_t get_obstacle_snaphot(obstacle_holder_t *obj){
+uint8_t obstacle_manager_get_obstacle_snaphot(obstacle_holder_t *obj){
     k_sem_take(&obsacle_holder_lock, K_FOREVER);
-    *obj = ob_holder;
+    memcpy(obj, &ob_holder, sizeof(ob_holder));
     k_sem_give(&obsacle_holder_lock);
     return 0;
 }

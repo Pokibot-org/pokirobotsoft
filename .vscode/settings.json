@@ -22,6 +22,8 @@
         "limits": "c",
         "relative_obstacle_storing.h": "c",
         "chrono": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "path_manager.h": "c",
+        "tracing.h": "c"
     }
 }

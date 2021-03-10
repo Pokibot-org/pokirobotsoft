@@ -7,6 +7,7 @@
 #else
 #include <zephyr.h>
 #include <random/rand32.h>
+#include "xoshiro128plusplus.h"
 #endif
 
 /*
@@ -52,21 +53,10 @@ uint32_t utils_get_rand32()
     return rand();
 }
 
-point_t utils_get_rand_point()
-{
-    int pt = rand();
-    return *(point_t *)&pt;
-}
 #else
 uint32_t utils_get_rand32()
 {
-    return sys_rand32_get();
-}
-
-point_t utils_get_rand_point()
-{
-    int pt = sys_rand32_get();
-    return *(point_t *)&pt;
+    return xoshiro128plusplus_next();
 }
 #endif
 
