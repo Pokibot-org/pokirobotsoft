@@ -13,8 +13,7 @@
 
 // DEFINES 
 
-uint8_t check_collision(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, coordinates_t *rand_coordinates, 
-                        path_node_t *closest_node_p, coordinates_t * out_crd);
+uint8_t check_collision(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, coordinates_t *rand_coordinates, coordinates_t *closest_node_coordinates, coordinates_t * out_crd);
 
 // FUNCTIONS
 
@@ -117,7 +116,7 @@ void remap_nodes_to_new_node_if_closer_to_start(pathfinding_object_t *obj, obsta
     for (size_t i = 0; i < nb_nodes; i++)
     {
         coordinates_t out_crd;
-        int err = check_collision(obj, ob_hold, &new_node->coordinate, nodes[i], &out_crd);
+        int err = check_collision(obj, ob_hold, &new_node->coordinate, &nodes[i]->coordinate, &out_crd);
         if(err){
             continue;
         }
@@ -152,7 +151,12 @@ int get_new_valid_coordinates(pathfinding_object_t *obj, coordinates_t *crd_tree
     return PATHFINDING_ERROR_NONE;
 }
 
-uint8_t check_collision(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, coordinates_t *rand_coordinates, path_node_t *closest_node_p, coordinates_t * out_crd){
+
+/**
+ * @brief Retun 0 if there is no collision
+ * 
+ */
+uint8_t check_collision(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, coordinates_t *rand_coordinates, coordinates_t *closest_node_coordinates, coordinates_t * out_crd){
     *out_crd = *rand_coordinates;
     coordinates_t obstacle_checked_crd = {0};
     uint8_t collision_happened = 0;
@@ -162,7 +166,7 @@ uint8_t check_collision(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, c
         obstacle_t *current_ob = &ob_hold->obstacles[index_obstacle];
         if (current_ob->type != obstacle_type_none)
         {
-            int status = obstacle_get_point_of_collision_with_segment(&closest_node_p->coordinate, rand_coordinates, current_ob, &obj->config.radius_of_security, &obstacle_checked_crd);
+            int status = obstacle_get_point_of_collision_with_segment(closest_node_coordinates, rand_coordinates, current_ob, &obj->config.radius_of_security, &obstacle_checked_crd);
             if (status == 1)
             {
                 collision_happened = 1;
@@ -195,6 +199,10 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
     obj->nodes[0].is_used = 1;
     obj->nodes[0].distance_to_start = 0;
 
+    if (start->x < 0 || start->y < 0 || start->x >= obj->config.field_boundaries.max_x || start->y >= obj->config.field_boundaries.max_y){
+        return PATHFINDING_ERROR_WRONG_INPUTS;
+    }
+
     for (size_t i = 1; i < PATHFINDING_MAX_NUM_OF_NODES; i++)
     {
         path_node_t *current_node = &obj->nodes[i];
@@ -217,7 +225,7 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
             // closest_node_p->coordinate.x, closest_node_p->coordinate.y);
 
             coordinates_t path_free_crd;
-            int err = check_collision(obj, ob_hold, &rand_coordinates, closest_node_p, &path_free_crd);
+            int err = check_collision(obj, ob_hold, &rand_coordinates, &closest_node_p->coordinate, &path_free_crd);
             if (err)
             {
                 // i -= 1; // TODO: need compating the path_node array and retry if path not found
@@ -241,6 +249,9 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
             // TODO: check for obstacle between the last point and goal
             if (utils_distance(&current_node->coordinate, end) <= obj->config.distance_to_destination)
             {
+                if (check_collision(obj, ob_hold, &current_node->coordinate, end, &path_free_crd)){
+                    continue;
+                }
                 *end_node = current_node;
                 return PATHFINDING_ERROR_NONE;
             }
@@ -273,7 +284,7 @@ int pathfinding_optimize_path(pathfinding_object_t *obj, obstacle_holder_t *ob_h
         // closest_node_p->coordinate.x, closest_node_p->coordinate.y);
 
         coordinates_t path_free_crd;
-        int err = check_collision(obj, ob_hold, &rand_coordinates, closest_node_p, &path_free_crd);
+        int err = check_collision(obj, ob_hold, &rand_coordinates, &closest_node_p->coordinate, &path_free_crd);
         if (err)
         {
             // i -= 1; // TODO: need compating the path_node array and retry if path not found
