@@ -101,6 +101,14 @@ static void path_manager_task(void *p0, void *p1, void *p2)
 
     obstacle_debug(&pm_obj->obstacle_hold, &pm_obj->pathfinding_obj);
     int err = pathfinding_find_path(&pm_obj->pathfinding_obj, &pm_obj->obstacle_hold, &pm_obj->start, &pm_obj->end, &pn_end);
+    if (err)
+    {
+        LOG_WRN("Path not found");
+    }
+    else
+    {
+        LOG_INF("Path found");
+    }
     // TODO: handle err code
     pbd(&pm_obj->pathfinding_obj);
     if (pm_obj->conf.found_path_clbk != NULL)

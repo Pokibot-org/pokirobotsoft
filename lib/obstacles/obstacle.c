@@ -165,6 +165,17 @@ uint8_t obstacle_are_they_colliding(obstacle_t *a, obstacle_t *b)
     return OBSTACLE_COLLISION_ERROR_UNSUPPORTED;
 }
 
+uint8_t check_seg_collision(const coordinates_t *a1, const coordinates_t *a2, const coordinates_t *b1, const coordinates_t *b2, coordinates_t *out)
+{
+    vector_t A,B;
+    A.x = a1->x - a2->x;
+    A.y = a1->y - a2->y;
+    B.x = b1->x - b2->x;
+    B.y = b1->y - b2->y;
+
+    return 0;
+}
+
 uint8_t obstacle_get_point_of_collision_with_segment(coordinates_t *start_point, coordinates_t *end_point, obstacle_t *obstacle, uint16_t *seg_diameter, coordinates_t *out_crd)
 {
     *out_crd = *start_point;

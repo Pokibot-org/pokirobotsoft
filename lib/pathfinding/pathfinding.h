@@ -14,10 +14,12 @@ typedef struct pathfinding_configuration {
     distance_t distance_to_destination;
     distance_t delta_distance;
     distance_t radius_of_security; // Must be radius of the robot + some
+    distance_t node_remapping_distance;
 }pathfinding_configuration_t;
 
 typedef struct pathfinding_object
 {
+    uint32_t next_free_node_nb;
     path_node_t nodes[PATHFINDING_MAX_NUM_OF_NODES];
     pathfinding_configuration_t config;
 }pathfinding_object_t;
