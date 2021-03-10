@@ -181,7 +181,7 @@ void test_object_collision_with_seg_and_circle(){
     int rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
     TEST_ASSERT_EQUAL_MESSAGE(1, rcode, "Intersection not found");
 
-    ob.data.circle.coordinates.x = end.x + (ob.data.circle.diameter + robot_diameter)/2; 
+    ob.data.circle.coordinates.x = end.x + (ob.data.circle.diameter + robot_diameter)/2 + 1; 
     // FIXME: current method is aproximate even working with ob.data.circle.coordinates.x -= 1
     rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
     TEST_ASSERT_EQUAL_MESSAGE(0, rcode, "Intersection found");
@@ -213,7 +213,7 @@ void test_object_collision_with_seg_and_rectangle(){
     int rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
     TEST_ASSERT_EQUAL_MESSAGE(1, rcode, "Intersection not found");
 
-    ob.data.rectangle.coordinates.x = end.x + (ob.data.rectangle.width + robot_diameter)/2; 
+    ob.data.rectangle.coordinates.x = end.x + (ob.data.rectangle.width + robot_diameter)/2 + 1; 
     // FIXME: current method is aproximate even working with ob.data.circle.coordinates.x -= 1
     rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
     TEST_ASSERT_EQUAL_MESSAGE(0, rcode, "Intersection found");
