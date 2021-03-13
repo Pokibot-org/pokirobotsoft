@@ -42,5 +42,6 @@ static void obstacle_manager_task()
     }
 }
 
-K_THREAD_DEFINE(obstacle_manager_task_name, 1024, obstacle_manager_task, NULL, NULL, NULL,
-                1, 0, 0);
+#if CONFIG_OBSTACLE_MANAGER_THREAD_ENABLED
+K_THREAD_DEFINE(obstacle_manager_task_name, CONFIG_OBSTACLE_MANAGER_THREAD_STACK, obstacle_manager_task, NULL, NULL, NULL, CONFIG_OBSTACLE_MANAGER_THREAD_PRIORITY, 0, 0);
+#endif

@@ -8,10 +8,6 @@
 
 LOG_MODULE_REGISTER(path_manager);
 
-// DEFINES
-#define PATH_MANAGER_STACK_SIZE 4048
-#define PATH_MANAGER_PRIORITY 2
-
 typedef struct path_manager_object
 {
     coordinates_t start;
@@ -22,7 +18,7 @@ typedef struct path_manager_object
 } path_manager_object_t;
 
 // PRIVATE VAR
-K_THREAD_STACK_DEFINE(path_manager_stack_area, PATH_MANAGER_STACK_SIZE);
+K_THREAD_STACK_DEFINE(path_manager_stack_area, CONFIG_PATH_MANAGER_THREAD_STACK);
 struct k_thread path_manager_thread_data;
 k_tid_t path_manager_tid = {0};
 static path_manager_object_t pm_obj = {0};
@@ -160,7 +156,7 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
                                        K_THREAD_STACK_SIZEOF(path_manager_stack_area),
                                        path_manager_task,
                                        &pm_obj, NULL, NULL,
-                                       PATH_MANAGER_PRIORITY, 0, K_NO_WAIT);
+                                       CONFIG_PATH_MANAGER_THREAD_PRIORITY, 0, K_NO_WAIT);
     if (path_manager_tid == NULL)
     {
         return -1;
