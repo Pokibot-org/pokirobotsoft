@@ -13,7 +13,7 @@ void tmp_clbk(const path_node_t * node, void * ucfg){
 }
 
 
-void main(void)
+int main(void)
 {
 
     LOG_INF("Main Booted\n");
@@ -40,5 +40,5 @@ void main(void)
     {
         k_sleep(K_MSEC(1000));
     }
-    
+
 }
