@@ -59,12 +59,13 @@ static float camsense_x1_speed = 0;
 // PRIVATE FUNC
 void process_recived_frame(uint8_t *recived_frame)
 {
+    LOG_DBG("Reciving lidar frame");
     camsense_x1_speed = ((uint16_t)(recived_frame[CAMSENSE_X1_SPEED_H_INDEX] << 8) | recived_frame[CAMSENSE_X1_SPEED_L_INDEX]) / 3840.0; // 3840.0 = (64 * 60)
     lidar_message_t message = {0};
     message.start_angle = (recived_frame[CAMSENSE_X1_START_ANGLE_H_INDEX] << 8 | recived_frame[CAMSENSE_X1_START_ANGLE_L_INDEX]) / 64.0 - 640.0;
     message.end_angle = (recived_frame[CAMSENSE_X1_END_ANGLE_H_INDEX] << 8 | recived_frame[CAMSENSE_X1_END_ANGLE_L_INDEX]) / 64.0 - 640.0;
 
-    for (int point_index = 0; point_index < CAMSENSE_X1_NUMBER_OF_POINT; point_index++) // for each of the 8 samples
+    for (int point_index = 0; point_index < LIDAR_MESSAGE_NUMBER_OF_POINT; point_index++) // for each of the 8 samples
     {
 
         uint8_t distance_l = recived_frame[CAMSENSE_X1_FIRST_POINT_INDEX + CAMSENSE_X1_POINT_DISTANCE_L_RELATIVE_INDEX + (point_index * 3)];
@@ -74,7 +75,7 @@ void process_recived_frame(uint8_t *recived_frame)
         message.points[point_index].distance = ((uint16_t)distance_h << 8) | distance_l;
         message.points[point_index].quality = quality;
     }
-
+    LOG_DBG("Putting lidar message");
     while(k_msgq_put(&lidar_msgq, &message, K_NO_WAIT)){
         k_msgq_purge(&lidar_msgq);
         LOG_ERR("Queue to full, purging");
@@ -175,5 +176,6 @@ float camsense_x1_get_sensor_speed()
 }
 
 void camsense_x1_read_sensor(lidar_message_t *message){
-    k_msgq_get(&lidar_msgq, &message, K_FOREVER);
+    k_msgq_get(&lidar_msgq, message, K_FOREVER);
+    LOG_DBG("Reading message");
 }

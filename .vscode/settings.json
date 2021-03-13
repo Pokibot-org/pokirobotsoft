@@ -1,3 +1,29 @@
 {
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "files.associations": {
+        "random": "cpp",
+        "pathfinding.h": "c",
+        "*.tcc": "c",
+        "pathfinding_types.h": "c",
+        "pathfinding_utils.h": "c",
+        "stdlib.h": "c",
+        "time.h": "c",
+        "array": "cpp",
+        "hash_map": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "ranges": "cpp",
+        "utility": "cpp",
+        "valarray": "cpp",
+        "string": "cpp",
+        "utils.h": "c",
+        "math.h": "c",
+        "zephyr.h": "c",
+        "limits": "c",
+        "relative_obstacle_storing.h": "c",
+        "chrono": "c",
+        "algorithm": "c",
+        "path_manager.h": "c",
+        "tracing.h": "c"
+    }
 }

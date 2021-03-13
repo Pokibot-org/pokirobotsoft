@@ -11,3 +11,7 @@
 &usart1 {
         status = "okay";
 };
+
+&usart2 {
+        current-speed = < 0x80000 >;
+};
