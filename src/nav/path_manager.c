@@ -99,7 +99,7 @@ static void path_manager_task(void *p0, void *p1, void *p2)
     int err = pathfinding_find_path(&pm_obj->pathfinding_obj, &pm_obj->obstacle_hold, &pm_obj->start, &pm_obj->end, &pn_end);
     if (err)
     {
-        LOG_WRN("Path not found");
+        LOG_WRN("Path not found err %d", err);
     }
     else
     {
@@ -141,7 +141,7 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
     pm_obj.conf = config;
     
     memset(&pm_obj.pathfinding_obj, 0, sizeof(pm_obj.pathfinding_obj));
-    // memset(&pm_obj.obstacle_hold, 0, sizeof(pm_obj.obstacle_hold)); // FIXME: Get snapshot obstacle manager
+    memset(&pm_obj.obstacle_hold, 0, sizeof(pm_obj.obstacle_hold)); // FIXME: Get snapshot obstacle manager
     // obstacle_manager_get_obstacle_snaphot(&pm_obj.obstacle_hold);
     
     pathfinding_configuration_t pathfinding_config;
