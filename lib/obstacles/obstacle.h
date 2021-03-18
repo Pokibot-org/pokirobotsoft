@@ -51,7 +51,7 @@ typedef struct obstacle_holder
 }obstacle_holder_t;
 
 
-uint8_t obstacle_are_they_colliding(obstacle_t *a, obstacle_t *b);
+uint8_t obstacle_are_they_colliding(const obstacle_t *a, const obstacle_t *b);
 
 int16_t obstacle_holder_get_number_of_obstacles(obstacle_holder_t *obj);
 uint8_t obstacle_holder_push(obstacle_holder_t *obj, obstacle_t *obstacle);
@@ -59,9 +59,10 @@ uint8_t obstacle_holder_get(obstacle_holder_t *obj, obstacle_t **obstacle);
 uint8_t obstacle_holder_push_circular_buffer_mode(obstacle_holder_t *obj, obstacle_t *obstacle);
 uint8_t obstacle_holder_delete_index(obstacle_holder_t *obj, uint16_t index);
 uint8_t obstacle_holder_delete(obstacle_holder_t *obj, obstacle_t *obstacle);
-uint8_t obstacle_get_point_of_collision_with_segment(coordinates_t *start_point, coordinates_t *end_point, obstacle_t *obstacle, uint16_t *seg_width, coordinates_t *out_crd);
+uint8_t obstacle_get_point_of_collision_with_segment(const coordinates_t *start_point, const coordinates_t *end_point, const obstacle_t *obstacle, const uint16_t *seg_diameter, coordinates_t *out_crd);
 #ifdef UNIT_TEST
     uint8_t obstacle_holder_compact(obstacle_holder_t *obj);
+    uint8_t check_seg_collision(const coordinates_t *a1, const coordinates_t *a2, const coordinates_t *b1, const coordinates_t *b2, coordinates_t *out);
 #endif
 
 #endif

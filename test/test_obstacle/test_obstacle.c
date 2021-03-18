@@ -219,6 +219,30 @@ void test_object_collision_with_seg_and_rectangle(){
     TEST_ASSERT_EQUAL_MESSAGE(0, rcode, "Intersection found");
 }
 
+void test_get_point_collision_two_segments(){
+    coordinates_t a1, a2, b1, b2, out, expected_out;
+    a1.x = 0;
+    a1.y = 40;
+    a2.x = 100;
+    a2.y = 40;
+
+    b1.x = 50;
+    b1.y = -200;
+    b2.x = 50;
+    b2.y = 200;
+
+    out.x = -1;
+    out.y = -1;
+
+    expected_out.x = 50;
+    expected_out.y = 40;
+    uint8_t rcode = check_seg_collision(&a1, &a2, &b1, &b2, &out);
+    printf("Out point: %d %d\n", out.x, out.y);
+    TEST_ASSERT_EQUAL_MESSAGE(1, rcode, "The collision was not found...");
+    TEST_ASSERT_EQUAL_MESSAGE(expected_out.x, out.x, "Wrongly calculated collision point x");
+    TEST_ASSERT_EQUAL_MESSAGE(expected_out.y, out.y, "Wrongly calculated collision point y");
+}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();
@@ -229,5 +253,6 @@ int main(int argc, char **argv)
     RUN_TEST(test_object_holder_relative_storing);
     RUN_TEST(test_object_collision_with_seg_and_circle);
     RUN_TEST(test_object_collision_with_seg_and_rectangle);
+    RUN_TEST(test_get_point_collision_two_segments);
     return UNITY_END();
 }

@@ -13,7 +13,7 @@
 
 // DEFINES 
 
-uint8_t check_collision(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, coordinates_t *rand_coordinates, coordinates_t *closest_node_coordinates, coordinates_t * out_crd);
+uint8_t check_collision(const pathfinding_object_t *obj, const obstacle_holder_t *ob_hold, const coordinates_t *rand_coordinates, const coordinates_t *closest_node_coordinates, coordinates_t * out_crd);
 
 // FUNCTIONS
 
@@ -148,7 +148,7 @@ int get_new_valid_coordinates(pathfinding_object_t *obj, coordinates_t *crd_tree
  * @brief Retun 0 if there is no collision
  * 
  */
-uint8_t check_collision(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, coordinates_t *rand_coordinates, coordinates_t *closest_node_coordinates, coordinates_t * out_crd){
+uint8_t check_collision(const pathfinding_object_t *obj, const obstacle_holder_t *ob_hold, const coordinates_t *rand_coordinates, const coordinates_t *closest_node_coordinates, coordinates_t * out_crd){
     *out_crd = *rand_coordinates;
     coordinates_t obstacle_checked_crd = {0};
     uint8_t collision_happened = 0;

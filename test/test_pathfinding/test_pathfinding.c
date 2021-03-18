@@ -11,7 +11,7 @@
 #endif
 
 
-#define PRINT_DEBUG
+// #define PRINT_DEBUG
 
 
 pathfinding_object_t pathfinding_obj;

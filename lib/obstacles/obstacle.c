@@ -1,10 +1,12 @@
 #include "obstacle.h"
 
-int16_t obstacle_holder_get_number_of_obstacles(obstacle_holder_t *obj){
+int16_t obstacle_holder_get_number_of_obstacles(obstacle_holder_t *obj)
+{
     uint16_t res = 0;
     for (uint16_t i = 0; i < OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE; i++)
     {
-        if (obj->obstacles[i].type != obstacle_type_none){
+        if (obj->obstacles[i].type != obstacle_type_none)
+        {
             res += 1;
         }
     }
@@ -107,7 +109,7 @@ uint8_t obstacle_holder_delete(obstacle_holder_t *obj, obstacle_t *obstacle)
     return obstacle_holder_delete_index(obj, index);
 }
 
-uint8_t are_rectangle_and_circle_colliding(rectangle_t *rec, circle_t *cir)
+uint8_t are_rectangle_and_circle_colliding(const rectangle_t *rec, const circle_t *cir)
 {
     uint32_t circle_distance_x = ABS((int32_t)cir->coordinates.x - (int32_t)rec->coordinates.x);
     uint32_t circle_distance_y = ABS((int32_t)cir->coordinates.y - (int32_t)rec->coordinates.y);
@@ -136,7 +138,7 @@ uint8_t are_rectangle_and_circle_colliding(rectangle_t *rec, circle_t *cir)
     return (corner_distance_sq <= SQUARE(cir->diameter / 2));
 }
 
-uint8_t obstacle_are_they_colliding(obstacle_t *a, obstacle_t *b)
+uint8_t obstacle_are_they_colliding(const obstacle_t *a, const obstacle_t *b)
 {
     if ((a->type == obstacle_type_none) || (b->type == obstacle_type_none))
     {
@@ -165,18 +167,35 @@ uint8_t obstacle_are_they_colliding(obstacle_t *a, obstacle_t *b)
     return OBSTACLE_COLLISION_ERROR_UNSUPPORTED;
 }
 
+#include "stdio.h"
+
 uint8_t check_seg_collision(const coordinates_t *a1, const coordinates_t *a2, const coordinates_t *b1, const coordinates_t *b2, coordinates_t *out)
 {
-    vector_t A,B;
-    A.x = a1->x - a2->x;
-    A.y = a1->y - a2->y;
-    B.x = b1->x - b2->x;
-    B.y = b1->y - b2->y;
+    vector_t vec_a, vec_b;
+    vec_a.x = a2->x - a1->x;
+    vec_a.y = a2->y - a1->y;
+    vec_b.x = b2->x - b1->x;
+    vec_b.y = b2->y - b1->y;
 
+    int32_t den = vec_a.x * vec_b.y - vec_a.y * vec_b.y;
+    if (!den)
+    {
+        *out = *a1;
+        return 0;
+    }
+    float coeff_point_sur_a = ((float)(-a1->x * vec_b.y + b1->x * vec_b.y + vec_b.x * a1->y - vec_b.x * b1->y)) / den;
+    float coeff_point_sur_b = ((float)(vec_a.x * a1->y - vec_a.x * b1->y - vec_a.y * a1->x + vec_a.y * b1->x)) / den;
+
+    if (coeff_point_sur_a > 0 && coeff_point_sur_a < 1 && coeff_point_sur_b > 0 && coeff_point_sur_b < 1)
+    {
+        out->x = a1->x + coeff_point_sur_a*vec_a.x;
+        out->y = a1->y + coeff_point_sur_a*vec_a.y;
+        return 1;
+    }
     return 0;
 }
 
-uint8_t obstacle_get_point_of_collision_with_segment(coordinates_t *start_point, coordinates_t *end_point, obstacle_t *obstacle, uint16_t *seg_diameter, coordinates_t *out_crd)
+uint8_t obstacle_get_point_of_collision_with_segment(const coordinates_t *start_point, const coordinates_t *end_point, const obstacle_t *obstacle, const uint16_t *seg_diameter, coordinates_t *out_crd)
 {
     *out_crd = *start_point;
     obstacle_t fake_obs = {0};
