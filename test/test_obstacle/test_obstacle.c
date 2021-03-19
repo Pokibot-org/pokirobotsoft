@@ -251,8 +251,8 @@ int main(int argc, char **argv)
     RUN_TEST(test_collision_rectangles_and_circles);
     RUN_TEST(test_object_holder);
     RUN_TEST(test_object_holder_relative_storing);
+    RUN_TEST(test_get_point_collision_two_segments);
     RUN_TEST(test_object_collision_with_seg_and_circle);
     RUN_TEST(test_object_collision_with_seg_and_rectangle);
-    RUN_TEST(test_get_point_collision_two_segments);
     return UNITY_END();
 }
