@@ -155,7 +155,7 @@ uint8_t check_collision(const pathfinding_object_t *obj, const obstacle_holder_t
     long_distance_t closest_obstacle = UINT32_MAX;
     for (size_t index_obstacle = 0; index_obstacle < OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE; index_obstacle++)
     {
-        obstacle_t *current_ob = &ob_hold->obstacles[index_obstacle];
+        const obstacle_t *current_ob = &ob_hold->obstacles[index_obstacle];
         if (current_ob->type != obstacle_type_none)
         {
             int status = obstacle_get_point_of_collision_with_segment(closest_node_coordinates, rand_coordinates, current_ob, &obj->config.radius_of_security, &obstacle_checked_crd);
