@@ -237,7 +237,27 @@ void test_get_point_collision_two_segments(){
     expected_out.x = 50;
     expected_out.y = 40;
     uint8_t rcode = check_seg_collision(&a1, &a2, &b1, &b2, &out);
-    printf("Out point: %d %d\n", out.x, out.y);
+    TEST_ASSERT_EQUAL_MESSAGE(1, rcode, "The collision was not found...");
+    TEST_ASSERT_EQUAL_MESSAGE(expected_out.x, out.x, "Wrongly calculated collision point x");
+    TEST_ASSERT_EQUAL_MESSAGE(expected_out.y, out.y, "Wrongly calculated collision point y");
+
+    // second test
+    a1.x = 0;
+    a1.y = 0;
+    a2.x = 100;
+    a2.y = 100;
+
+    b1.x = 0;
+    b1.y = 100;
+    b2.x = 100;
+    b2.y = 0;
+
+    out.x = -1;
+    out.y = -1;
+
+    expected_out.x = 50;
+    expected_out.y = 50;
+    rcode = check_seg_collision(&a1, &a2, &b1, &b2, &out);
     TEST_ASSERT_EQUAL_MESSAGE(1, rcode, "The collision was not found...");
     TEST_ASSERT_EQUAL_MESSAGE(expected_out.x, out.x, "Wrongly calculated collision point x");
     TEST_ASSERT_EQUAL_MESSAGE(expected_out.y, out.y, "Wrongly calculated collision point y");
