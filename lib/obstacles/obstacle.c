@@ -1,4 +1,7 @@
 #include "obstacle.h"
+#include "math.h"
+
+#define OBSTACLE_COLLISION_NB_MAX_SIDES    8
 
 int16_t obstacle_holder_get_number_of_obstacles(obstacle_holder_t *obj)
 {
@@ -177,7 +180,7 @@ uint8_t check_seg_collision(const coordinates_t *a1, const coordinates_t *a2, co
     vec_b.x = b2->x - b1->x;
     vec_b.y = b2->y - b1->y;
 
-    int32_t den = vec_a.x * vec_b.y - vec_a.y * vec_b.y;
+    int32_t den = vec_a.x * vec_b.y - vec_a.y * vec_b.x;
     if (!den)
     {
         *out = *a1;
@@ -197,49 +200,69 @@ uint8_t check_seg_collision(const coordinates_t *a1, const coordinates_t *a2, co
 
 uint8_t obstacle_get_point_of_collision_with_segment(const coordinates_t *start_point, const coordinates_t *end_point, const obstacle_t *obstacle, const uint16_t *seg_diameter, coordinates_t *out_crd)
 {
-    *out_crd = *start_point;
-    obstacle_t fake_obs = {0};
-    fake_obs.type = obstacle_type_circle;
-    fake_obs.data.circle.coordinates.x = start_point->x;
-    fake_obs.data.circle.coordinates.y = start_point->y;
-    fake_obs.data.circle.diameter = *seg_diameter; // Precision, smaller is better but slower
-
-    if (obstacle->type != obstacle_type_none)
+    coordinates_t points[OBSTACLE_COLLISION_NB_MAX_SIDES];
+    uint8_t sides_to_check = 0;
+    
+    if (obstacle->type == obstacle_type_rectangle)
     {
-        uint32_t len_seg = utils_distance(start_point, end_point);
-        uint16_t steps = len_seg * 10 / (fake_obs.data.circle.diameter);
-        if (!steps)
+        distance_t demi_w = (obstacle->data.rectangle.width + *seg_diameter)/2;
+        distance_t demi_h = (obstacle->data.rectangle.height + *seg_diameter)/2;
+        points[0].x = obstacle->data.rectangle.coordinates.x - demi_w;
+        points[0].y = obstacle->data.rectangle.coordinates.y - demi_h;
+
+        points[1].x = obstacle->data.rectangle.coordinates.x + demi_w;
+        points[1].y = obstacle->data.rectangle.coordinates.y - demi_h;
+
+        points[2].x = obstacle->data.rectangle.coordinates.x + demi_w;
+        points[2].y = obstacle->data.rectangle.coordinates.y + demi_h;
+
+        points[3].x = obstacle->data.rectangle.coordinates.x - demi_w;
+        points[3].y = obstacle->data.rectangle.coordinates.y + demi_h;
+        sides_to_check = 4;
+    }
+    else if (obstacle->type == obstacle_type_circle)
+    {
+        const float step = 2*M_PI/OBSTACLE_COLLISION_NB_MAX_SIDES;
+        float radius = (obstacle->data.circle.diameter + *seg_diameter)/2;
+
+        for (size_t i = 0; i < OBSTACLE_COLLISION_NB_MAX_SIDES; i++)
         {
-            return 2; // TODO: is the other check to do ?
+            points[i].x = obstacle->data.circle.coordinates.x + radius * cosf(i*step);
+            points[i].y = obstacle->data.circle.coordinates.y + radius * sinf(i*step);
         }
-        int16_t step_x = (end_point->x - start_point->x) / steps;
-        int16_t step_y = (end_point->y - start_point->y) / steps;
-        uint8_t collision_happend = 0;
-        for (uint16_t i = 0; i <= steps; i++)
-        {
-            if (obstacle_are_they_colliding(&fake_obs, obstacle))
-            {
-                collision_happend = 1;
-                break;
-            }
-            *out_crd = fake_obs.data.circle.coordinates;
-            //increment;
-            fake_obs.data.circle.coordinates.x += step_x;
-            fake_obs.data.circle.coordinates.y += step_y;
-        }
-        if (!collision_happend)
-        {
-            return 0;
-        }
-        else
-        {
-            return 1;
-        }
+        sides_to_check = OBSTACLE_COLLISION_NB_MAX_SIDES;
     }
     else
     {
         return OBSTACLE_COLLISION_ERROR_UNSUPPORTED;
     }
 
-    return 0; // NO COLLISION
+    coordinates_t out_pt_coll[OBSTACLE_COLLISION_NB_MAX_SIDES];
+    uint8_t nb_coll = 0;
+    uint8_t is_colliding = check_seg_collision(start_point, end_point, &points[0], &points[sides_to_check-1], &out_pt_coll[nb_coll]);
+    nb_coll += is_colliding;
+    for (size_t i = 1; i < sides_to_check; i++)
+    {
+        uint8_t is_colliding = check_seg_collision(start_point, end_point, &points[i-1], &points[i], &out_pt_coll[nb_coll]);
+        nb_coll += is_colliding;
+    }
+    
+    if (!nb_coll)
+    {
+        *out_crd = *end_point;
+        return 0;
+    }
+
+    distance_t closest_dist = UINT16_MAX;
+    for (size_t i = 0; i < nb_coll; i++)
+    {
+        distance_t dist = utils_distance(&out_pt_coll[i], start_point);
+        if (dist <= closest_dist)
+        {
+            closest_dist = dist;
+            *out_crd = out_pt_coll[i];
+        }
+    }
+    
+    return 1; // NO COLLISION
 }
