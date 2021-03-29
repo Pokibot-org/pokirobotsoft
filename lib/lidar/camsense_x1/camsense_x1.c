@@ -59,11 +59,11 @@ static float camsense_x1_speed = 0;
 // PRIVATE FUNC
 void process_recived_frame(uint8_t *recived_frame)
 {
-    LOG_DBG("Reciving lidar frame");
+    LOG_DBG("Receiving lidar frame");
     camsense_x1_speed = ((uint16_t)(recived_frame[CAMSENSE_X1_SPEED_H_INDEX] << 8) | recived_frame[CAMSENSE_X1_SPEED_L_INDEX]) / 3840.0; // 3840.0 = (64 * 60)
     lidar_message_t message = {0};
-    message.start_angle = (recived_frame[CAMSENSE_X1_START_ANGLE_H_INDEX] << 8 | recived_frame[CAMSENSE_X1_START_ANGLE_L_INDEX]) / 64.0 - 640.0;
-    message.end_angle = (recived_frame[CAMSENSE_X1_END_ANGLE_H_INDEX] << 8 | recived_frame[CAMSENSE_X1_END_ANGLE_L_INDEX]) / 64.0 - 640.0;
+    message.start_angle = (((uint16_t)recived_frame[CAMSENSE_X1_START_ANGLE_H_INDEX]) << 8 | recived_frame[CAMSENSE_X1_START_ANGLE_L_INDEX]) / 64.0 - 640.0; // TODO: Use shift not /
+    message.end_angle = (((uint16_t)recived_frame[CAMSENSE_X1_END_ANGLE_H_INDEX]) << 8 | recived_frame[CAMSENSE_X1_END_ANGLE_L_INDEX]) / 64.0 - 640.0;
 
     for (int point_index = 0; point_index < LIDAR_MESSAGE_NUMBER_OF_POINT; point_index++) // for each of the 8 samples
     {
@@ -72,7 +72,7 @@ void process_recived_frame(uint8_t *recived_frame)
         uint8_t distance_h = recived_frame[CAMSENSE_X1_FIRST_POINT_INDEX + CAMSENSE_X1_POINT_DISTANCE_H_RELATIVE_INDEX + (point_index * 3)];
         uint8_t quality = recived_frame[CAMSENSE_X1_FIRST_POINT_INDEX + CAMSENSE_X1_POINT_QUALITY_RELATIVE_INDEX + (point_index * 3)];
 
-        message.points[point_index].distance = ((uint16_t)distance_h << 8) | distance_l;
+        message.points[point_index].distance = (((uint16_t)distance_h) << 8) | (uint16_t)distance_l;
         message.points[point_index].quality = quality;
     }
     LOG_DBG("Putting lidar message");
@@ -99,7 +99,7 @@ void uart_rx_callback(const struct device *dev, void *user_data)
         if (recived_byte == camsense_x1_header[header_sync_index])
         {
             header_sync_index += 1;
-            if (header_sync_index == (CAMSENSE_X1_HEADER_SIZE - 1))
+            if (header_sync_index == CAMSENSE_X1_HEADER_SIZE)
             {
                 header_sync_index = 0;
                 parsing_state = frame_parsing_state_normal;
@@ -114,7 +114,7 @@ void uart_rx_callback(const struct device *dev, void *user_data)
     case frame_parsing_state_normal:
         frame_buffer[frame_index] = recived_byte;
         frame_index += 1;
-        if (frame_index == (CAMSENSE_X1_FRAME_SIZE - 1))
+        if (frame_index == (CAMSENSE_X1_FRAME_SIZE - CAMSENSE_X1_HEADER_SIZE - 1))
         {
             frame_index = 0;
             parsing_state = frame_parsing_state_header_sync;

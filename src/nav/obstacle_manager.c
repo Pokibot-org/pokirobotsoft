@@ -11,7 +11,7 @@ LOG_MODULE_REGISTER(obstacle_manager);
 static obstacle_holder_t ob_holder = {0};
 K_SEM_DEFINE(obsacle_holder_lock, 1, 1);
 // PRIVATE DEF
-#define CAMNSENSE_CENTER_OFFSET_DEG 16.0f
+#define CAMSENSE_CENTER_OFFSET_DEG -16.0f
 
 // FUNC
 
@@ -32,7 +32,7 @@ static void obstacle_manager_task()
     {
         camsense_x1_read_sensor(&message);
         k_sem_take(&obsacle_holder_lock, K_FOREVER);
-        err = relative_obstacle_storing_lidar_points_relative_to_robot(&ob_holder, &message, robot_get_obj(), CAMNSENSE_CENTER_OFFSET_DEG);
+        err = relative_obstacle_storing_lidar_points_relative_to_robot(&ob_holder, &message, robot_get_obj(), CAMSENSE_CENTER_OFFSET_DEG);
         k_sem_give(&obsacle_holder_lock);
         if (err)
         {
