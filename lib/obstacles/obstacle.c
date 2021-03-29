@@ -1,5 +1,11 @@
 #include "obstacle.h"
 #include "math.h"
+#ifndef UNIT_TEST
+#include <zephyr.h>
+#define M_PI		3.14159265358979323846
+#define M_PI_2		1.57079632679489661923
+#define M_PI_4		0.78539816339744830962
+#endif
 
 #define OBSTACLE_COLLISION_NB_MAX_SIDES    8
 
@@ -103,7 +109,7 @@ uint8_t obstacle_holder_delete_index(obstacle_holder_t *obj, uint16_t index)
 }
 
 /**
- * @brief Delete the obtacle object from the obstacle_holder object.
+ * @brief Delete the obstacle object from the obstacle_holder object.
  * THE OBSTACLE OBJECT ADRESS MUST BE IN THE obstacle_holder_t OBJECT
  */
 uint8_t obstacle_holder_delete(obstacle_holder_t *obj, obstacle_t *obstacle)

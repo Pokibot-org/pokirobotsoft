@@ -132,7 +132,15 @@ void test_object_holder_relative_storing(){
     message.points[0].quality = 1;
     message.points[0].distance = 100;
     obstacle_holder_t holder = {0};
-    robot_t robot = {0};
+    robot_t robot = {
+        .angle_rad = 0,
+        .position = 
+        {
+            .x = 0,
+            .y = 0
+        },
+        .radius_mm = 150
+    };
     obstacle_t expected_result = {
         .type = obstacle_type_circle,
         .data.circle = {
