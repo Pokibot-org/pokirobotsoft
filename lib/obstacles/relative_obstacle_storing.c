@@ -49,8 +49,8 @@ uint8_t relative_obstacle_storing_lidar_points_relative_to_robot(obstacle_holder
 
             new_obstacle.data.circle.coordinates.x = robot->position.x + sinf(point_angle_absolute) * message->points[i].distance;
             new_obstacle.data.circle.coordinates.y = robot->position.y + cosf(point_angle_absolute) * message->points[i].distance;
-
-            printk("<%hd:%hd>\n", new_obstacle.data.circle.coordinates.x, new_obstacle.data.circle.coordinates.y);
+            // Uncomment the following lines if you want to use tools/lidar_point_visualiser.py
+            // printk("<%hd:%hd>\n", new_obstacle.data.circle.coordinates.x, new_obstacle.data.circle.coordinates.y);
             obstacle_holder_push_circular_buffer_mode(holder, &new_obstacle);
         }
     }
