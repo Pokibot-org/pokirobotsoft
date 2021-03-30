@@ -57,35 +57,6 @@ void pbd(pathfinding_object_t *obj)
     }
 };
 
-void obstacle_debug(obstacle_holder_t *obj, pathfinding_object_t *path_obj)
-{
-    uint8_t tab[DEBUG_TAB_SIZE_Y][DEBUG_TAB_SIZE_X] = {0};
-
-    for (size_t i = 0; i < OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE; i++)
-    {
-        uint16_t y = MIN(obj->obstacles[i].data.circle.coordinates.y * DEBUG_TAB_SIZE_Y, path_obj->config.field_boundaries.max_y) / path_obj->config.field_boundaries.max_y;
-        uint16_t x = MIN(obj->obstacles[i].data.circle.coordinates.x * DEBUG_TAB_SIZE_X, path_obj->config.field_boundaries.max_x) / path_obj->config.field_boundaries.max_x;
-        tab[y][x] = 1;
-    }
-
-    for (size_t y = 0; y < DEBUG_TAB_SIZE_Y; y++)
-    {
-        for (size_t x = 0; x < DEBUG_TAB_SIZE_X; x++)
-        {
-            if (tab[y][x])
-            {
-                printk("X");
-            }
-            else
-            {
-                printk(".");
-            }
-        }
-        printk("\n");
-    }
-    k_sleep(K_SECONDS(1));
-};
-
 // TO REMOVE ---------------------------------------------------------------
 
 // PRIVATE FUN
@@ -95,7 +66,6 @@ static void path_manager_task(void *p0, void *p1, void *p2)
     path_manager_object_t *pm_obj = (path_manager_object_t *)p0;
     path_node_t *pn_end;
 
-    obstacle_debug(&pm_obj->obstacle_hold, &pm_obj->pathfinding_obj);
     int err = pathfinding_find_path(&pm_obj->pathfinding_obj, &pm_obj->obstacle_hold, &pm_obj->start, &pm_obj->end, &pn_end);
     if (err)
     {
@@ -141,9 +111,9 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
     pm_obj.conf = config;
     
     memset(&pm_obj.pathfinding_obj, 0, sizeof(pm_obj.pathfinding_obj));
-    memset(&pm_obj.obstacle_hold, 0, sizeof(pm_obj.obstacle_hold)); // FIXME: Get snapshot obstacle manager
-    // obstacle_manager_get_obstacle_snaphot(&pm_obj.obstacle_hold);
-    
+    // memset(&pm_obj.obstacle_hold, 0, sizeof(pm_obj.obstacle_hold)); // FIXME: Get snapshot obstacle manager
+    obstacle_manager_get_obstacle_snaphot(&pm_obj.obstacle_hold);
+
     pathfinding_configuration_t pathfinding_config;
     pathfinding_config.field_boundaries.max_x = 3000; // 3m
     pathfinding_config.field_boundaries.max_y = 2000; // 2m
