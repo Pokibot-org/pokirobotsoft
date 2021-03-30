@@ -14,7 +14,7 @@ uint8_t relative_obstacle_storing_lidar_points_relative_to_robot(obstacle_holder
     float step = 0.0f;
     obstacle_t new_obstacle = {
         .type = obstacle_type_circle,
-        .data.circle.diameter = 8 // FIXME: remove the magic number
+        .data.circle.diameter = 0 // FIXME: remove the magic number
     };
 
     if (message->end_angle > message->start_angle)

@@ -191,6 +191,8 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
     obj->nodes[0].is_used = 1;
     obj->nodes[0].distance_to_start = 0;
 
+    uint8_t new_crd_on_goal = 1;
+
     if (start->x < 0 || start->y < 0 || start->x >= obj->config.field_boundaries.max_x || start->y >= obj->config.field_boundaries.max_y){
         return PATHFINDING_ERROR_WRONG_INPUTS;
     }
@@ -210,8 +212,18 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
         else
         {
             coordinates_t rand_coordinates;
-            rand_coordinates.x = utils_get_rand32() % obj->config.field_boundaries.max_x;
-            rand_coordinates.y = utils_get_rand32() % obj->config.field_boundaries.max_y;
+            if (new_crd_on_goal){
+                rand_coordinates.x = end->x;
+                rand_coordinates.y = end->y;
+                new_crd_on_goal = 0;
+            }
+            else
+            {
+                rand_coordinates.x = utils_get_rand32() % obj->config.field_boundaries.max_x;
+                rand_coordinates.y = utils_get_rand32() % obj->config.field_boundaries.max_y;
+                new_crd_on_goal = 1;
+            }
+
             path_node_t *closest_node_p = get_closest_node(obj, &rand_coordinates);
             // printk("rand crd x:%d y:%d\n Closest node x:%d y:%d\n", rand_coordinates.x, rand_coordinates.y,
             // closest_node_p->coordinate.x, closest_node_p->coordinate.y);
