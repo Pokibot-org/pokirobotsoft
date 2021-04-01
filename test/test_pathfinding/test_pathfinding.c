@@ -240,7 +240,7 @@ void test_with_lidar_obstacle_path_must_be_found(void)
                 .x = 1500,
                 .y = 10
             },
-            .diameter = 0
+            .radius = 0
         }
     };
     for (size_t i = 0; i < 60; i++)
