@@ -22,7 +22,7 @@ void test_collision_circles(void)
                 .x = 50,
                 .y = 50
             },
-        .diameter = 20
+        .radius = 10
         }
     };
 
@@ -33,7 +33,7 @@ void test_collision_circles(void)
                 .x = 60,
                 .y = 50
             },
-        .diameter = 20
+        .radius = 10
         }
     };
 
@@ -94,7 +94,7 @@ void test_collision_rectangles_and_circles(void)
                 .x = 60,
                 .y = 50
             },
-        .diameter = 20
+        .radius = 10
         }
     };
 
@@ -114,7 +114,7 @@ void test_object_holder(){
                 .x = 60,
                 .y = 50
             },
-        .diameter = 20
+        .radius = 10
         }
     };
 
@@ -148,7 +148,7 @@ void test_object_holder_relative_storing(){
                 .x = 0,
                 .y = 100
             },
-            .diameter = 4
+            .radius = 0
         }
     };
     obstacle_t *result;
@@ -159,7 +159,7 @@ void test_object_holder_relative_storing(){
     ), "Error when storing lidar message");
     TEST_ASSERT_EQUAL_MESSAGE(0, obstacle_holder_get(&holder, &result), "Error when getting obstacle");
     TEST_ASSERT_EQUAL(expected_result.type, result->type);
-    TEST_ASSERT_EQUAL(expected_result.data.circle.diameter, result->data.circle.diameter);
+    TEST_ASSERT_EQUAL(expected_result.data.circle.radius, result->data.circle.radius);
     TEST_ASSERT_EQUAL(expected_result.data.circle.coordinates.y, result->data.circle.coordinates.y);
     TEST_ASSERT_EQUAL(expected_result.data.circle.coordinates.x, result->data.circle.coordinates.x);
 }
@@ -181,17 +181,17 @@ void test_object_collision_with_seg_and_circle(){
             .x = 10,
             .y = 500
         },
-        .data.circle.diameter = 20,
+        .data.circle.radius = 10,
     };
 
-    uint16_t robot_diameter = 20;
+    uint16_t robot_radius = 10;
     coordinates_t intersection_pt = {0};
-    int rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
+    int rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_radius, &intersection_pt);
     TEST_ASSERT_EQUAL_MESSAGE(1, rcode, "Intersection not found");
 
-    ob.data.circle.coordinates.x = end.x + (ob.data.circle.diameter + robot_diameter)/2 + 1; 
+    ob.data.circle.coordinates.x = end.x + ob.data.circle.radius + robot_radius + 1; 
     // FIXME: current method is aproximate even working with ob.data.circle.coordinates.x -= 1
-    rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
+    rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_radius, &intersection_pt);
     TEST_ASSERT_EQUAL_MESSAGE(0, rcode, "Intersection found");
 }
 
@@ -216,14 +216,14 @@ void test_object_collision_with_seg_and_rectangle(){
         .data.rectangle.height = 10,
     };
 
-    uint16_t robot_diameter = 20;
+    uint16_t robot_radius = 10;
     coordinates_t intersection_pt = {0};
-    int rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
+    int rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_radius, &intersection_pt);
     TEST_ASSERT_EQUAL_MESSAGE(1, rcode, "Intersection not found");
 
-    ob.data.rectangle.coordinates.x = end.x + (ob.data.rectangle.width + robot_diameter)/2 + 1; 
+    ob.data.rectangle.coordinates.x = end.x + ob.data.rectangle.width/2 + robot_radius + 1; 
     // FIXME: current method is aproximate even working with ob.data.circle.coordinates.x -= 1
-    rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_diameter, &intersection_pt);
+    rcode = obstacle_get_point_of_collision_with_segment(&start, &end, &ob, &robot_radius, &intersection_pt);
     TEST_ASSERT_EQUAL_MESSAGE(0, rcode, "Intersection found");
 }
 
