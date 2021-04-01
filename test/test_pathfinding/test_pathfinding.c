@@ -23,7 +23,7 @@ void setUp(void)
     config.field_boundaries.max_y = 2000; // 2m
     config.delta_distance = 400; // jump of Xcm
     config.distance_to_destination = 60; // stop when less than 6 cm close tho goal
-    config.radius_of_security = 300; // 300 mm
+    config.radius_of_security = 150; // Basicaly the robot radius in mm
     memset(&pathfinding_obj.nodes, 0, PATHFINDING_MAX_NUM_OF_NODES * sizeof(path_node_t));
     pathfinding_object_configure(&pathfinding_obj, &config);
     srand(time(NULL));
@@ -150,6 +150,13 @@ void test_with_lidar_obstacle_path_must_be_found(void)
     {
         obstacle_holder_push(&ob_hold, &obs);
         obs.data.circle.coordinates.y += 20;
+    }
+    obs.data.circle.coordinates.x = 2000;
+    obs.data.circle.coordinates.y = 2000;
+    for (size_t i = 0; i < 60; i++)
+    {
+        obstacle_holder_push(&ob_hold, &obs);
+        obs.data.circle.coordinates.y -= 20;
     }
     
     path_node_t *end_node;

@@ -4,7 +4,7 @@
 #include "obstacle_manager.h"
 #include "string.h"
 #include "logging/log.h"
-
+#include "robot.h"
 
 LOG_MODULE_REGISTER(path_manager);
 
@@ -111,7 +111,9 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
     pm_obj.conf = config;
     
     memset(&pm_obj.pathfinding_obj, 0, sizeof(pm_obj.pathfinding_obj));
-    memset(&pm_obj.obstacle_hold, 0, sizeof(pm_obj.obstacle_hold)); // FIXME: Get snapshot obstacle manager
+    
+    #ifdef TEST
+    memset(&pm_obj.obstacle_hold, 0, sizeof(pm_obj.obstacle_hold)); // TODO: Reactivate get snapshot obstacle manager
     obstacle_t obs = {
         .type = obstacle_type_circle,
         .data.circle = {
@@ -122,19 +124,28 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
             .radius = 0
         }
     };
-    for (size_t i = 0; i < 60; i++)
+    for (size_t i = 0; i < 120; i++)
     {
         obstacle_holder_push(&pm_obj.obstacle_hold, &obs);
-        obs.data.circle.coordinates.y += 20;
+        obs.data.circle.coordinates.y += 10;
     }
-    // obstacle_manager_get_obstacle_snaphot(&pm_obj.obstacle_hold);
 
+    obs.data.circle.coordinates.x = 2000;
+    obs.data.circle.coordinates.y = 2000;
+    for (size_t i = 0; i < 120; i++)
+    {
+        obstacle_holder_push(&pm_obj.obstacle_hold, &obs);
+        obs.data.circle.coordinates.y -= 10;
+    }
+    #else
+    obstacle_manager_get_obstacle_snapshot(&pm_obj.obstacle_hold);
+    #endif
     pathfinding_configuration_t pathfinding_config;
     pathfinding_config.field_boundaries.max_x = 3000; // 3m
     pathfinding_config.field_boundaries.max_y = 2000; // 2m
-    pathfinding_config.delta_distance = 400;          // jump of Xcm
+    pathfinding_config.delta_distance = 400;          // jump of Xmm
     pathfinding_config.distance_to_destination = 60;  // stop when less than 6 cm close tho goal
-    pathfinding_config.radius_of_security = 300;      // 300 mm
+    pathfinding_config.radius_of_security = robot_get_obj()->radius_mm;      // 300 mm
     pathfinding_object_configure(&pm_obj.pathfinding_obj, &pathfinding_config);
 
     path_manager_tid = k_thread_create(&path_manager_thread_data, path_manager_stack_area,
