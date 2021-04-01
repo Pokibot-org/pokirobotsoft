@@ -228,11 +228,11 @@ void test_get_new_valid_coordinates()
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();
-    // RUN_TEST(test_get_closest_node);
-    // RUN_TEST(test_in_free_space_path_must_be_found_simple_config);
-    // RUN_TEST(test_in_free_space_path_must_be_found_hard_config);
-    // RUN_TEST(test_with_obstacle_path_must_be_found_hard_config);
+    RUN_TEST(test_get_closest_node);
+    RUN_TEST(test_in_free_space_path_must_be_found_simple_config);
+    RUN_TEST(test_in_free_space_path_must_be_found_hard_config);
+    RUN_TEST(test_with_obstacle_path_must_be_found_hard_config);
     RUN_TEST(test_with_lidar_obstacle_path_must_be_found);
-    // RUN_TEST(test_get_new_valid_coordinates);
+    RUN_TEST(test_get_new_valid_coordinates);
     return UNITY_END();
 }
