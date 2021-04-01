@@ -248,6 +248,13 @@ void test_with_lidar_obstacle_path_must_be_found(void)
         obstacle_holder_push(&ob_hold, &obs);
         obs.data.circle.coordinates.y += 20;
     }
+    obs.data.circle.coordinates.x = 2000;
+    obs.data.circle.coordinates.y = 2000;
+    for (size_t i = 0; i < 60; i++)
+    {
+        obstacle_holder_push(&ob_hold, &obs);
+        obs.data.circle.coordinates.y -= 20;
+    }
     
     path_node_t *end_node;
     coordinates_t start = {
