@@ -111,8 +111,23 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
     pm_obj.conf = config;
     
     memset(&pm_obj.pathfinding_obj, 0, sizeof(pm_obj.pathfinding_obj));
-    // memset(&pm_obj.obstacle_hold, 0, sizeof(pm_obj.obstacle_hold)); // FIXME: Get snapshot obstacle manager
-    obstacle_manager_get_obstacle_snaphot(&pm_obj.obstacle_hold);
+    memset(&pm_obj.obstacle_hold, 0, sizeof(pm_obj.obstacle_hold)); // FIXME: Get snapshot obstacle manager
+    obstacle_t obs = {
+        .type = obstacle_type_circle,
+        .data.circle = {
+            .coordinates = {
+                .x = 1500,
+                .y = 10
+            },
+            .radius = 0
+        }
+    };
+    for (size_t i = 0; i < 60; i++)
+    {
+        obstacle_holder_push(&pm_obj.obstacle_hold, &obs);
+        obs.data.circle.coordinates.y += 20;
+    }
+    // obstacle_manager_get_obstacle_snaphot(&pm_obj.obstacle_hold);
 
     pathfinding_configuration_t pathfinding_config;
     pathfinding_config.field_boundaries.max_x = 3000; // 3m

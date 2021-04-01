@@ -2,12 +2,12 @@
 #include "math.h"
 #ifndef UNIT_TEST
 #include <zephyr.h>
-#define M_PI		3.14159265358979323846f
-#define M_PI_2		1.57079632679489661923f
-#define M_PI_4		0.78539816339744830962f
+#define M_PI 3.14159265358979323846f
+#define M_PI_2 1.57079632679489661923f
+#define M_PI_4 0.78539816339744830962f
 #endif
 
-#define OBSTACLE_COLLISION_NB_MAX_SIDES    8
+#define OBSTACLE_COLLISION_NB_MAX_SIDES 8
 
 int16_t obstacle_holder_get_number_of_obstacles(obstacle_holder_t *obj)
 {
@@ -123,11 +123,11 @@ uint8_t are_rectangle_and_circle_colliding(const rectangle_t *rec, const circle_
     uint32_t circle_distance_x = ABS((int32_t)cir->coordinates.x - (int32_t)rec->coordinates.x);
     uint32_t circle_distance_y = ABS((int32_t)cir->coordinates.y - (int32_t)rec->coordinates.y);
 
-    if (circle_distance_x > ((rec->width + cir->diameter) / 2))
+    if (circle_distance_x > (rec->width / 2 + cir->radius))
     {
         return 0;
     }
-    if (circle_distance_y > ((rec->height + cir->diameter) / 2))
+    if (circle_distance_y > (rec->height / 2 + cir->radius))
     {
         return 0;
     }
@@ -144,7 +144,7 @@ uint8_t are_rectangle_and_circle_colliding(const rectangle_t *rec, const circle_
     uint32_t corner_distance_sq = SQUARE((int32_t)circle_distance_x - rec->width / 2) +
                                   SQUARE((int32_t)circle_distance_y - rec->height / 2);
 
-    return (corner_distance_sq <= SQUARE(cir->diameter / 2));
+    return (corner_distance_sq <= SQUARE(cir->radius));
 }
 
 uint8_t obstacle_are_they_colliding(const obstacle_t *a, const obstacle_t *b)
@@ -157,7 +157,7 @@ uint8_t obstacle_are_they_colliding(const obstacle_t *a, const obstacle_t *b)
     {
         if (a->type == obstacle_type_circle)
         {
-            return utils_distance(&a->data.circle.coordinates, &b->data.circle.coordinates) <= ((a->data.circle.diameter + b->data.circle.diameter) / 2);
+            return utils_distance(&a->data.circle.coordinates, &b->data.circle.coordinates) <= ((a->data.circle.radius + b->data.circle.radius));
         }
         else
         {
@@ -197,22 +197,22 @@ uint8_t check_seg_collision(const coordinates_t *a1, const coordinates_t *a2, co
 
     if (coeff_point_sur_a > 0 && coeff_point_sur_a < 1 && coeff_point_sur_b > 0 && coeff_point_sur_b < 1)
     {
-        out->x = a1->x + coeff_point_sur_a*vec_a.x;
-        out->y = a1->y + coeff_point_sur_a*vec_a.y;
+        out->x = a1->x + coeff_point_sur_a * vec_a.x;
+        out->y = a1->y + coeff_point_sur_a * vec_a.y;
         return 1;
     }
     return 0;
 }
 
-uint8_t obstacle_get_point_of_collision_with_segment(const coordinates_t *start_point, const coordinates_t *end_point, const obstacle_t *obstacle, const uint16_t *seg_diameter, coordinates_t *out_crd)
+uint8_t obstacle_get_point_of_collision_with_segment(const coordinates_t *start_point, const coordinates_t *end_point, const obstacle_t *obstacle, const uint16_t *seg_radius, coordinates_t *out_crd)
 {
     coordinates_t points[OBSTACLE_COLLISION_NB_MAX_SIDES];
     uint8_t sides_to_check = 0;
-    
+
     if (obstacle->type == obstacle_type_rectangle)
     {
-        distance_t demi_w = (obstacle->data.rectangle.width + *seg_diameter)/2;
-        distance_t demi_h = (obstacle->data.rectangle.height + *seg_diameter)/2;
+        distance_t demi_w = (obstacle->data.rectangle.width / 2 + *seg_radius);
+        distance_t demi_h = (obstacle->data.rectangle.height / 2 + *seg_radius);
         points[0].x = obstacle->data.rectangle.coordinates.x - demi_w;
         points[0].y = obstacle->data.rectangle.coordinates.y - demi_h;
 
@@ -228,13 +228,13 @@ uint8_t obstacle_get_point_of_collision_with_segment(const coordinates_t *start_
     }
     else if (obstacle->type == obstacle_type_circle)
     {
-        const float step = 2*M_PI/OBSTACLE_COLLISION_NB_MAX_SIDES;
-        float radius = (obstacle->data.circle.diameter + *seg_diameter)/2;
+        const float step = 2 * M_PI / OBSTACLE_COLLISION_NB_MAX_SIDES;
+        float radius = (obstacle->data.circle.radius + *seg_radius);
 
         for (size_t i = 0; i < OBSTACLE_COLLISION_NB_MAX_SIDES; i++)
         {
-            points[i].x = obstacle->data.circle.coordinates.x + radius * cosf(i*step);
-            points[i].y = obstacle->data.circle.coordinates.y + radius * sinf(i*step);
+            points[i].x = obstacle->data.circle.coordinates.x + radius * cosf(i * step);
+            points[i].y = obstacle->data.circle.coordinates.y + radius * sinf(i * step);
         }
         sides_to_check = OBSTACLE_COLLISION_NB_MAX_SIDES;
     }
@@ -245,14 +245,14 @@ uint8_t obstacle_get_point_of_collision_with_segment(const coordinates_t *start_
 
     coordinates_t out_pt_coll[OBSTACLE_COLLISION_NB_MAX_SIDES];
     uint8_t nb_coll = 0;
-    uint8_t is_colliding = check_seg_collision(start_point, end_point, &points[0], &points[sides_to_check-1], &out_pt_coll[nb_coll]);
+    uint8_t is_colliding = check_seg_collision(start_point, end_point, &points[0], &points[sides_to_check - 1], &out_pt_coll[nb_coll]);
     nb_coll += is_colliding;
     for (size_t i = 1; i < sides_to_check; i++)
     {
-        uint8_t is_colliding = check_seg_collision(start_point, end_point, &points[i-1], &points[i], &out_pt_coll[nb_coll]);
+        uint8_t is_colliding = check_seg_collision(start_point, end_point, &points[i - 1], &points[i], &out_pt_coll[nb_coll]);
         nb_coll += is_colliding;
     }
-    
+
     if (!nb_coll)
     {
         *out_crd = *end_point;
@@ -269,6 +269,6 @@ uint8_t obstacle_get_point_of_collision_with_segment(const coordinates_t *start_
             *out_crd = out_pt_coll[i];
         }
     }
-    
+
     return 1; // NO COLLISION
 }
