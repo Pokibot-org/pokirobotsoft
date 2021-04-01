@@ -19,17 +19,17 @@ uint8_t relative_obstacle_storing_lidar_points_relative_to_robot(obstacle_holder
 
     if (message->end_angle > message->start_angle)
     {
-        step = (message->end_angle - message->start_angle) / 8;
+        step = (message->end_angle - message->start_angle) / 8.0f;
     }
     else
     {
-        step = (message->end_angle - (message->start_angle - 360.0f)) / 8;
+        step = (message->end_angle - (message->start_angle - 360.0f)) / 8.0f;
     }
 
     for (int i = 0; i < LIDAR_MESSAGE_NUMBER_OF_POINT; i++) // for each of the 8 samples
     {
-        float point_angle = (message->start_angle + step * i) + (center_offset_degre + 180);
-        float point_angle_absolute = ((point_angle*M_PI/180) + robot->angle_rad);
+        float point_angle = (message->start_angle + step * i) + (center_offset_degre + 180.0f);
+        float point_angle_absolute = ((point_angle*(M_PI/180.0f)) + robot->angle_rad);
         if (point_angle_absolute < -M_PI_2)
         {
             point_angle_absolute += M_PI;
@@ -45,7 +45,6 @@ uint8_t relative_obstacle_storing_lidar_points_relative_to_robot(obstacle_holder
             // if (message->points[i].distance <= robot->radius_mm){
             //     continue;
             // }
-
 
             new_obstacle.data.circle.coordinates.x = robot->position.x + sinf(point_angle_absolute) * message->points[i].distance;
             new_obstacle.data.circle.coordinates.y = robot->position.y + cosf(point_angle_absolute) * message->points[i].distance;
