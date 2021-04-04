@@ -15,6 +15,7 @@ typedef struct pathfinding_configuration {
     distance_t delta_distance;
     distance_t radius_of_security; // Must be radius of the robot + some
     distance_t node_remapping_distance;
+    uint8_t sampling_rate;  // A sampling rate of 1/2 = 256 / 2 
 }pathfinding_configuration_t;
 
 typedef struct pathfinding_object
@@ -27,7 +28,7 @@ typedef struct pathfinding_object
 
 int pathfinding_object_configure(pathfinding_object_t *obj, pathfinding_configuration_t *config);
 int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, const coordinates_t *start, const coordinates_t *end, path_node_t **end_node);
-int pathfinding_optimize_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, uint16_t nb_of_nodes_to_add);
+int pathfinding_optimize_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, path_node_t *solved_path_end_node, uint16_t nb_of_nodes_to_add);
 uint16_t pathfinding_get_number_of_used_nodes(pathfinding_object_t *obj);
 #ifdef UNIT_TEST
     int get_new_valid_coordinates(pathfinding_object_t *obj, coordinates_t *crd_tree_node, coordinates_t *crd_random_node, coordinates_t *crd_new_node);

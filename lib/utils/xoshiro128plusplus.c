@@ -31,6 +31,18 @@ static uint32_t s[4] = {
 	0xde4886e6
 };
 
+
+uint8_t xoshiro128plusplus_init_seed(uint32_t init_tab[4])
+{
+	uint8_t is_valid = 0;
+	for (uint8_t i = 0; i < 4; i++)
+	{
+		s[i] = init_tab[i];
+		is_valid += (s[i] != 0);
+	}
+	return is_valid != 0;
+}
+
 uint32_t xoshiro128plusplus_next(void) {
 	const uint32_t result = rotl(s[0] + s[3], 7) + s[0];
 
