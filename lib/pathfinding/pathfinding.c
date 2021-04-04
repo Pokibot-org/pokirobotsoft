@@ -216,7 +216,7 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
         else
         {
             coordinates_t rand_coordinates;
-            uint8_t new_crd_on_goal = (utils_get_rand32() & 0x000000FF) > obj->config.sampling_rate;
+            uint8_t new_crd_on_goal = (utils_get_rand32() & 0x000000FF) < obj->config.sampling_rate;
             if (new_crd_on_goal)
             {
                 rand_coordinates = *end;
