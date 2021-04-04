@@ -277,7 +277,7 @@ void test_with_lidar_obstacle_path_must_be_found(void)
     float time_spent = (float)(end_clk - begin_clk) / CLOCKS_PER_SEC * 1000;
     printf("Found in %d nodes! Time : %f ms | Len : %d\n Now optimizing: \n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
     begin_clk = clock();
-    pathfinding_optimize_path(&pathfinding_obj, &ob_hold, PATHFINDING_MAX_NUM_OF_NODES);
+    pathfinding_optimize_path(&pathfinding_obj, &ob_hold, end_node, PATHFINDING_MAX_NUM_OF_NODES);
     end_clk = clock();
     pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
 
