@@ -229,6 +229,11 @@ void test_with_lidar_obstacle_path_must_be_found(void)
     
 }
 
+        time_spent = (float)(end_clk - begin_clk) / CLOCKS_PER_SEC * 1000;
+        printf("Optimized with total of %d nodes! Time : %f ms | Len : %d\n Now optimizing: \n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
+        // pathfinding_debug_write_found_path_list(&pathfinding_obj, end_node, "/tmp/path");
+    }
+}
 
 void test_with_lidar_obstacle_path_must_be_found(void)
 {
@@ -238,11 +243,8 @@ void test_with_lidar_obstacle_path_must_be_found(void)
         .data.circle = {
             .coordinates = {
                 .x = 1500,
-                .y = 10
-            },
-            .radius = 0
-        }
-    };
+                .y = 10},
+            .radius = 0}};
     for (size_t i = 0; i < 60; i++)
     {
         obstacle_holder_push(&ob_hold, &obs);
@@ -255,7 +257,7 @@ void test_with_lidar_obstacle_path_must_be_found(void)
         obstacle_holder_push(&ob_hold, &obs);
         obs.data.circle.coordinates.y -= 20;
     }
-    
+
     path_node_t *end_node;
     coordinates_t start = {
         .x = 40,
@@ -264,27 +266,36 @@ void test_with_lidar_obstacle_path_must_be_found(void)
     coordinates_t end = {
         .x = pathfinding_obj.config.field_boundaries.max_x - 40,
         .y = 500,
-    };    
+    };
     clock_t begin_clk = clock();
     int err = pathfinding_find_path(&pathfinding_obj, &ob_hold, &start, &end, &end_node);
     clock_t end_clk = clock();
-#ifdef PRINT_DEBUG
-    pathfinding_debug_print(&pathfinding_obj);
-#endif
-    TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
-#ifdef PRINT_DEBUG
-    pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
     float time_spent = (float)(end_clk - begin_clk) / CLOCKS_PER_SEC * 1000;
-    printf("Found in %d nodes! Time : %f ms | Len : %d\n Now optimizing: \n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
-    begin_clk = clock();
-    pathfinding_optimize_path(&pathfinding_obj, &ob_hold, end_node, PATHFINDING_MAX_NUM_OF_NODES);
-    end_clk = clock();
-    pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
+    if (err)
+    {
+        fprintf(psr_fd, "Path not found\n");
+    }
+    else
+    {
+        fprintf(psr_fd, "Found in %d nodes! Time : %f ms | Len : %d\n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
+    }
+    if (FORCE_PRINT_CONSTANT || err)
+    {
+        pathfinding_debug_print(&pathfinding_obj);
+    }
+    TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
+    if (FORCE_PRINT_CONSTANT || err)
+    {
+        pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
+        printf("Found in %d nodes! Time : %f ms | Len : %d\n Now optimizing: \n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
+        begin_clk = clock();
+        pathfinding_optimize_path(&pathfinding_obj, &ob_hold, end_node, PATHFINDING_MAX_NUM_OF_NODES);
+        end_clk = clock();
+        pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
 
-    time_spent = (float)(end_clk - begin_clk) / CLOCKS_PER_SEC * 1000;
-    printf("Optimized with total of %d nodes! Time : %f ms | Len : %d\n Now optimizing: \n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
-    // pathfinding_debug_write_found_path_list(&pathfinding_obj, end_node, "/tmp/path");
-#endif
+        time_spent = (float)(end_clk - begin_clk) / CLOCKS_PER_SEC * 1000;
+        printf("Optimized with total of %d nodes! Time : %f ms | Len : %d\n Now optimizing: \n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
+    }
 }
 
 void test_get_new_valid_coordinates()
