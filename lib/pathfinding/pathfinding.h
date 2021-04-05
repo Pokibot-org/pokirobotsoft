@@ -25,13 +25,14 @@ typedef struct pathfinding_object
     path_node_t nodes[PATHFINDING_MAX_NUM_OF_NODES];
     coordinates_t coordinate_cache[PATHFINDING_MAX_NUM_OF_COORDINATES_CACHE];
     pathfinding_configuration_t config;
-    uint32_t nb_of_coordinate_cache;
+    uint32_t nb_of_coordinate_cached;
     uint32_t next_free_node_nb;
 }pathfinding_object_t;
 
 
 int pathfinding_object_configure(pathfinding_object_t *obj, pathfinding_configuration_t *config);
 int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, const coordinates_t *start, const coordinates_t *end, path_node_t **end_node);
+int pathfinding_rebuild(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, const coordinates_t *start, const coordinates_t *end, path_node_t **end_node);
 int pathfinding_optimize_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, path_node_t *solved_path_end_node, uint16_t nb_of_nodes_to_add);
 uint16_t pathfinding_get_number_of_used_nodes(pathfinding_object_t *obj);
 #ifdef UNIT_TEST
