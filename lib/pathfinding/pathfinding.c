@@ -259,9 +259,7 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
         current_node->distance_to_start = closest_node_p->distance_to_start + utils_distance(&closest_node_p->coordinate, &current_node->coordinate);
 
         remap_nodes_to_new_node_if_closer_to_start(obj, ob_hold, to_be_remaped_nodes, nb_of_to_be_remaped_nodes, current_node);
-        // TODO: check for obstacle between the last point and goal
-        long_distance_t dist_to_goal = utils_distance(&current_node->coordinate, end);
-
+        
         if ((rand_coordinates.x == end->x) && (rand_coordinates.y == end->y))
         {
             *end_node = current_node;

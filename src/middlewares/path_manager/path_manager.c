@@ -53,7 +53,7 @@ void pbd(pathfinding_object_t *obj)
 
     for (size_t y = 0; y < DEBUG_TAB_SIZE_Y; y++)
     {
-        printk("%s", tab[y]);
+        LOG_DBG("%s", tab[y]);
     }
 };
 
