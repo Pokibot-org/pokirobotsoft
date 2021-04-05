@@ -7,11 +7,12 @@
 #include "obstacle.h"
 
 #define PATHFINDING_MAX_NUM_OF_NODES 1024
+#define PATHFINDING_MAX_NUM_OF_COORDINATES_CACHE 256
+
 #define PATHFINDING_MAX_BOUNDARIES INT16_MAX
 
 typedef struct pathfinding_configuration {
     boundaries_t field_boundaries;
-    distance_t distance_to_destination;
     distance_t delta_distance;
     distance_t radius_of_security; // Must be radius of the robot + some
     distance_t node_remapping_distance;
@@ -21,9 +22,11 @@ typedef struct pathfinding_configuration {
 
 typedef struct pathfinding_object
 {
-    uint32_t next_free_node_nb;
     path_node_t nodes[PATHFINDING_MAX_NUM_OF_NODES];
+    coordinates_t coordinate_cache[PATHFINDING_MAX_NUM_OF_COORDINATES_CACHE];
     pathfinding_configuration_t config;
+    uint32_t nb_of_coordinate_cache;
+    uint32_t next_free_node_nb;
 }pathfinding_object_t;
 
 

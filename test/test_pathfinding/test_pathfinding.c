@@ -29,7 +29,6 @@ void setUp(void)
     config.field_boundaries.max_x = 3000; // 3m
     config.field_boundaries.max_y = 2000; // 2m
     config.delta_distance = 400;          // jump of Xcm
-    config.distance_to_destination = 60;  // stop when less than 6 cm close tho goal
     config.radius_of_security = 150;      // Basicaly the robot radius in mm
     memset(&pathfinding_obj.nodes, 0, PATHFINDING_MAX_NUM_OF_NODES * sizeof(path_node_t));
     pathfinding_object_configure(&pathfinding_obj, &config);
@@ -236,7 +235,8 @@ void test_get_new_valid_coordinates()
 
     // DIAGONAL
     end = (coordinates_t){1000, 1000};
-    must_be_crd = (coordinates_t){10 + pathfinding_obj.config.delta_distance * M_SQRT2 / 2, 10 + pathfinding_obj.config.delta_distance * M_SQRT2 / 2};
+    must_be_crd = (coordinates_t){10 + pathfinding_obj.config.delta_distance * M_SQRT2 / 2,
+                                  10 + pathfinding_obj.config.delta_distance * M_SQRT2 / 2};
     TEST_ASSERT_EQUAL(0, get_new_valid_coordinates(&pathfinding_obj, &start, &end, &new));
     TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.y, new.y, "Y");
     TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.x, new.x, "X");

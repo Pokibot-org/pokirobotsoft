@@ -144,7 +144,6 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
     pathfinding_config.field_boundaries.max_x = 3000; // 3m
     pathfinding_config.field_boundaries.max_y = 2000; // 2m
     pathfinding_config.delta_distance = 400;          // jump of Xmm
-    pathfinding_config.distance_to_destination = 60;  // stop when less than 6 cm close tho goal
     pathfinding_config.radius_of_security = robot_get_obj()->radius_mm;      // 300 mm
     pathfinding_object_configure(&pm_obj.pathfinding_obj, &pathfinding_config);
 
