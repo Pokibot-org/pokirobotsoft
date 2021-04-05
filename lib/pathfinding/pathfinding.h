@@ -15,7 +15,8 @@ typedef struct pathfinding_configuration {
     distance_t delta_distance;
     distance_t radius_of_security; // Must be radius of the robot + some
     distance_t node_remapping_distance;
-    uint8_t sampling_rate;  // A sampling rate of 1/2 = 256 / 2 
+    uint8_t rand_goal_probability;  // A sampling rate of 1/2 = 256 / 2 
+    uint8_t rand_waypoint_probability;
 }pathfinding_configuration_t;
 
 typedef struct pathfinding_object
