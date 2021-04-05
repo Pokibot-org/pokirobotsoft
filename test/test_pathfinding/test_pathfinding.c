@@ -205,14 +205,28 @@ void test_with_lidar_obstacle_path_must_be_found(void)
     {
         pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
         printf("Found in %d nodes! Time : %f ms | Len : %d\n Now optimizing: \n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
-        begin_clk = clock();
-        pathfinding_optimize_path(&pathfinding_obj, &ob_hold, end_node, PATHFINDING_MAX_NUM_OF_NODES);
-        end_clk = clock();
-        pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
-
-        time_spent = (float)(end_clk - begin_clk) / CLOCKS_PER_SEC * 1000;
-        printf("Optimized with total of %d nodes! Time : %f ms | Len : %d\n Now optimizing: \n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
     }
+
+    begin_clk = clock();
+    err = pathfinding_rebuild(&pathfinding_obj, &ob_hold, &start, &end, &end_node);
+    end_clk = clock();
+    time_spent = (float)(end_clk - begin_clk) / CLOCKS_PER_SEC * 1000;
+    if (err)
+    {
+        fprintf(psr_fd, "Rebuild failed, path not found\n");
+    }
+    else
+    {
+        fprintf(psr_fd, "Rebuild done, Path found in %d nodes! Time : %f ms | Len : %d\n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
+    }
+
+    if (FORCE_PRINT_CONSTANT || err)
+    {
+        pathfinding_debug_print_found_path(&pathfinding_obj, end_node);
+        printf("Rebuild done in %d nodes! Time : %f ms | Len : %d\n Now optimizing: \n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
+    }
+    TEST_ASSERT_EQUAL(PATHFINDING_ERROR_NONE, err);
+    
 }
 
 void test_get_new_valid_coordinates()
