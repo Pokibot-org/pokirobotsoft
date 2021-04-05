@@ -249,7 +249,7 @@ uint8_t obstacle_get_point_of_collision_with_segment(const coordinates_t *start_
     nb_coll += is_colliding;
     for (size_t i = 1; i < sides_to_check; i++)
     {
-        uint8_t is_colliding = check_seg_collision(start_point, end_point, &points[i - 1], &points[i], &out_pt_coll[nb_coll]);
+        is_colliding = check_seg_collision(start_point, end_point, &points[i - 1], &points[i], &out_pt_coll[nb_coll]);
         nb_coll += is_colliding;
     }
 
