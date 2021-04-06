@@ -11,7 +11,7 @@ LOG_MODULE_REGISTER(obstacle_manager);
 static obstacle_holder_t ob_holder = {0};
 K_SEM_DEFINE(obsacle_holder_lock, 1, 1);
 // PRIVATE DEF
-#define CAMSENSE_CENTER_OFFSET_DEG -16.0f
+#define CAMSENSE_CENTER_OFFSET_DEG 16.0f
 
 // FUNC
 
