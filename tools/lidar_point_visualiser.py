@@ -10,8 +10,9 @@ def update(i, ax, list_x, list_y):
     mutex.acquire()
     ax.clear()
     ax.scatter(list_x, list_y, c= 'red')
-    ax.set_xlim([-1000,1000])
-    ax.set_ylim([-1000,1000])
+    lim = 2000
+    ax.set_xlim([-lim,lim])
+    ax.set_ylim([-lim,lim])
     list_x.clear()
     list_y.clear()
     mutex.release()
