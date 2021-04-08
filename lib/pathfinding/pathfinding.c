@@ -5,6 +5,7 @@
 #include "math.h"
 #include "obstacle.h"
 #include "string.h"
+#include "kdtree.h"
 
 #define DEBUG_TAB_SIZE_X 120
 #define DEBUG_TAB_SIZE_Y 40
