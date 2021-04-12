@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.13.1)
+list(APPEND BOARD_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(DTC_OVERLAY_FILE
     "${DTC_OVERLAY_FILE} project.overlay"

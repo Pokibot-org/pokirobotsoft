@@ -1,0 +1,5 @@
+# STM32H743ZI Nucleo board configuration
+
+config BOARD_WEACT_STM32H743VI
+	bool "WeAct H743VI Development Board"
+	depends on SOC_STM32H743XX
