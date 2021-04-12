@@ -1,0 +1,6 @@
+if BOARD_WEACT_STM32H743VI
+
+config BOARD
+	default "weact_stm32h743vi"
+
+endif # BOARD_WEACT_STM32H743VI

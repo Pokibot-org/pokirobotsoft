@@ -1,17 +1,13 @@
 / {
     aliases {
-            camsense-uart-1 = &usart1;
+            camsense-uart-1 = &usart2;
     };
-
-    soc {
-
-    };
-};
-
-&usart1 {
-        status = "okay";
 };
 
 &usart2 {
-        current-speed = < 0x80000 >;
+        status = "okay";
 };
+
+// &usart2 {
+//         current-speed = < 0x80000 >;
+// };
