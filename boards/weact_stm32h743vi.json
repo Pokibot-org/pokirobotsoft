@@ -16,7 +16,7 @@
     "default_tools": [
       "stlink"
     ],
-    "jlink_device": "STM32H743ZI",
+    "jlink_device": "STM32H743VI",
     "onboard_tools": [
       "stlink"
     ],
@@ -44,6 +44,6 @@
       "mbed"
     ]
   },
-  "url": "https://www.st.com/en/evaluation-tools/nucleo-h743zi.html",
+  "url": "https://www.st.com/en/evaluation-tools/nucleo-h743vi.html",
   "vendor": "ST"
 }
