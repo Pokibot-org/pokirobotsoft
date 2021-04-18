@@ -3,7 +3,7 @@
 
 #include "utils.h"
 
-#ifndef UNIT_TEST
+#ifdef CONFIG_KERNEL_BIN_NAME
 #include <zephyr.h>
 #include <random/rand32.h>
 #endif
@@ -37,7 +37,7 @@ uint32_t utils_distance_aproximated(const coordinates_t *a, const coordinates_t 
 
 uint32_t utils_get_rand32()
 {
-#ifndef UNIT_TEST
+#ifdef CONFIG_KERNEL_BIN_NAME
     return sys_rand32_get();
 #else
     return rand();
