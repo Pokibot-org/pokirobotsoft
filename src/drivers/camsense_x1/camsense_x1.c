@@ -115,7 +115,6 @@ void camsense_x1_full_frame_callback(const struct device *dev, struct uart_event
 {
     if (evt->type == UART_RX_RDY)
     {
-        LOG_ERR("RECIVED full frame");
         uint8_t *frame = evt->data.rx.buf;
         if (memcmp(frame, camsense_x1_header, CAMSENSE_X1_HEADER_SIZE) == 0)
         {
@@ -124,6 +123,7 @@ void camsense_x1_full_frame_callback(const struct device *dev, struct uart_event
         else
         {
             // Resync
+            LOG_WRN("Wrong header, resync started");
             uart_irq_rx_enable(uart_dev);
             return;
         }
