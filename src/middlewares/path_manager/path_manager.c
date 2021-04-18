@@ -94,7 +94,7 @@ static void path_manager_task(void *p0, void *p1, void *p2)
 }
 
 // PUBLIC FUN
-
+#define TEST
 uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_manager_config_t config)
 {
 
@@ -143,7 +143,7 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
     pathfinding_configuration_t pathfinding_config;
     pathfinding_config.field_boundaries.max_x = 3000; // 3m
     pathfinding_config.field_boundaries.max_y = 2000; // 2m
-    pathfinding_config.delta_distance = 400;          // jump of Xmm
+    pathfinding_config.delta_distance = 200;          // jump of Xmm
     pathfinding_config.radius_of_security = robot_get_obj()->radius_mm;      // 300 mm
     pathfinding_object_configure(&pm_obj.pathfinding_obj, &pathfinding_config);
 

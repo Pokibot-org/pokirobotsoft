@@ -2,13 +2,11 @@
 #include <stdlib.h>
 
 #include "utils.h"
-#include "xoshiro128plusplus.h"
 
 #ifndef UNIT_TEST
 #include <zephyr.h>
 #include <random/rand32.h>
 #endif
-
 
 // TODO: Octile distance h(x) = max( (x1 – x2), (y1 – y2) + (sqrt(2) -1) * min( (x1 – x2), (y1 – y2))
 
@@ -39,21 +37,11 @@ uint32_t utils_distance_aproximated(const coordinates_t *a, const coordinates_t 
 
 uint32_t utils_get_rand32()
 {
-    return xoshiro128plusplus_next();
-}
-
-void utils_init_rand_seed(uint32_t tab[4])
-{
-    int err = xoshiro128plusplus_init_seed(tab);
-    if (err) {
-        uint32_t s[4] = {
-            0x4ae4098c,
-            0xde47cafb,
-            0x97cd3540,
-            0xde4886e6
-        };
-        xoshiro128plusplus_init_seed(s);
-    }
+#ifndef UNIT_TEST
+    return sys_rand32_get();
+#else
+    return rand();
+#endif
 }
 
 uint32_t utils_max(uint32_t a, uint32_t b)
