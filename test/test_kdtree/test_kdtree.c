@@ -12,8 +12,9 @@ void tearDown(void)
 
 void test_init_kdtree(void)
 {
-    kd_tree_t *tree = kdtree_create_equally_spaced(3, 3000, 2000);
+    kd_tree_t *tree = kdtree_create_equally_spaced(3, 3000, 2000, sizeof(nodes_holder_t));
     TEST_ASSERT_NOT_NULL(tree);
+    kdtree_print(tree, kdtree_leaf_data_print_nodes_holder);
 }
 
 int main(int argc, char **argv)

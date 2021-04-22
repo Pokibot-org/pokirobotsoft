@@ -28,10 +28,13 @@ typedef struct kd_tree
     kd_superblock_t * root;
 }kd_tree_t;
 
+typedef void (*kdtree_leaf_data_print)(const void * leaf_data, char * parent_node_name);  
 
-kd_tree_t * kdtree_create_equally_spaced(uint8_t power_of_division, distance_t width, distance_t height);
+
+kd_tree_t * kdtree_create_equally_spaced(uint8_t power_of_division, distance_t width, distance_t height, uint32_t leaf_size);
 void kdtree_clear_leafs(kd_tree_t * tree);
 void kdtree_delete(kd_tree_t * tree);
 uint8_t kdtree_push(kd_tree_t * tree, const point_t * point);
-
+void kdtree_print(kd_tree_t *tree, kdtree_leaf_data_print leaf_clbk);
+void kdtree_leaf_data_print_nodes_holder(const void * leaf_data, char * parent_node_name);
 #endif

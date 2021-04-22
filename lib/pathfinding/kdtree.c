@@ -6,6 +6,7 @@
 LOG_MODULE_REGISTER(kdtree_lib);
 #define KDTREE_PRINT_ERR(format, ...) LOG_ERR(format, ##__VA_ARGS__)
 #define KDTREE_PRINT_INF(format, ...) LOG_INF(format, ##__VA_ARGS__)
+#define KDTREE_PRINT(format, ...) printk(format, ##__VA_ARGS__)
 
 K_HEAP_DEFINE(kdtree_heap, 2048);
 #define KDTREE_ALLOC(size) k_heap_alloc(&kdtree_heap, size, K_NO_WAIT)
@@ -18,17 +19,19 @@ K_HEAP_DEFINE(kdtree_heap, 2048);
 #define KDTREE_FREE(ptr) free(ptr)
 #define KDTREE_PRINT_ERR(format, ...) printf("ERR>" format "\n", ##__VA_ARGS__)
 #define KDTREE_PRINT_INF(format, ...) printf("INF>" format "\n", ##__VA_ARGS__)
+#define KDTREE_PRINT(format, ...) printf(format, ##__VA_ARGS__)
+
 
 #endif
 
 #define KDTREE_MAX_DEEPTH 10
 
 
-kd_tree_t *kdtree_create_equally_spaced(uint8_t power_of_division, distance_t width, distance_t height)
+kd_tree_t *kdtree_create_equally_spaced(uint8_t power_of_division, distance_t width, distance_t height, uint32_t leaf_size)
 {
-    if (power_of_division >= KDTREE_MAX_DEEPTH)
+    if (power_of_division >= KDTREE_MAX_DEEPTH || power_of_division < 1)
     {
-        KDTREE_PRINT_ERR("Called with a too high power_of_division, max %d", KDTREE_MAX_DEEPTH);
+        KDTREE_PRINT_ERR("Called with a wrong power_of_division, min 1, max %d", KDTREE_MAX_DEEPTH);
         return NULL;
     }
 
@@ -78,8 +81,8 @@ kd_tree_t *kdtree_create_equally_spaced(uint8_t power_of_division, distance_t wi
         if (deepth >= power_of_division - 1)
         {
             KDTREE_PRINT_INF("On leaf");
-            (*current_superblock)->data = KDTREE_ALLOC(sizeof(nodes_holder_t));
-            memset((*current_superblock)->data, 0, sizeof(nodes_holder_t));
+            (*current_superblock)->data = KDTREE_ALLOC(leaf_size);
+            memset((*current_superblock)->data, 0, leaf_size);
 
             if ((*current_superblock)->data == NULL)
             {
@@ -134,4 +137,51 @@ void kdtree_delete(kd_tree_t *tree){
 
 uint8_t kdtree_push(kd_tree_t *tree, const point_t *point){
 
+};
+
+
+void kdtree_leaf_data_print_nodes_holder(const void * leaf_data, char * parent_node_name)
+{
+    const nodes_holder_t *obj = leaf_data;
+    if (obj->nb_of_nodes == 0)
+    {
+        return;
+    }
+    for (size_t i = 0; i < obj->nb_of_nodes; i++)
+    {
+        KDTREE_PRINT("%s -> x:%d|y:%d\n",parent_node_name, obj->points[i].coordinate.x, obj->points[i].coordinate.y);
+    }
+}
+
+
+void kdtree_print_superblock(kd_superblock_t *block, kdtree_leaf_data_print leaf_clbk){
+
+
+    if (block->data != NULL)
+    {
+        char node_name[30];
+        sprintf_s(node_name, 30, "leaf_%llu\n", block->data);
+        KDTREE_PRINT(node_name);
+        if (leaf_clbk != NULL)
+        {
+            leaf_clbk(block->data, node_name);
+        }
+        return;
+    }
+    KDTREE_PRINT("block_%llu", block);
+    KDTREE_PRINT(" -> ");
+    kdtree_print_superblock(block->sons.block_l, leaf_clbk);
+    KDTREE_PRINT("block_%llu", block);
+    KDTREE_PRINT(" -> ");
+    kdtree_print_superblock(block->sons.block_r, leaf_clbk);
+
+
+}
+
+void kdtree_print(kd_tree_t *tree, kdtree_leaf_data_print leaf_clbk)
+{
+    
+    KDTREE_PRINT("digraph G {\n");
+    kdtree_print_superblock(tree->root, leaf_clbk);
+    KDTREE_PRINT("}\n");
 };
