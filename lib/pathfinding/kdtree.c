@@ -135,8 +135,52 @@ void kdtree_delete(kd_tree_t *tree){
 };
 
 
-uint8_t kdtree_push(kd_tree_t *tree, const point_t *point){
-
+uint8_t kdtree_push(kd_tree_t *tree, const path_node_t *node){
+    int8_t deepth = 0;
+    kd_superblock_t * current_block = tree->root;
+    while (1)
+    {
+        if (current_block->data != NULL) {
+            nodes_holder_t * obj = current_block->data;
+            if (obj->nb_of_nodes < KDTREE_POINT_HOLDER_LEN)
+            {
+                obj->points[obj->nb_of_nodes] = *node;
+                obj->nb_of_nodes += 1;
+                return 0;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+        else
+        {
+            // There is more compacy ways to do it but like this it will be faster
+            if (deepth % 2){
+                if (node->coordinate.y >= current_block->dim)
+                {
+                    current_block = current_block->sons.block_r;
+                }
+                else
+                {
+                    current_block = current_block->sons.block_l;
+                }
+            }
+            else
+            {
+                if (node->coordinate.x >= current_block->dim)
+                {
+                    current_block = current_block->sons.block_r;
+                }
+                else
+                {
+                    current_block = current_block->sons.block_l;
+                }
+            }
+            deepth += 1;
+        }
+    }
+    
 };
 
 
@@ -149,7 +193,7 @@ void kdtree_leaf_data_print_nodes_holder(const void * leaf_data, char * parent_n
     }
     for (size_t i = 0; i < obj->nb_of_nodes; i++)
     {
-        KDTREE_PRINT("%s -> x:%d|y:%d\n",parent_node_name, obj->points[i].coordinate.x, obj->points[i].coordinate.y);
+        KDTREE_PRINT("%s -> \"x:%d|y:%d\"\n", parent_node_name, obj->points[i].coordinate.x, obj->points[i].coordinate.y);
     }
 }
 
@@ -160,19 +204,17 @@ void kdtree_print_superblock(kd_superblock_t *block, kdtree_leaf_data_print leaf
     if (block->data != NULL)
     {
         char node_name[30];
-        sprintf_s(node_name, 30, "leaf_%llu\n", block->data);
-        KDTREE_PRINT(node_name);
+        sprintf_s(node_name, 30, "\"leaf_%llu\"", block->data);
+        KDTREE_PRINT("%s\n", node_name);
         if (leaf_clbk != NULL)
         {
             leaf_clbk(block->data, node_name);
         }
         return;
     }
-    KDTREE_PRINT("block_%llu", block);
-    KDTREE_PRINT(" -> ");
+    KDTREE_PRINT("\"block_%llu dim:%d\" -> ", block, block->dim);
     kdtree_print_superblock(block->sons.block_l, leaf_clbk);
-    KDTREE_PRINT("block_%llu", block);
-    KDTREE_PRINT(" -> ");
+    KDTREE_PRINT("\"block_%llu dim:%d\" -> ", block, block->dim);
     kdtree_print_superblock(block->sons.block_r, leaf_clbk);
 
 
