@@ -3,7 +3,8 @@
 #include "stdint.h" 
 #include "common_types.h"
 #include "robot.h"
-#include "utils.h"
+#include "vector.h"
+#include "frame.h"
 
 #define SPEEDGEN_PATH_MAX_LEN   512
 #define LOOKAHEAD_DIST  1   //Robot follow a point a this distance in Meters
