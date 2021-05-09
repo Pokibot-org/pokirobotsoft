@@ -116,43 +116,45 @@ float utils_get_vector_angle(const vector_t *a, const vector_t *b)
 //Function calculating a vector from point A to B : with Y reference Up and X reference Right
 vector_t *utils_vector_from_points(const coordinates_t *a, const coordinates_t *b)
 {
-    vector_t *vect;
-    vect->x = b->x - a->x;
-    vect->y = b->y - a->y;
+    vector_t vect;
+    vect.x = b->x - a->x;
+    vect.y = b->y - a->y;
 
-    return vect;
+    return &vect;
 };
 
 //Function calculating the unit vector of a vector
 vector_t *utils_get_unit_vector(const vector_t *a)
 {
-    vector_t *unit_vector;
+    vector_t unit_vector;
     uint32_t norm = utils_vector_norm(a);
-    unit_vector->x = a->x/norm;
-    unit_vector->y = a->y/norm;
+    unit_vector.x = a->x/norm;
+    unit_vector.y = a->y/norm;
     
-    return unit_vector;
+    return &unit_vector;
 };
 
 //Function returning the global coordinates of the point pointed by the vector
 coordinates_t *utils_coordinates_from_vector(const vector_t *a, const coordinates_t *b)
 {
-    coordinates_t *point;
+    coordinates_t point;
 
-    point->x = b->x + a->x;
-    point->y = b->y + a->y;
+    point.x = b->x + a->x;
+    point.y = b->y + a->y;
 
-    return point;
+    return &point;
 };
 
 //Function creating from a norm and a unit vector
 vector_t *utils_form_vector(const vector_t *a, const uint32_t *norm)
 {
-    vector_t *vector;
+    vector_t vector;
 
-    vector->x = (int32_t)norm * a->x;
-    vector->y = (int32_t)norm * a->y;
+    vector.x = (int32_t)norm * a->x;
+    vector.y = (int32_t)norm * a->y;
 
-    return vector;
+    // TODO this is wrong, returning address of a local variable
+    // Need to pass this as an arg of the function
+    return &vector;
 };
-
+>>>>>>> 44267c4 (Function modification for PIO compilation):lib/utils/utils.c
