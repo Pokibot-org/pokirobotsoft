@@ -44,7 +44,7 @@ vector_t find_path_point(speedgen_obj_t * obj)
 //  Returning the coordinates of the Goal Point in Global Frame
 coordinates_t compute_goal_point(speedgen_obj_t * obj, vector_t * path_point){
 
-    uint32_t goal_norm = utils_vector_norm(&path_point)+LOOKAHEAD_DIST;
+    uint32_t goal_norm = utils_vector_norm(path_point)+LOOKAHEAD_DIST;
     
     if (goal_norm > obj->current_section->section_distance)
     {
@@ -62,7 +62,7 @@ coordinates_t compute_goal_point(speedgen_obj_t * obj, vector_t * path_point){
             }
             section_goal_norm = section_goal_norm - obj->current_section->section_distance;
             //Updating the current section by the new one
-            obj->current_section = get_next_section(&obj);
+            *obj->current_section = get_next_section(obj);
         };
 
         goal_norm = section_goal_norm;
@@ -70,26 +70,26 @@ coordinates_t compute_goal_point(speedgen_obj_t * obj, vector_t * path_point){
 
     return *utils_coordinates_from_vector(
                 utils_form_vector(utils_get_unit_vector(&obj->current_section->end_pos),
-                                    goal_norm),
+                                    &goal_norm),
                 &obj->current_section->begin_pos);
 };
 
 //Function Returning the next section parameters
-section_t *get_next_section(speedgen_obj_t *obj)
+section_t get_next_section(speedgen_obj_t *obj)
 {
-    section_t *next_section;
+    section_t next_section;
 
     //Update the index 
-    next_section->current_path_index = obj->current_section->current_path_index+1;
+    next_section.current_path_index = obj->current_section->current_path_index+1;
     //get the current section end point
-    next_section->begin_pos = obj->current_path[next_section->current_path_index];
+    next_section.begin_pos = obj->current_path[next_section.current_path_index];
     //get the end position
-    coordinates_t section_end = obj->current_path[next_section->current_path_index+1];
+    coordinates_t section_end = obj->current_path[next_section.current_path_index+1];
     //convert it to a vector pointing to it
-    next_section->end_pos = *utils_vector_from_points(&next_section->begin_pos,&section_end);
+    next_section.end_pos = *utils_vector_from_points(&next_section.begin_pos,&section_end);
     //Complete the last parameters
-    next_section->begin_distance = obj->current_section->begin_distance + obj->current_section->section_distance;
-    next_section->section_distance = utils_vector_norm(&next_section->end_pos);
+    next_section.begin_distance = obj->current_section->begin_distance + obj->current_section->section_distance;
+    next_section.section_distance = utils_vector_norm(&next_section.end_pos);
 
     return next_section;
 };

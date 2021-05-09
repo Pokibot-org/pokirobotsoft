@@ -1,6 +1,7 @@
 #include <zephyr.h>
 #include <logging/log.h>
 #include "path_manager.h"
+#include "speedgen.h"
 
 LOG_MODULE_REGISTER(main_task);
 
