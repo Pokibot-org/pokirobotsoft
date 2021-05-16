@@ -10,8 +10,9 @@
 
 &usart1 {
         status = "okay";
+        current-speed = < 115200 >;
 };
 
 &usart2 {
-        current-speed = < 0x80000 >;
+        current-speed = < 115200 >;
 };

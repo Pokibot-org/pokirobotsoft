@@ -10,6 +10,10 @@
 #include "xoshiro128plusplus.h"
 #endif
 
+// TODO
+// Remove one liner functions by macros
+// Or inline functions when type safety is a must
+
 /*
 if opti needed
 double fsqrt (double y) {
@@ -69,6 +73,8 @@ void utils_normalize_coordinates(const coordinates_t *crd){
 }
 */
 
+// TODO
+// Move into #define MAX(a, b) a < b ? b : a for untyped + inlined version
 uint32_t utils_max(uint32_t a, uint32_t b)
 {
     if (a >= b)
