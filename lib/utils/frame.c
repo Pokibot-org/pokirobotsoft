@@ -10,7 +10,7 @@
 
 //Function returning the Global frame according to the 
 //right low corner of the table. 
-frame_t get_global_frame()
+frame_t frame_get_global_frame()
 {
     frame_t global_frame;
 
@@ -26,7 +26,7 @@ frame_t get_global_frame()
 
 //Returning an orthogonal frame from the Y vector ans its position
 //in the global frame
-frame_t set_orthogonal_frame(vector_t *Y, coordinates_t *pos)
+frame_t frame_set_orthogonal_frame(vector_t *Y, coordinates_t *pos)
 {
     frame_t frame;
 
@@ -40,19 +40,19 @@ frame_t set_orthogonal_frame(vector_t *Y, coordinates_t *pos)
 };
 
 //Function converting point coordinates to another frame
-coordinates_t point_frame_transformation(frame_t *from, frame_t *to, coordinates_t *point)
+coordinates_t frame_point_frame_transformation(frame_t *from, frame_t *to, coordinates_t *point)
 {
     coordinates_t new_point;
 
     //Translation of the frame
-    vector_t F_T = *utils_vector_from_points(&from->pos,&to->pos);
-    vector_t F_P = *utils_vector_from_points(&from->pos,point);
+    vector_t F_T = vector_vector_from_points(&from->pos,&to->pos);
+    vector_t F_P = vector_vector_from_points(&from->pos,point);
 
     point_t X_bis = F_P.x - F_T.x;
     point_t Y_bis = F_P.y - F_T.y;
 
     //Rotation of the frame
-    float theta = utils_get_vector_angle(&from->Y,&to->Y);
+    float theta = vector_get_vector_angle(&from->Y,&to->Y);
     new_point.x = cos(theta)*X_bis - sin(theta)*Y_bis;
     new_point.y = sin(theta)*X_bis + cos(theta)*Y_bis;
 

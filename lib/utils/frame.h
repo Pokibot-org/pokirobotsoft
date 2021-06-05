@@ -20,8 +20,8 @@ typedef struct frame
     coordinates_t pos;
 } frame_t;
 
-frame_t get_global_frame();
-frame_t set_orthogonal_frame(vector_t *Y, coordinates_t *pos);
-coordinates_t point_frame_transformation(frame_t *from, frame_t *to, coordinates_t *point);
+frame_t frame_get_global_frame();
+frame_t frame_set_orthogonal_frame(vector_t *Y, coordinates_t *pos);
+coordinates_t frame_point_frame_transformation(frame_t *from, frame_t *to, coordinates_t *point);
 
 #endif

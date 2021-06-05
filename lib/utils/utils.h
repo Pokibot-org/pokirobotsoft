@@ -1,6 +1,5 @@
 #ifndef PATHFINDING_UTILS_H
 #define PATHFINDING_UTILS_H
-#include <stdint.h>
 #include "common_types.h"
 
 #define SQUARE(a) ((a) * (a))

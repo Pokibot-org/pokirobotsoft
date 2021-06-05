@@ -1,5 +1,6 @@
 #ifndef COMMON_TYPES_H
 #define COMMON_TYPES_H
+#include <stdint.h>
 
 typedef int16_t point_t;
 typedef uint16_t distance_t;
