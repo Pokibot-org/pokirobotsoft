@@ -1,7 +1,6 @@
 #include <zephyr.h>
 #include <logging/log.h>
-#include "camsense_x1.h"
-#include "obstacle.h"
+#include "lidar.h"
 #include "relative_obstacle_storing.h"
 #include "robot.h"
 

@@ -11,9 +11,11 @@ project(pokirobotsoft)
 
 include_directories(
     ../include
+    ../include/nav
 )
 
 FILE(GLOB app_sources
     ../src/*.c
+    ../src/nav/*.c
 )
 target_sources(app PRIVATE ${app_sources})
