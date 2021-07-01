@@ -1,6 +1,8 @@
+
 / {
     aliases {
             camsense-uart-1 = &usart1;
+            enc-left = &spi1;
     };
 
     soc {
@@ -8,11 +10,21 @@
     };
 };
 
+
 &usart1 {
-        status = "okay";
-        current-speed = < 115200 >;
+    status = "okay";
+    current-speed = < 115200 >;
 };
 
 &usart2 {
-        current-speed = < 115200 >;
+    current-speed = < 115200 >;
 };
+
+&spi1 {
+    pinctrl-0 = <   &spi1_nss_pa4
+                    &spi1_sck_pa5
+                    &spi1_miso_pa6
+                    &spi1_mosi_pa7>;
+    status = "okay";
+};
+
