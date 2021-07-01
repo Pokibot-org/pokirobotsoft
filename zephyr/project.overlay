@@ -1,13 +1,31 @@
 
 / {
     aliases {
-            camsense-uart-1 = &usart2;
+            camsense-uart-1 = &usart1;
+            enc-left = &spi1;
     };
+
+    soc {
+
+    };
+};
+
+&usart1 {
+    status = "okay";
+    current-speed = < 115200 >;
 };
 
 &usart2 {
         status = "okay";
         current-speed = < 115200 >;
+};
+
+&spi1 {
+    pinctrl-0 = <   &spi1_nss_pa4
+                    &spi1_sck_pa5
+                    &spi1_miso_pa6
+                    &spi1_mosi_pa7>;
+    status = "okay";
 };
 
 &timers2
@@ -36,4 +54,4 @@
 		pinctrl-0 = <&tim3_ch1_pb4 &tim3_ch2_pb5> ;
 		#pwm-cells = <3>;
 	};
-};
+
