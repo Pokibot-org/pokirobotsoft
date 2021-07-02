@@ -30,7 +30,7 @@ int main(void)
         uint16_t val = 1;
         //int ret = 0;
         int ret = as5047p_read(&enc_l, &val);
-        LOG_INF("transceive (ret=%d): %x", ret, val & 0xFFFF);
+        LOG_INF("transceive (ret=%d): par=%x err=%x  ---  %d", ret, (val & (1<<15)) >> 15, (val & (1<<14)) >> 14, val & 0x3fff);
     }
 
     return 0;
