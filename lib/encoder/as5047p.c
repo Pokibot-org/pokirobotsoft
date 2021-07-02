@@ -2,33 +2,48 @@
 #include <device.h>
 #include <drivers/spi.h>
 #include <logging/log.h>
+#include <pinmux/stm32/pinmux_stm32.h>
 
 #include "as5047p.h"
 
 LOG_MODULE_REGISTER(encoders);
 
 int as5047p_init(as5047p* encoder, const struct device* spi) {
-    encoder->cfg.operation = SPI_OP_MODE_MASTER | SPI_MODE_CPOL | SPI_MODE_CPHA | SPI_TRANSFER_MSB | SPI_WORD_SET(8);
-    encoder->cfg.frequency = 100000U;
+    //encoder->cs_ctrl.delay = 0;
+    //encoder->cs_ctrl.gpio_dt_flags = GPIO_ACTIVE_LOW;
+    //encoder->cs_ctrl.gpio_dev = device_get_binding(DT_ST_STM32_SPI_1_CS_GPIOS_CONTROLLER);
+    //encoder->cs_ctrl.gpio_pin = STM32_PIN_PA4;
+    //encoder->cfg.cs = &encoder->cs_ctrl;
+    encoder->spi = spi;
+    encoder->cfg.operation = SPI_OP_MODE_MASTER | SPI_MODE_CPHA | SPI_TRANSFER_MSB | SPI_WORD_SET(16);
+    encoder->cfg.frequency = 1000000U;
     return 0;
 }
 
-int as5047p_read(const as5047p* dev, uint32_t* val) {
-    uint32_t data[4];
-    const struct spi_buf buf = {
-        .buf = data,
-        .len = 4
+int as5047p_read(const as5047p* dev, uint16_t* val) {
+    uint16_t rx_data[1];
+    const struct spi_buf rx_buf = {
+        .buf = rx_data,
+        .len = 1
     };
     const struct spi_buf_set rx = {
-        .buffers = &buf,
-        .count = 4
+        .buffers = &rx_buf,
+        .count = 1
+    };
+    uint16_t tx_data[] = { 0x7fff };
+    const struct spi_buf tx_buf = {
+        .buf = tx_data,
+        .len = 1
+    };
+    const struct spi_buf_set tx = {
+        .buffers = &tx_buf,
+        .count = 1
     };
 
-    LOG_INF("aaaa");
-    int read = spi_read(dev->spi, &dev->cfg, &rx);
-    LOG_INF("bbbb");
-    *val = data[0];
+    //int ret = spi_transceive(dev->spi, &dev->cfg, &tx, &rx);
+    int ret = spi_read(dev->spi, &dev->cfg, &rx);
+    *val = rx_data[0];
 
-    return read;
+    return ret;
 }
 
