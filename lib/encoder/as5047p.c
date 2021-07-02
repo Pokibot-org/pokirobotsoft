@@ -9,14 +9,19 @@
 LOG_MODULE_REGISTER(encoders);
 
 int as5047p_init(as5047p* encoder, const struct device* spi) {
-    //encoder->cs_ctrl.delay = 0;
-    //encoder->cs_ctrl.gpio_dt_flags = GPIO_ACTIVE_LOW;
-    //encoder->cs_ctrl.gpio_dev = device_get_binding(DT_ST_STM32_SPI_1_CS_GPIOS_CONTROLLER);
-    //encoder->cs_ctrl.gpio_pin = STM32_PIN_PA4;
-    //encoder->cfg.cs = &encoder->cs_ctrl;
+    encoder->cs_ctrl = {
+        .delay = 0,
+        .gpio_dt_flags = GPIO_ACTIVE_LOW,
+        .gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpioa)),
+        .gpio_pin = 15
+    };
+    encoder->cfg = {
+        .frequency = 500000U,
+        .operation = SPI_OP_MODE_MASTER | SPI_MODE_CPHA | SPI_TRANSFER_MSB | SPI_WORD_SET(16),
+        .slave = 0,
+        .cs = &encoder->cs_ctrl
+    };
     encoder->spi = spi;
-    encoder->cfg.operation = SPI_OP_MODE_MASTER | SPI_MODE_CPHA | SPI_TRANSFER_MSB | SPI_WORD_SET(16);
-    encoder->cfg.frequency = 1000000U;
     return 0;
 }
 
