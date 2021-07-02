@@ -13,7 +13,7 @@ int as5047p_init(as5047p* encoder, const struct device* spi) {
         .delay = 0,
         .gpio_dt_flags = GPIO_ACTIVE_LOW,
         .gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpioa)),
-        .gpio_pin = 15
+        .gpio_pin = 4
     };
     encoder->cfg = (struct spi_config){
         .frequency = 500000U,
@@ -35,7 +35,7 @@ int as5047p_read(const as5047p* dev, uint16_t* val) {
         .buffers = &rx_buf,
         .count = 1
     };
-    uint16_t tx_data[] = { 0x7fff };
+    uint16_t tx_data[] = { 0xffff };
     const struct spi_buf tx_buf = {
         .buf = tx_data,
         .len = 1
@@ -45,8 +45,8 @@ int as5047p_read(const as5047p* dev, uint16_t* val) {
         .count = 1
     };
 
-    //int ret = spi_transceive(dev->spi, &dev->cfg, &tx, &rx);
-    int ret = spi_read(dev->spi, &dev->cfg, &rx);
+    int ret = spi_transceive(dev->spi, &dev->cfg, &tx, &rx);
+    //int ret = spi_read(dev->spi, &dev->cfg, &rx);
     *val = rx_data[0];
 
     return ret;

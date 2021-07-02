@@ -9,23 +9,26 @@
 
     };
 
-    &usart1 {
-        status = "okay";
-        current-speed = < 115200 >;
+};
+
+&usart1 {
+    status = "okay";
+    current-speed = < 115200 >;
+};
+
+&usart2 {
+    status = "okay";
+    current-speed = < 115200 >;
+};
+
+&spi1 {
+    status = "okay";
+    pinctrl-0 = <&spi1_nss_pa4 &spi1_sck_pa5 &spi1_miso_pa6 &spi1_mosi_pa7>;
+    cs-gpios = <&gpioa 4 GPIO_ACTIVE_LOW>;
+
+    as5047p@0 {
+        reg = <0>;
     };
-
-    &usart2 {
-        current-speed = < 115200 >;
-    };
-
-    &spi1 {
-        status = "okay";
-        pinctrl-0 = <&spi1_nss_pa4 &spi1_sck_pa5 &spi1_miso_pa6 &spi1_mosi_pa7>;
-        cs-gpios = <&gpioa 15 GPIO_ACTIVE_LOW>;
-
-        as5047p: spi-device@0 {};
-    };
-
 };
 
 &timers2
