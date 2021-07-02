@@ -17,24 +17,20 @@ int main(void)
         while (1)
         {
             k_sleep(K_MSEC(1000));
-            LOG_INF("fail device_get\n");
+            LOG_INF("fail device_get");
         }
     }
 
-    as5047p enc_left;
-    as5047p_init(&enc_left, spi);
+    as5047p enc_l;
+    as5047p_init(&enc_l, spi);
 
     while (1)
     {
         k_sleep(K_MSEC(1000));
-        uint32_t val;
+        uint16_t val = 1;
         //int ret = 0;
-        int ret = as5047p_read(&enc_left, &val);
-        if (!ret) {
-            LOG_INF("success read\n");
-        } else {
-            LOG_INF("fail read\n");
-        }
+        int ret = as5047p_read(&enc_l, &val);
+        LOG_INF("transceive (ret=%d): %x", ret, val & 0xFFFF);
     }
 
     return 0;
