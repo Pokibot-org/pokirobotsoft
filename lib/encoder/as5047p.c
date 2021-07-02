@@ -9,13 +9,13 @@
 LOG_MODULE_REGISTER(encoders);
 
 int as5047p_init(as5047p* encoder, const struct device* spi) {
-    encoder->cs_ctrl = {
+    encoder->cs_ctrl = (struct spi_cs_control){
         .delay = 0,
         .gpio_dt_flags = GPIO_ACTIVE_LOW,
         .gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpioa)),
         .gpio_pin = 15
     };
-    encoder->cfg = {
+    encoder->cfg = (struct spi_config){
         .frequency = 500000U,
         .operation = SPI_OP_MODE_MASTER | SPI_MODE_CPHA | SPI_TRANSFER_MSB | SPI_WORD_SET(16),
         .slave = 0,
