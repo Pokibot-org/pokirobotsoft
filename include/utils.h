@@ -1,6 +1,9 @@
+
 #ifndef PATHFINDING_UTILS_H
 #define PATHFINDING_UTILS_H
+
 #include "common_types.h"
+
 
 #define SQUARE(a) ((a) * (a))
 #define ABS(a) ((a) < 0 ? -(a) : (a))
@@ -15,3 +18,4 @@ void utils_init_rand_seed(uint32_t tab[4]);
 uint32_t utils_max(uint32_t a, uint32_t b);
 
 #endif
+
