@@ -3,25 +3,34 @@
 #include <drivers/spi.h>
 #include <logging/log.h>
 #include <pinmux/stm32/pinmux_stm32.h>
+#include <devicetree.h>
+#include <drivers/gpio.h>
 
 #include "as5047p.h"
 
 LOG_MODULE_REGISTER(encoders);
 
-int as5047p_init(as5047p* encoder, const struct device* spi) {
-    encoder->cs_ctrl = (struct spi_cs_control){
-        .delay = 0,
-        .gpio_dt_flags = GPIO_ACTIVE_LOW,
-        .gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpioa)),
-        .gpio_pin = 4
-    };
-    encoder->cfg = (struct spi_config){
-        .frequency = 500000U,
-        .operation = SPI_OP_MODE_MASTER | SPI_MODE_CPHA | SPI_TRANSFER_MSB | SPI_WORD_SET(16),
-        .slave = 0,
-        .cs = &encoder->cs_ctrl
-    };
-    encoder->spi = spi;
+//int as5047p_init(as5047p* encoder, const struct device* spi) {
+//    encoder->cs_ctrl = (struct spi_cs_control){
+//        .delay = 0,
+//        .gpio_dt_flags = GPIO_ACTIVE_LOW,
+//        .gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpioa)),
+//        .gpio_pin = 4
+//    };
+//    encoder->cfg = (struct spi_config){
+//        .frequency = 500000U,
+//        .operation = SPI_OP_MODE_MASTER | SPI_MODE_CPHA | SPI_TRANSFER_MSB | SPI_WORD_SET(16),
+//        .slave = 0,
+//        .cs = &encoder->cs_ctrl
+//    };
+//    encoder->spi = spi;
+//    return 0;
+//}
+int as5047p_init(struct as5047p* dev, const struct device* spi, uint16_t slave,
+        const struct device* gpio_dev, gpio_pin_t pin) {
+    dev->spi = spi;
+    dev->cfg = SPI_AS5047P_CONFIG(slave, &dev->cs_ctrl);
+    dev->cs_ctrl = SPI_AS5047P_CS_CTRL(gpio_dev, pin);
     return 0;
 }
 
