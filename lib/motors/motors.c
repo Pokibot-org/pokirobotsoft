@@ -14,31 +14,19 @@ int motors_init(){
 	if (!pwms_motors)
 	{
 		LOG_ERR("failed to get PWM MOTORS");
-		while (1)
-		{
-			k_sleep(K_MSEC(1000));
-			LOG_INF("fail device_get PWM MOTORS");
-		}
+		return -1;
 	}
 
-	if (pwm_pin_set_usec(pwms_motors, MOTOR_L, PERIOD, 0, 0))
+	if (pwm_pin_set_usec(pwms_motors, MOTOR_L, PERIOD_MOTORS, 0, 0))
 	{
 		LOG_ERR("PWM pin 1 set fails\n");
-		while (1)
-		{
-			k_sleep(K_MSEC(1000));
-			LOG_INF("PWM pin 1 set fails");
-		}
+		return -1;
 	}
 
-	if (pwm_pin_set_usec(pwms_motors, MOTOR_R, PERIOD, 0, 0))
+	if (pwm_pin_set_usec(pwms_motors, MOTOR_R, PERIOD_MOTORS, 0, 0))
 	{
 		LOG_ERR("PWM pin 2 set fails\n");
-		while (1)
-		{
-			k_sleep(K_MSEC(1000));
-			LOG_INF("PWM pin 2 set fails");
-		}
+		return -1;
 	}
 
 	dir_l = device_get_binding(DIR_L_PIN_PORT);
@@ -68,14 +56,10 @@ int motor_set(uint16_t motor, int16_t val){
 		motor_set_dir(motor, WAY_FORWARD);
 
 
-	if (pwm_pin_set_usec(pwms_motors, motor, PERIOD, val, 0))
+	if (pwm_pin_set_usec(pwms_motors, motor, PERIOD_MOTORS, val, 0))
 	{
 		LOG_ERR("PWM motor %d set fails\n", motor);
-		while (1)
-		{
-			k_sleep(K_MSEC(1000));
-			LOG_ERR("PWM motor %d set fails\n", motor);
-		}
+		return -1;
 	}
 
 	return 0;
@@ -95,5 +79,5 @@ int motor_set_dir(uint16_t motor, bool way){
 		else
 			gpio_pin_set(dir_r, DIR_R_PIN_NUM, !DIR_R_PIN_FORWARD);
 	}
-
+	return 0;
 }
