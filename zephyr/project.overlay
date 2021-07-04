@@ -2,11 +2,7 @@
 / {
     aliases {
             camsense-uart-1 = &usart1;
-            enc-left = &spi1;
-    };
-
-    soc {
-
+            spi-as5047p = &spi1;
     };
 
 };
