@@ -10,11 +10,21 @@
 #define MOTOR_L 1
 #define MOTOR_R 2
 
+#define WAY_FORWARD 	true
+#define WAY_BACKWARD	false
+
+#define DIR_L_PIN_PORT	"GPIOC"
+#define DIR_L_PIN_NUM	0
+#define DIR_L_PIN_FORWARD true // Edit here if motor turn the wrong way
+#define DIR_R_PIN_PORT	"GPIOC"
+#define DIR_R_PIN_NUM	1
+#define DIR_R_PIN_FORWARD true // Edit here if motor turn the wrong way
+
 #define FREQUENCY 20000U
 #define PERIOD (USEC_PER_SEC / FREQUENCY)
 
 #define PWM_MAX 50
-#define PWM_MIN 0
+#define PWM_MIN -PWM_MAX
 
 int motors_init();
 int motor_set(uint16_t motor, int16_t val);
