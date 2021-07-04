@@ -11,3 +11,17 @@
 		#pwm-cells = <3>;
 	};
 };
+
+&timers3
+{
+    status = "okay";
+
+	pwms_servos: pwm_0 {
+		compatible = "st,stm32-pwm";
+		status = "okay";
+		st,prescaler = <0>;
+		label = "PWMS_SERVOS";
+		pinctrl-0 = <&tim3_ch1_pb4 &tim3_ch2_pb5> ;
+		#pwm-cells = <3>;
+	};
+};

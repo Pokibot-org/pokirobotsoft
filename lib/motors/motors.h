@@ -20,8 +20,8 @@
 #define DIR_R_PIN_NUM	1
 #define DIR_R_PIN_FORWARD true // Edit here if motor turn the wrong way
 
-#define FREQUENCY 20000U
-#define PERIOD (USEC_PER_SEC / FREQUENCY)
+#define FREQUENCY_MOTORS 20000U
+#define PERIOD_MOTORS (USEC_PER_SEC / FREQUENCY_MOTORS)
 
 #define PWM_MAX 50
 #define PWM_MIN -PWM_MAX
