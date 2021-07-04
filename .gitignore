@@ -1,3 +1,7 @@
 .pio
 .vscode
 .ccls
+cmake-build-*
+CMakeLists.txt
+CMakeListsPrivate.txt
+.idea/
