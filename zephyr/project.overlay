@@ -1,0 +1,13 @@
+&timers2
+{
+    status = "okay";
+
+	pwms_motors: pwm_0 {
+		compatible = "st,stm32-pwm";
+		status = "okay";
+		st,prescaler = <0>;
+		label = "PWMS_MOTORS";
+		pinctrl-0 = <&tim2_ch1_pa0 &tim2_ch2_pb3> ;
+		#pwm-cells = <3>;
+	};
+};
