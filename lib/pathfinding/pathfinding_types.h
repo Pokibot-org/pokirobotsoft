@@ -24,7 +24,6 @@ typedef struct boundaries
     int32_t max_y;
     int32_t min_x;
     int32_t min_y;
-    // TODO: add min boundaries
 }boundaries_t;
 
 #endif

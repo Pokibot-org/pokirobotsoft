@@ -28,8 +28,10 @@ void setUp(void)
     pathfinding_configuration_t config;
     config.field_boundaries.max_x = 3000; // 3m
     config.field_boundaries.max_y = 2000; // 2m
-    config.delta_distance = 400;          // jump of Xcm
-    config.radius_of_security = 150;      // Basicaly the robot radius in mm
+    config.field_boundaries.min_x = 0;
+    config.field_boundaries.min_y = 0;
+    config.delta_distance = 400;     // jump of Xcm
+    config.radius_of_security = 150; // Basicaly the robot radius in mm
     memset(&pathfinding_obj.nodes, 0, PATHFINDING_MAX_NUM_OF_NODES * sizeof(path_node_t));
     pathfinding_object_configure(&pathfinding_obj, &config);
 
@@ -247,8 +249,8 @@ void test_get_new_valid_coordinates()
     must_be_crd = (coordinates_t){500 - pathfinding_obj.config.delta_distance * M_SQRT2 / 2,
                                   500 - pathfinding_obj.config.delta_distance * M_SQRT2 / 2};
     TEST_ASSERT_EQUAL(0, get_new_valid_coordinates(&pathfinding_obj, &start, &end, &new));
-    TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.y, new.y, "Y");
-    TEST_ASSERT_EQUAL_MESSAGE(must_be_crd.x, new.x, "X");
+    TEST_ASSERT_TRUE_MESSAGE(new.y > must_be_crd.y * 0.99 && new.y < must_be_crd.y * 1.01, "Diag 2 y"); // not perfectly precise
+    TEST_ASSERT_TRUE_MESSAGE(new.x > must_be_crd.x * 0.99 && new.x < must_be_crd.x * 1.01, "Diag 2 x");
     // TO CLOSE
     start = (coordinates_t){10, 10};
     end = (coordinates_t){20, 20};
