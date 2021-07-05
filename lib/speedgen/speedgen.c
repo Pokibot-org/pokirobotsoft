@@ -25,12 +25,12 @@ vector_t find_path_point(speedgen_obj_t * obj)
 {
     vector_t vect;
 
-    vector_t robot_v = *utils_vector_from_points(&obj->current_section->begin_pos,&obj->robot->position);
+    vector_t robot_v = utils_vector_from_points(&obj->current_section->begin_pos,&obj->robot->position);
     uint32_t robot_dist = utils_vector_norm(&robot_v);
     float theta = utils_get_vector_angle(&obj->current_section->end_pos,&robot_v);
     //Projection of robot position on section
     uint32_t proj_dist = robot_dist*cos(theta);
-    vector_t unit_vector = *utils_get_unit_vector(&obj->current_section->end_pos);
+    vector_t unit_vector = utils_get_unit_vector(&obj->current_section->end_pos);
     //Getting Point Vector
     int32_t x = proj_dist*unit_vector.x;
     int32_t y = proj_dist*unit_vector.y;
@@ -68,10 +68,9 @@ coordinates_t compute_goal_point(speedgen_obj_t * obj, vector_t * path_point){
         goal_norm = section_goal_norm;
     };
 
-    return *utils_coordinates_from_vector(
-                utils_form_vector(utils_get_unit_vector(&obj->current_section->end_pos),
-                                    &goal_norm),
-                &obj->current_section->begin_pos);
+    vector_t truc = utils_get_unit_vector(&obj->current_section->end_pos);
+    vector_t bidule = utils_form_vector(&truc, &goal_norm);
+    return utils_coordinates_from_vector(&bidule, &obj->current_section->begin_pos);
 };
 
 //Function Returning the next section parameters
@@ -86,7 +85,7 @@ section_t get_next_section(speedgen_obj_t *obj)
     //get the end position
     coordinates_t section_end = obj->current_path[next_section.current_path_index+1];
     //convert it to a vector pointing to it
-    next_section.end_pos = *utils_vector_from_points(&next_section.begin_pos,&section_end);
+    next_section.end_pos = utils_vector_from_points(&next_section.begin_pos,&section_end);
     //Complete the last parameters
     next_section.begin_distance = obj->current_section->begin_distance + obj->current_section->section_distance;
     next_section.section_distance = utils_vector_norm(&next_section.end_pos);

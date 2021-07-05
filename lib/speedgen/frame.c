@@ -45,8 +45,8 @@ coordinates_t point_frame_transformation(frame_t *from, frame_t *to, coordinates
     coordinates_t new_point;
 
     //Translation of the frame
-    vector_t F_T = *utils_vector_from_points(&from->pos,&to->pos);
-    vector_t F_P = *utils_vector_from_points(&from->pos,point);
+    vector_t F_T = utils_vector_from_points(&from->pos,&to->pos);
+    vector_t F_P = utils_vector_from_points(&from->pos,point);
 
     point_t X_bis = F_P.x - F_T.x;
     point_t Y_bis = F_P.y - F_T.y;
