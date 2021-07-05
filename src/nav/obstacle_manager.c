@@ -3,6 +3,7 @@
 #include "lidar.h"
 #include "relative_obstacle_storing.h"
 #include "robot.h"
+#include "nav/obstacle_manager.h"
 
 LOG_MODULE_REGISTER(obstacle_manager);
 
