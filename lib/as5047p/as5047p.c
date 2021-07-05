@@ -4,7 +4,7 @@
 
 #include "as5047p.h"
 
-int as5047p_init(struct as5047p* dev, const struct device* spi, uint16_t slave,
+int as5047p_init(as5047p_t* dev, const struct device* spi, uint16_t slave,
         const struct device* gpio_dev, gpio_pin_t pin) {
     dev->spi = spi;
     dev->cfg = SPI_AS5047P_CONFIG(slave, &dev->cs_ctrl);
@@ -12,7 +12,7 @@ int as5047p_init(struct as5047p* dev, const struct device* spi, uint16_t slave,
     return 0;
 }
 
-int as5047p_read(const as5047p* dev, uint16_t* rval) {
+int as5047p_read(const as5047p_t* dev, uint16_t* rval) {
     uint16_t rx_data[1];
     const struct spi_buf rx_buf = {
         .buf = rx_data,
@@ -23,11 +23,11 @@ int as5047p_read(const as5047p* dev, uint16_t* rval) {
         .count = 1
     };
     int ret = spi_read(dev->spi, &dev->cfg, &rx);
-    *rval = rx_data[0];
+    *rval = rx_data[0] << 2;
     return ret;
 }
 
-int as5047p_transeive(const as5047p* dev, uint16_t tval, uint16_t* rval) {
+int as5047p_transeive(const as5047p_t* dev, uint16_t tval, uint16_t* rval) {
     uint16_t rx_data[1];
     const struct spi_buf rx_buf = {
         .buf = rx_data,
@@ -47,7 +47,7 @@ int as5047p_transeive(const as5047p* dev, uint16_t tval, uint16_t* rval) {
         .count = 1
     };
     int ret = spi_transceive(dev->spi, &dev->cfg, &tx, &rx);
-    *rval = rx_data[0];
+    *rval = rx_data[0] << 2;
     return ret;
 }
 

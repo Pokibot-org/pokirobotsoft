@@ -12,10 +12,12 @@ project(pokirobotsoft)
 include_directories(
     ../include
     ../include/nav
+    ../include/odometry
 )
 
 FILE(GLOB app_sources
     ../src/*.c
     ../src/nav/*.c
+    ../src/odometry/*.c
 )
 target_sources(app PRIVATE ${app_sources})
