@@ -37,7 +37,7 @@ int pathfinding_object_configure(pathfinding_object_t *obj, pathfinding_configur
     obj->config = *config;
     if ((obj->config.field_boundaries.max_x == obj->config.field_boundaries.max_y) && (obj->config.field_boundaries.max_x == 0))
     {
-        obj->config.field_boundaries = (boundaries_t){INT32_MAX, INT32_MAX};
+        obj->config.field_boundaries = (boundaries_t){INT32_MAX, INT32_MAX, INT32_MIN, INT32_MIN};
     }
     if (!obj->config.delta_distance)
     {
@@ -269,7 +269,10 @@ int pathfinding_find_path(pathfinding_object_t *obj, obstacle_holder_t *ob_hold,
     obj->nodes[0].is_used = 1;
     obj->nodes[0].distance_to_start = 0;
 
-    if (start->x < 0 || start->y < 0 || start->x >= obj->config.field_boundaries.max_x || start->y >= obj->config.field_boundaries.max_y)
+    if (start->x < obj->config.field_boundaries.min_x || 
+        start->y < obj->config.field_boundaries.min_y || 
+        start->x >= obj->config.field_boundaries.max_x || 
+        start->y >= obj->config.field_boundaries.max_y)
     {
         return PATHFINDING_ERROR_WRONG_INPUTS;
     }
@@ -326,7 +329,10 @@ int pathfinding_rebuild(pathfinding_object_t *obj, obstacle_holder_t *ob_hold, c
     obj->nodes[0].is_used = 1;
     obj->nodes[0].distance_to_start = 0;
 
-    if (start->x < 0 || start->y < 0 || start->x >= obj->config.field_boundaries.max_x || start->y >= obj->config.field_boundaries.max_y)
+    if (start->x < obj->config.field_boundaries.min_x || 
+        start->y < obj->config.field_boundaries.min_y || 
+        start->x >= obj->config.field_boundaries.max_x || 
+        start->y >= obj->config.field_boundaries.max_y)
     {
         return PATHFINDING_ERROR_WRONG_INPUTS;
     }
@@ -384,8 +390,8 @@ int pathfinding_optimize_path(pathfinding_object_t *obj, obstacle_holder_t *ob_h
         }
         // FIXME: in middle of the node array thereis unused nodes, you must optimise all existing nodes and not stop to the first unused nodes when nb_of_nodes_to_add = 0
         coordinates_t rand_coordinates;
-        rand_coordinates.x = utils_get_rand32() % obj->config.field_boundaries.max_x;
-        rand_coordinates.y = utils_get_rand32() % obj->config.field_boundaries.max_y;
+        rand_coordinates.x = obj->config.field_boundaries.min_x  + utils_get_rand32() % (obj->config.field_boundaries.max_x - obj->config.field_boundaries.min_x);
+        rand_coordinates.y = obj->config.field_boundaries.min_y + utils_get_rand32() % (obj->config.field_boundaries.max_y - obj->config.field_boundaries.min_y);
         path_node_t *closest_node_p = get_closest_node(obj, &rand_coordinates);
         // printf("rand crd x:%d y:%d\n Closest node x:%d y:%d\n", rand_coordinates.x, rand_coordinates.y,
         // closest_node_p->coordinate.x, closest_node_p->coordinate.y);

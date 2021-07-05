@@ -204,7 +204,7 @@ void kdtree_print_superblock(kd_superblock_t *block, kdtree_leaf_data_print leaf
     if (block->data != NULL)
     {
         char node_name[30];
-        sprintf(node_name, "\"leaf_%llu\"", block->data);
+        KDTREE_PRINT(node_name, "\"leaf_%llu\"", block->data);
         KDTREE_PRINT("%s\n", node_name);
         if (leaf_clbk != NULL)
         {
