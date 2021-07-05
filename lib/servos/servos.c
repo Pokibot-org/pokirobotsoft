@@ -30,7 +30,7 @@ int servos_init(){
 	return 0;
 }
 
-int servo_set(uint16_t servo, int16_t val){
+int servo_set(uint16_t servo, uint16_t val){
 
 	if ((servo != SERVO_1) && (servo != SERVO_2))
 		return -1;

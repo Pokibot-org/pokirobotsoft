@@ -16,10 +16,10 @@
 {
     status = "okay";
 
-	pwms_servos: pwm_0 {
+	pwms_servos: pwm_3 {
 		compatible = "st,stm32-pwm";
 		status = "okay";
-		st,prescaler = <0>;
+		st,prescaler = <10000>;
 		label = "PWMS_SERVOS";
 		pinctrl-0 = <&tim3_ch1_pb4 &tim3_ch2_pb5> ;
 		#pwm-cells = <3>;
