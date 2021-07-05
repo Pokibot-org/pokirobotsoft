@@ -229,12 +229,6 @@ void test_with_lidar_obstacle_path_must_be_found(void)
     
 }
 
-        time_spent = (float)(end_clk - begin_clk) / CLOCKS_PER_SEC * 1000;
-        printf("Optimized with total of %d nodes! Time : %f ms | Len : %d\n Now optimizing: \n", pathfinding_get_number_of_used_nodes(&pathfinding_obj), time_spent, end_node->distance_to_start);
-        // pathfinding_debug_write_found_path_list(&pathfinding_obj, end_node, "/tmp/path");
-    }
-}
-
 void test_with_lidar_obstacle_path_must_be_found(void)
 {
     obstacle_holder_t ob_hold = {0};
