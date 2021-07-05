@@ -2,3 +2,7 @@
 *.vscode
 *.ccls
 psr.txt
+cmake-build-*
+CMakeLists.txt
+CMakeListsPrivate.txt
+.idea/

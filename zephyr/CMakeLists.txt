@@ -1,3 +1,6 @@
+# Path to out-of-tree boards definitions
+set (BOARD_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
+
 cmake_minimum_required(VERSION 3.13.1)
 list(APPEND BOARD_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 

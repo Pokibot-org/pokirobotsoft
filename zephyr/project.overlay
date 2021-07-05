@@ -1,3 +1,4 @@
+
 / {
     aliases {
             camsense-uart-1 = &usart2;
@@ -7,4 +8,32 @@
 &usart2 {
         status = "okay";
         current-speed = < 115200 >;
+};
+
+&timers2
+{
+    status = "okay";
+
+	pwms_motors: pwm_0 {
+		compatible = "st,stm32-pwm";
+		status = "okay";
+		st,prescaler = <0>;
+		label = "PWMS_MOTORS";
+		pinctrl-0 = <&tim2_ch1_pa0 &tim2_ch2_pb3> ;
+		#pwm-cells = <3>;
+	};
+};
+
+&timers3
+{
+    status = "okay";
+
+	pwms_servos: pwm_3 {
+		compatible = "st,stm32-pwm";
+		status = "okay";
+		st,prescaler = <10000>;
+		label = "PWMS_SERVOS";
+		pinctrl-0 = <&tim3_ch1_pb4 &tim3_ch2_pb5> ;
+		#pwm-cells = <3>;
+	};
 };
