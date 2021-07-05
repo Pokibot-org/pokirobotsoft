@@ -8,7 +8,6 @@
 #include <random/rand32.h>
 #endif
 
-#define MAX(a, b) ((a)>(b) ? (a) : (b))
 
 // TODO: Octile distance h(x) = max( (x1 – x2), (y1 – y2) + (sqrt(2) -1) * min( (x1 – x2), (y1 – y2))
 

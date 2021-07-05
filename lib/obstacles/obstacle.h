@@ -2,6 +2,7 @@
 #define OBSTACLE_H
 #include <stdint.h>
 #include "utils.h"
+#include "common_types.h"
 
 // TODO: How much point we need for a 360 lidar scan?
 #define OBSTACLE_HOLDER_MAX_NUMBER_OF_OBSTACLE 420

@@ -1,5 +1,6 @@
 #include "obstacle.h"
 #include "math.h"
+#include "common_types.h"
 #ifndef UNIT_TEST
 #include <zephyr.h>
 #define M_PI 3.14159265358979323846f

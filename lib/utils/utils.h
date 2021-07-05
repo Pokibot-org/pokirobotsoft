@@ -4,6 +4,8 @@
 
 #define SQUARE(a) ((a) * (a))
 #define ABS(a) ((a) < 0 ? -(a) : (a))
+#define MAX(a, b) ((a)>(b) ? (a) : (b))
+
 
 float utils_distance(const coordinates_t *a, const coordinates_t *b);
 float utils_distance_squared(const coordinates_t *a, const coordinates_t *b);

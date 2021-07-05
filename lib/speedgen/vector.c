@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdlib.h>
-
 #include "vector.h"
+#include "utils.h"
 
 #ifndef UNIT_TEST
 #include <zephyr.h>
