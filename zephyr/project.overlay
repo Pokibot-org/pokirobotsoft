@@ -60,4 +60,4 @@
 		pinctrl-0 = <&tim3_ch1_pb4 &tim3_ch2_pb5> ;
 		#pwm-cells = <3>;
 	};
-
+};
