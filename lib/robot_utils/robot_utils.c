@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "robot_utils.h"
-
+#include "xoshiro128plusplus.h"
 #ifdef CONFIG_KERNEL_BIN_NAME
 #include <zephyr.h>
 #include <random/rand32.h>
@@ -36,11 +36,22 @@ inline float utils_distance_aproximated(const coordinates_t *a, const coordinate
     return (dx + dy + MAX(dx, dy)) >> 1;
 }
 
+
 inline uint32_t utils_get_rand32()
 {
-#ifdef CONFIG_KERNEL_BIN_NAME
-    return sys_rand32_get();
-#else
-    return rand();
-#endif
+    return xoshiro128plusplus_next();
+}
+
+void utils_init_rand_seed(uint32_t tab[4])
+{
+    int err = xoshiro128plusplus_init_seed(tab);
+    if (err) {
+        uint32_t s[4] = {
+            0x4ae4098c,
+            0xde47cafb,
+            0x97cd3540,
+            0xde4886e6
+        };
+        xoshiro128plusplus_init_seed(s);
+    }
 }
