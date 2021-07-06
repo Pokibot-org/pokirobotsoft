@@ -1,7 +1,7 @@
 #ifndef KDTREE_H
 #define KDTREE_H
 #include "stdint.h"
-#include "utils.h"
+#include "robot_utils.h"
 #include "pathfinding_types.h"
 
 #define KDTREE_POINT_HOLDER_LEN 20
