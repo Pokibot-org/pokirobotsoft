@@ -1,5 +1,6 @@
 #ifndef LIDAR_MESSAGE_H
 #define LIDAR_MESSAGE_H
+
 #include "stdint.h"
 
 #define LIDAR_MESSAGE_NUMBER_OF_POINT 8
