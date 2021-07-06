@@ -2,7 +2,7 @@
 #define PATHFINDING_TYPES_H
 
 #include <stdint.h>
-#include "utils.h"
+#include "robot_utils.h"
 
 typedef struct path_node
 {

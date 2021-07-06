@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "utils.h"
+#include "robot_utils.h"
 
 #ifdef CONFIG_KERNEL_BIN_NAME
 #include <zephyr.h>
