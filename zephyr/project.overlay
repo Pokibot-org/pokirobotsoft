@@ -1,13 +1,37 @@
 
 / {
     aliases {
-            camsense-uart-1 = &usart2;
+            camsense-uart-1 = &usart1;
+            spi-as5047p = &spi1;
     };
+
+};
+
+&usart1 {
+    status = "okay";
+    current-speed = < 115200 >;
 };
 
 &usart2 {
-        status = "okay";
-        current-speed = < 115200 >;
+    status = "okay";
+    current-speed = < 115200 >;
+};
+
+&spi1 {
+    status = "okay";
+    pinctrl-0 = <&spi1_sck_pa5 &spi1_miso_pa6 &spi1_mosi_pa7>;
+    cs-gpios = <&gpioa 4 GPIO_ACTIVE_LOW>, <&gpioa 15 GPIO_ACTIVE_LOW>;
+
+    as5047p_l: spi-dev-as4047p-l@0 {
+        label = "AS5047P_L";
+        reg = <0>;
+        spi-max-frequency = <10000000>;
+    };
+    as5047p_r: spi-dev-as504p-r@1 {
+        label = "AS5047P_R";
+        reg = <1>;
+        spi-max-frequency = <10000000>;
+    };
 };
 
 &timers2

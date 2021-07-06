@@ -2,27 +2,39 @@ source "Kconfig.zephyr"
 
 menu "POKIBOT extra settings"
 
+
 config ONE_THREAD_TESTING
     bool "If activated, turn off all threads"
     default n
+
+
+config ODOMETRY_THREAD_ENABLED
+    bool "Activate the obstacle manager thread"
+    default y
+    default n if ONE_THREAD_TESTING
+config ODOMETRY_THREAD_STACK
+    int "Stack size"
+    default 1024
+config ODOMETRY_THREAD_PRIORITY
+    int "Thread priority"
+    default 3
+
 
 config OBSTACLE_MANAGER_THREAD_ENABLED
     bool "Activate the obstacle manager thread"
     default y
     default n if ONE_THREAD_TESTING
-
 config OBSTACLE_MANAGER_THREAD_STACK
     int "Stack size"
     default 1024
-
 config OBSTACLE_MANAGER_THREAD_PRIORITY
     int "Thread priority"
     default 13
 
+
 config PATH_MANAGER_THREAD_STACK
     int "Stack size"
     default 4096
-
 config PATH_MANAGER_THREAD_PRIORITY
     int "Thread priority"
     default 14
