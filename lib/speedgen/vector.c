@@ -65,8 +65,8 @@ vector_t utils_form_vector(const vector_t *a, const uint32_t *norm)
 {
     vector_t vector;
 
-    vector.x = (int32_t)norm * a->x;
-    vector.y = (int32_t)norm * a->y;
+    vector.x = (int32_t)(*norm) * a->x;
+    vector.y = (int32_t)(*norm) * a->y;
 
     return vector;
 };
