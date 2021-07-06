@@ -2,9 +2,9 @@
 
 LOG_MODULE_REGISTER(motors);
 
-const struct device* pwms_motors;
-const struct device *dir_l;
-const struct device *dir_r;
+static const struct device* pwms_motors;
+static const struct device *dir_l;
+static const struct device *dir_r;
 
 int motor_set_dir(uint16_t motor, bool way);
 
