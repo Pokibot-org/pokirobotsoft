@@ -16,7 +16,7 @@
 #define ENCODER_LEFT_CS_PIN     4
 #define ENCODER_RIGHT_CS_PIN    15
 
-#define SPEED_FIFO_DEPTH    3
+#define SPEED_FIFO_DEPTH    4
 
 
 // TODO uint32_t ?

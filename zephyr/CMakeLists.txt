@@ -15,12 +15,14 @@ project(pokirobotsoft)
 
 include_directories(
     ../include
+    ../include/control
     ../include/nav
     ../include/odometry
 )
 
 FILE(GLOB app_sources
     ../src/*.c
+    ../src/comtrol/*.c
     ../src/nav/*.c
     ../src/odometry/*.c
 )
