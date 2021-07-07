@@ -22,15 +22,15 @@ void pathfinding_test_main()
     path_manager_config_t cfg = {
         .found_path_clbk = tmp_clbk,
         .found_updated_path_clbk = NULL,
-        .user_config = NULL
+        .user_config = NULL,
     };
     coordinates_t path_start = {
-        .x = 10,
-        .y = 10,
+        .x = 300,
+        .y = 300,
     };
     coordinates_t path_end = {
-        .x = 2990,
-        .y = 10,
+        .x = 3000-300,
+        .y = 2000-300,
     };
 
     path_manager_find_path(path_start, path_end, cfg);

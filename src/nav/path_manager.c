@@ -141,6 +141,8 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
     obstacle_manager_get_obstacle_snapshot(&pm_obj.obstacle_hold);
     #endif
     pathfinding_configuration_t pathfinding_config;
+    pathfinding_config.field_boundaries.min_x = 0; 
+    pathfinding_config.field_boundaries.min_y = 0;
     pathfinding_config.field_boundaries.max_x = 3000; // 3m
     pathfinding_config.field_boundaries.max_y = 2000; // 2m
     pathfinding_config.delta_distance = 200;          // jump of Xmm
