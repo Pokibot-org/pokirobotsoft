@@ -94,7 +94,7 @@ static void path_manager_task(void *p0, void *p1, void *p2)
 }
 
 // PUBLIC FUN
-#define TEST
+// #define TEST
 uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_manager_config_t config)
 {
 
