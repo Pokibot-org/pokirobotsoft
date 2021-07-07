@@ -33,7 +33,7 @@ int servos_init()
 	return 0;
 }
 
-int servos_set(servo_names_t name, uint8_t val_percent)
+int servos_set(servo_names_t name, uint16_t val_degree)
 {
 	if ((uint8_t)name > NUMBER_OF_SERVOS){
 		LOG_ERR("Undefined servo in servo_list");
@@ -46,10 +46,11 @@ int servos_set(servo_names_t name, uint8_t val_percent)
 		return -1;
 	}
 
-	uint16_t out_val = MINPULSEWIDTH + ((MAXPULSEWIDTH - MINPULSEWIDTH) *  MIN(val_percent, 100))/100;
+	uint16_t out_val = MINPULSEWIDTH + ((MAXPULSEWIDTH - MINPULSEWIDTH) *  MIN(val_degree, 180))/180;
+	LOG_DBG("PWM servo %s %d at speed %d %d", servo->pwm_alias, servo->channel, val_degree, out_val);
 	if (pwm_pin_set_usec(servo->pwm_device, servo->channel, PERIOD_SERVOS, out_val, 0))
 	{
-		LOG_ERR("PWM servo %s %d set fails\n", servo->pwm_alias, servo->channel);
+		LOG_ERR("PWM servo %s %d set fails", servo->pwm_alias, servo->channel);
 		return -1;
 	}
 
@@ -59,5 +60,17 @@ int servos_set(servo_names_t name, uint8_t val_percent)
 void test_servo()
 {
 	servos_init();
-	servos_set(servo_front_l, 50);
+	while (1)
+	{
+		for (size_t i = 0; i < 180; i+= 10)
+		{
+			servos_set(servo_front_l, i);
+			k_sleep(K_MSEC(100));
+		}
+		for (size_t i = 0; i < 180; i+=10)
+		{
+			servos_set(servo_front_l, 180-i);
+			k_sleep(K_MSEC(100));
+		}
+	}
 }

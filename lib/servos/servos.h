@@ -31,7 +31,7 @@ typedef struct servo {
 #define MAXPULSEWIDTH 2400  /* Servo 180 degrees */
 
 int servos_init();
-int servos_set(servo_names_t name, uint8_t val_percent);
+int servos_set(servo_names_t name, uint16_t val_degree);
 void test_servo();
 
 #endif // SERVOS_H
