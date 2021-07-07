@@ -20,7 +20,16 @@ typedef struct obstacle_manager_message
     };
 }obstacle_manager_message_t;
 
+
+typedef struct obstacle_manager
+{
+    obstacle_holder_t obs_holder;
+    uint8_t obstacle_detected;
+}obstacle_manager_t;
+
+
 uint8_t obstacle_manager_get_obstacle_snapshot(obstacle_holder_t *obj);
 void obstacle_manager_send_message(const obstacle_manager_message_t *msg);
+uint8_t obstacle_manager_is_there_an_obstacle();
 
 #endif

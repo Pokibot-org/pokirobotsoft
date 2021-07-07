@@ -3,14 +3,14 @@
 #else
 #include <math.h>
 #include <zephyr.h>
-#define M_PI		3.14159265358979323846f
-#define M_PI_2		1.57079632679489661923f
-#define M_PI_4		0.78539816339744830962f
+#define M_PI 3.14159265358979323846f
+#define M_PI_2 1.57079632679489661923f
+#define M_PI_4 0.78539816339744830962f
 #endif
 
 #include "relative_obstacle_storing.h"
 
-uint8_t relative_obstacle_storing_lidar_points_relative_to_robot(obstacle_holder_t *holder, lidar_message_t *message, robot_t * robot, float center_offset_degre)
+uint8_t relative_obstacle_storing_lidar_points_relative_to_robot(obstacle_holder_t *holder, lidar_message_t *message, robot_t *robot, float center_offset_degre)
 {
     float step = 0.0f;
     obstacle_t new_obstacle = {
@@ -30,7 +30,7 @@ uint8_t relative_obstacle_storing_lidar_points_relative_to_robot(obstacle_holder
     for (int i = 0; i < LIDAR_MESSAGE_NUMBER_OF_POINT; i++) // for each of the 8 samples
     {
         float point_angle = (message->start_angle + step * i) + (center_offset_degre + 180.0f);
-        float point_angle_absolute = ((point_angle*(M_PI/180.0f)) + robot->angle_rad);
+        float point_angle_absolute = ((point_angle * (M_PI / 180.0f)) + robot->angle_rad);
         if (point_angle_absolute < -M_PI_2)
         {
             point_angle_absolute += M_PI;
@@ -39,7 +39,6 @@ uint8_t relative_obstacle_storing_lidar_points_relative_to_robot(obstacle_holder
         {
             point_angle_absolute -= M_PI;
         }
-        
 
         if (message->points[i].quality != 0) // Filter some noisy data
         {
@@ -56,3 +55,4 @@ uint8_t relative_obstacle_storing_lidar_points_relative_to_robot(obstacle_holder
     }
     return 0;
 }
+

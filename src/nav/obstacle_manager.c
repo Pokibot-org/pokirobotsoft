@@ -4,13 +4,20 @@
 #include "relative_obstacle_storing.h"
 #include "robot.h"
 #include "nav/obstacle_manager.h"
+#include "math.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846f
+#define M_PI_2 1.57079632679489661923f
+#define M_PI_4 0.78539816339744830962f
+#endif
 
 LOG_MODULE_REGISTER(obstacle_manager);
 
 K_MSGQ_DEFINE(obstacle_manager_msgq, sizeof(obstacle_manager_message_t), 10, 1);
 
 // PRIVATE VAR
-static obstacle_holder_t ob_holder = {0};
+static obstacle_manager_t obs_man_obj = {0};
 K_SEM_DEFINE(obsacle_holder_lock, 1, 1);
 // PRIVATE DEF
 #define CAMSENSE_CENTER_OFFSET_DEG 16.0f
@@ -29,9 +36,14 @@ void obstacle_manager_send_message(const obstacle_manager_message_t *msg)
 uint8_t obstacle_manager_get_obstacle_snapshot(obstacle_holder_t *obj)
 {
     k_sem_take(&obsacle_holder_lock, K_FOREVER);
-    memcpy(obj, &ob_holder, sizeof(ob_holder));
+    memcpy(obj, &obs_man_obj.obs_holder, sizeof(obs_man_obj.obs_holder));
     k_sem_give(&obsacle_holder_lock);
     return 0;
+}
+
+uint8_t obstacle_manager_is_there_an_obstacle()
+{
+    return obs_man_obj.obstacle_detected;
 }
 
 void on_rotation_lidar_callback()
@@ -40,6 +52,89 @@ void on_rotation_lidar_callback()
         .type = obstacle_manager_message_type_event,
         .event = obstacle_manager_message_event_lidar_did_rotation};
     obstacle_manager_send_message(&msg);
+}
+
+uint8_t process_point(obstacle_manager_t *obj, distance_t point_distance, float point_angle)
+{
+    uint8_t return_code = 0;
+    robot_t * robot_obj = robot_get_obj();
+    obstacle_t new_obstacle = {
+        .type = obstacle_type_circle,
+        .data.circle.radius = 0 // FIXME: remove the magic number
+    };
+
+    if (point_distance < robot_obj->radius_mm) // in robot do nothing
+    {
+        return 0;
+    }
+
+    // if it is a near obstacle change return code
+    if ((point_angle < robot_obj->radius_mm + 100) && (ABS(point_angle)< 70))
+    {
+        return_code = 1;
+    }
+
+    float point_angle_absolute = ((point_angle * (M_PI / 180.0f)) + robot_obj->angle_rad);
+    if (point_angle_absolute < -M_PI_2)
+    {
+        point_angle_absolute += M_PI;
+    }
+    else if (point_angle_absolute > M_PI_2)
+    {
+        point_angle_absolute -= M_PI;
+    }
+
+    new_obstacle.data.circle.coordinates.x = robot_obj->position.x +
+                                             sinf(point_angle_absolute) * point_distance;
+    new_obstacle.data.circle.coordinates.y = robot_obj->position.y +
+                                             cosf(point_angle_absolute) * point_distance;
+
+    if (new_obstacle.data.circle.coordinates.x < 0 ||
+        new_obstacle.data.circle.coordinates.x > 3000 ||
+        new_obstacle.data.circle.coordinates.y < 0 ||
+        new_obstacle.data.circle.coordinates.y > 2000)
+    {
+        return 2;
+    }
+    // Uncomment the following lines if you want to use tools/lidar_point_visualiser.py
+    // printk("<%hd:%hd>\n", new_obstacle.data.circle.coordinates.x, new_obstacle.data.circle.coordinates.y);
+    obstacle_holder_push_circular_buffer_mode(&obj->obs_holder, &new_obstacle);
+
+    return return_code;
+}
+
+uint8_t process_lidar_message(obstacle_manager_t *obj, const lidar_message_t *message)
+{
+    float step = 0.0f;
+    uint8_t in_obstacle_detected = 0;
+    if (message->end_angle > message->start_angle)
+    {
+        step = (message->end_angle - message->start_angle) / 8.0f;
+    }
+    else
+    {
+        step = (message->end_angle - (message->start_angle - 360.0f)) / 8.0f;
+    }
+
+    for (int i = 0; i < LIDAR_MESSAGE_NUMBER_OF_POINT; i++) // for each of the 8 samples
+    {
+        if (message->points[i].quality != 0) // Filter some noisy data
+        {
+            float point_angle = (message->start_angle + step * i) + (CAMSENSE_CENTER_OFFSET_DEG + 180.0f);
+
+            // if (message->points[i].distance <= robot->radius_mm){
+            //     continue;
+            // }
+            uint8_t err_code = process_point(&obs_man_obj, message->points[i].distance, point_angle);
+            if (err_code == 1) // 0 ok, 1 in front of robot, 2 outside table
+            {
+                in_obstacle_detected = 1;
+            }
+        }
+    }
+
+    obj->obstacle_detected = in_obstacle_detected;
+    return 0;
 }
 
 static void obstacle_manager_task()
@@ -52,7 +147,7 @@ static void obstacle_manager_task()
     {
         k_msgq_get(&obstacle_manager_msgq, &msg, K_FOREVER);
         LOG_DBG("Recived message");
-        if (msg.type ==  obstacle_manager_message_type_event)
+        if (msg.type == obstacle_manager_message_type_event)
         {
             LOG_DBG("Recived event");
             if (msg.event == obstacle_manager_message_event_lidar_did_rotation)
@@ -62,10 +157,10 @@ static void obstacle_manager_task()
                 k_sem_take(&obsacle_holder_lock, K_FOREVER);
                 while (!camsense_x1_read_sensor_non_blocking(&lidar_message))
                 {
-                    err = relative_obstacle_storing_lidar_points_relative_to_robot(&ob_holder, &lidar_message, robot_get_obj(), CAMSENSE_CENTER_OFFSET_DEG);
+                    err = process_lidar_message(&obs_man_obj, &lidar_message);
                     if (err)
                     {
-                        LOG_ERR("obstacle_manager_task error when calling obstacle_manager_store_lidar_points %d", err);
+                        LOG_ERR("obstacle_manager_task error when calling process_lidar_message %d", err);
                     }
                 }
                 k_sem_give(&obsacle_holder_lock);
