@@ -77,7 +77,7 @@ uint8_t process_point(obstacle_manager_t *obj, distance_t point_distance, float 
     if ((point_distance < robot_obj->radius_mm + LIDAR_DETECTION_DISTANCE_MM) 
         && (ABS(point_angle) < LIDAR_DETECTION_ANGLE/2))
     {
-        LOG_DBG("Askip ya un obstacle| angle: %.3hi, distance: %.5hu", (int16_t)(point_angle), point_distance);
+        LOG_DBG("Obstacle detected | angle: %.3hi, distance: %.5hu", (int16_t)(point_angle), point_distance);
         return_code = 1;
     }
 
