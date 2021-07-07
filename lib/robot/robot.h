@@ -1,5 +1,6 @@
 #ifndef ROBOT_H
 #define ROBOT_H
+
 #include "robot_utils.h"
 
 typedef struct robot

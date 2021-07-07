@@ -16,7 +16,8 @@ int main(void) {
     pathfinding_test_main();
     //test_encoders();
     //test_speed();
-    // test_pos();
+    //test_pos();
+    //test_motors_speed();
 
     return 0;
 

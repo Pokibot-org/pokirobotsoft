@@ -9,7 +9,7 @@ config ONE_THREAD_TESTING
 
 
 config ODOMETRY_THREAD_ENABLED
-    bool "Activate the obstacle manager thread"
+    bool "Activate the speed and position odometry thread"
     default y
     default n if ONE_THREAD_TESTING
 config ODOMETRY_THREAD_STACK
@@ -18,6 +18,18 @@ config ODOMETRY_THREAD_STACK
 config ODOMETRY_THREAD_PRIORITY
     int "Thread priority"
     default 3
+
+
+config SPEED_CONTROL_THREAD_ENABLED
+    bool "Activate the speed closed control loop thread"
+    default y
+    default n if ONE_THREAD_TESTING
+config SPEED_CONTROL_THREAD_STACK
+    int "Stack size"
+    default 2048
+config SPEED_CONTROL_THREAD_PRIORITY
+    int "Thread priority"
+    default 4
 
 
 config OBSTACLE_MANAGER_THREAD_ENABLED
