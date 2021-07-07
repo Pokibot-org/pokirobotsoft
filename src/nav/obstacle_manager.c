@@ -77,7 +77,7 @@ uint8_t process_point(obstacle_manager_t *obj, distance_t point_distance, float 
     if ((point_distance < robot_obj->radius_mm + LIDAR_DETECTION_DISTANCE_MM) 
         && (ABS(point_angle) < LIDAR_DETECTION_ANGLE/2))
     {
-        LOG_INF("Askip ya un obstacle| angle: %.3hi, distance: %.5hu", (int16_t)(point_angle), point_distance);
+        LOG_DBG("Askip ya un obstacle| angle: %.3hi, distance: %.5hu", (int16_t)(point_angle), point_distance);
         return_code = 1;
     }
 
@@ -132,12 +132,6 @@ uint8_t process_lidar_message(obstacle_manager_t *obj, const lidar_message_t *me
             #else
             float point_angle = (message->start_angle + step * i) + (CAMSENSE_CENTER_OFFSET_DEG + 180.0f);
             #endif
-            // if (point_angle < 2){
-            //     LOG_INF("POINT en gestion: angle: %d, first message distance and quality: %d|%d", point_angle, message->points[i].distance, message->points[i].quality);
-            // }
-            // if (message->points[i].distance <= robot->radius_mm){
-            //     continue;
-            // }
 
             uint8_t err_code = process_point(&obs_man_obj, message->points[i].distance, point_angle);
             if (err_code == 1) // 0 ok, 1 in front of robot, 2 outside table
@@ -148,6 +142,10 @@ uint8_t process_lidar_message(obstacle_manager_t *obj, const lidar_message_t *me
     }
 
     obj->obstacle_detected = in_obstacle_detected;
+    if (obj->obstacle_detected)
+    {
+        LOG_INF("Obstacle detected in front of the robot");
+    }
     return 0;
 }
 
