@@ -57,7 +57,7 @@
 		status = "okay";
 		st,prescaler = <10000>;
 		label = "PWMS_SERVOS";
-		pinctrl-0 = <&tim3_ch1_pb4 &tim3_ch2_pb5> ;
+		pinctrl-0 = <&tim3_ch1_pb4 &tim3_ch2_pb5 &tim3_ch3_pb0 &tim3_ch4_pb1> ; // ou tim3_ch3_pc8 et tim3_ch4_pc9
 		#pwm-cells = <3>;
 	};
 };

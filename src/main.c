@@ -5,6 +5,7 @@
 
 #include "pathfinding_test.h"
 #include "odometry.h"
+#include "servos.h"
 
 LOG_MODULE_REGISTER(main);
 
@@ -13,7 +14,9 @@ int main(void) {
 
     LOG_INF("boot\n");
 
-    pathfinding_test_main();
+    test_servo();
+
+    // pathfinding_test_main();
     //test_encoders();
     //test_speed();
     //test_pos();

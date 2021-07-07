@@ -2,49 +2,62 @@
 
 LOG_MODULE_REGISTER(servos);
 
-const struct device* pwms_servos;
+static servo_t servo_list[] = { // MUST BE IN THE SAME ORDER AS servo_names_t
+    {1, DT_ALIAS_PWMS_SERVOS, NULL},
+    {2, DT_ALIAS_PWMS_SERVOS, NULL},
+    {3, DT_ALIAS_PWMS_SERVOS, NULL},
+    {4, DT_ALIAS_PWMS_SERVOS, NULL}
+};
 
-int servos_init(){
+#define NUMBER_OF_SERVOS ARRAY_SIZE(servo_list)
 
-	pwms_servos = device_get_binding(DT_ALIAS_PWMS_SERVOS);
-	if (!pwms_servos)
+int servos_init()
+{
+	for (size_t i = 0; i < NUMBER_OF_SERVOS; i++)
 	{
-		LOG_ERR("failed to get PWM SERVOS");
-		return -1;
-	}
+		servo_list[i].pwm_device = device_get_binding(servo_list[i].pwm_alias);
+		if (!servo_list[i].pwm_device)
+		{
+			LOG_ERR("failed to get PWM SERVOS %u", i);
+			return -1;
+		}
 
-	if (pwm_pin_set_usec(pwms_servos, SERVO_1, PERIOD_SERVOS, 0, 0))
-	{
-		LOG_ERR("PWM pin 1 set fails\n");
-		return -1;
+		if (pwm_pin_set_usec(servo_list[i].pwm_device, servo_list[i].channel, PERIOD_SERVOS, 0, 0))
+		{
+			LOG_ERR("PWM %u set fails\n", i);
+			return -2;
+		}
 	}
-
-	if (pwm_pin_set_usec(pwms_servos, SERVO_2, PERIOD_SERVOS, 0, 0))
-	{
-		LOG_ERR("PWM pin 2 set fails\n");
-		return -1;
-	}
-
 
 	LOG_INF("PWM SERVO initialized.");
 	return 0;
 }
 
-int servo_set(uint16_t servo, uint16_t val){
-
-	if ((servo != SERVO_1) && (servo != SERVO_2))
+int servos_set(servo_names_t name, uint8_t val_percent)
+{
+	if ((uint8_t)name > NUMBER_OF_SERVOS){
+		LOG_ERR("Undefined servo in servo_list");
 		return -1;
-
-	if (val > MAXPULSEWIDTH)
-		val = MAXPULSEWIDTH;
-	else if (val < MINPULSEWIDTH)
-		val = MINPULSEWIDTH;
-
-	if (pwm_pin_set_usec(pwms_servos, servo, PERIOD_SERVOS, val, 0))
+	}
+	servo_t * servo = &servo_list[(uint8_t)name];
+	if (servo->pwm_device == NULL)
 	{
-		LOG_ERR("PWM servo %d set fails\n", servo);
+		LOG_ERR("Servo not initialized");
+		return -1;
+	}
+
+	uint16_t out_val = MINPULSEWIDTH + ((MAXPULSEWIDTH - MINPULSEWIDTH) *  MIN(val_percent, 100))/100;
+	if (pwm_pin_set_usec(servo->pwm_device, servo->channel, PERIOD_SERVOS, out_val, 0))
+	{
+		LOG_ERR("PWM servo %s %d set fails\n", servo->pwm_alias, servo->channel);
 		return -1;
 	}
 
 	return 0;
+}
+
+void test_servo()
+{
+	servos_init();
+	servos_set(servo_front_l, 50);
 }
