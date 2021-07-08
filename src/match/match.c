@@ -2,6 +2,7 @@
 #include "match/match.h"
 #include "strategy.h"
 #include "logging/log.h"
+#include "tirette.h"
 
 LOG_MODULE_REGISTER(match);
 
@@ -24,12 +25,17 @@ static void match_task()
 {
     LOG_INF("Init match task");
 
+    tirette_init();
+
+    while (!tirette_is_removed())
+    {
+        k_sleep(K_MSEC(1));
+    }
+
     STRATEGY_BUILD_INIT(strat)
     STRATEGY_BUILD_ADD(NULL, go_to_lighthouse, NULL, NULL, status_ready)
     STRATEGY_BUILD_ADD(NULL, do_wait, NULL, NULL, status_always_ready)
     STRATEGY_BUILD_END(strat);
-    strategy_run(&strat);
-
     strategy_run(&strat);
 }
 

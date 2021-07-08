@@ -1,9 +1,11 @@
 #include <zephyr.h>
 #include "thread_killer/thread_killer.h"
 #include "logging/log.h"
-#include "control/control.h"
+#include "tirette.h"
 
 LOG_MODULE_REGISTER(thread_killer);
+
+#define SECONDS_BEFORE_THREAD_KILL 95
 
 extern const k_tid_t odometry_task_name;
 extern const k_tid_t speed_control_task_name;
@@ -19,7 +21,14 @@ static const k_tid_t * threads_to_kill[] = {
 static void thread_killer_task()
 {
     LOG_INF("Init thread killer");
-    k_sleep(K_SECONDS(95));
+    tirette_init();
+
+    while (!tirette_is_removed())
+    {
+        k_sleep(K_MSEC(1));
+    }
+    LOG_INF("Tirette is removed, killing all threads in %d seconds", SECONDS_BEFORE_THREAD_KILL);
+    k_sleep(K_SECONDS(SECONDS_BEFORE_THREAD_KILL));
     LOG_INF("Killing necessary threads, end of match");
     for (size_t i = 0; i < NUMBER_OF_THREADS_TO_KILL; i++)
     {

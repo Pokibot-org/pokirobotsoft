@@ -7,9 +7,17 @@ LOG_MODULE_REGISTER(tirette);
 #define TIRETTE_GPIO_PIN 9
 
 const static struct device * gpio_port;
+// K_SEM_DEFINE(tirette_init_lock, 1, 1);
+K_MUTEX_DEFINE(tirette_mutex);
 
 uint8_t tirette_init()
 {
+    if(!k_mutex_lock(&tirette_mutex, K_NO_WAIT))
+    {
+        LOG_WRN("Tirette already init");
+        return 0;
+    }
+
     gpio_port = device_get_binding(TIRETTE_GPIO_LABEL);
     if (!gpio_port)
     {

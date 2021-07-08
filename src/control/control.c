@@ -5,7 +5,7 @@
 #include "control.h"
 #include "motors.h"
 #include "odometry.h"
-
+#include "tirette.h"
 
 LOG_MODULE_REGISTER(control);
 
@@ -74,6 +74,13 @@ void test_motors_speed() {
 static void speed_control_task() {
     LOG_INF("starting speed_control task");
     init_motors();
+    tirette_init();
+
+    while (!tirette_is_removed())
+    {
+        k_sleep(K_MSEC(1));
+    }
+
     while(1) {
         // TODO
         // - get desired speed from somewhere
