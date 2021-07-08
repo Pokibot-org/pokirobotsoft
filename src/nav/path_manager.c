@@ -4,7 +4,8 @@
 #include "obstacle_manager.h"
 #include "string.h"
 #include "logging/log.h"
-#include "robot.h"
+#include "robot_config.h"
+
 
 LOG_MODULE_REGISTER(path_manager);
 
@@ -146,7 +147,7 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
     pathfinding_config.field_boundaries.max_x = 3000; // 3m
     pathfinding_config.field_boundaries.max_y = 2000; // 2m
     pathfinding_config.delta_distance = 200;          // jump of Xmm
-    pathfinding_config.radius_of_security = robot_get_obj()->max_radius_mm;      // 300 mm
+    pathfinding_config.radius_of_security = ROBOT_MAX_RADIUS_MM;      // 300 mm
     pathfinding_object_configure(&pm_obj.pathfinding_obj, &pathfinding_config);
 
     path_manager_tid = k_thread_create(&path_manager_thread_data, path_manager_stack_area,

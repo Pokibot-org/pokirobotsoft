@@ -1,0 +1,7 @@
+#ifndef ROBOT_CONFIG_H
+#define ROBOT_CONFIG_H
+
+#define ROBOT_MIN_RADIUS_MM 95
+#define ROBOT_MAX_RADIUS_MM 190
+
+#endif
