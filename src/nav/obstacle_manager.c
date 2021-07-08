@@ -20,10 +20,10 @@ K_MSGQ_DEFINE(obstacle_manager_msgq, sizeof(obstacle_manager_message_t), 10, 1);
 static obstacle_manager_t obs_man_obj = {0};
 K_SEM_DEFINE(obsacle_holder_lock, 1, 1);
 // PRIVATE DEF
-#define CAMSENSE_CENTER_OFFSET_DEG    16.0f
+#define CAMSENSE_CENTER_OFFSET_DEG 16.0f
 #define LIDAR_COUNTER_CLOCKWISE
-#define LIDAR_DETECTION_DISTANCE_MM    300
-#define LIDAR_DETECTION_ANGLE   110
+#define LIDAR_DETECTION_DISTANCE_MM 300
+#define LIDAR_DETECTION_ANGLE 110
 // FUNC
 
 void obstacle_manager_send_message(const obstacle_manager_message_t *msg)
@@ -74,8 +74,7 @@ uint8_t process_point(obstacle_manager_t *obj, distance_t point_distance, float 
     }
 
     // if it is a near obstacle change return code
-    if ((point_distance < robot_obj->radius_mm + LIDAR_DETECTION_DISTANCE_MM) 
-        && (ABS(point_angle) < LIDAR_DETECTION_ANGLE/2))
+    if ((point_distance < robot_obj->radius_mm + LIDAR_DETECTION_DISTANCE_MM) && (ABS(point_angle) < LIDAR_DETECTION_ANGLE / 2))
     {
         LOG_DBG("Obstacle detected | angle: %.3hi, distance: %.5hu", (int16_t)(point_angle), point_distance);
         return_code = 1;
@@ -127,11 +126,11 @@ uint8_t process_lidar_message(obstacle_manager_t *obj, const lidar_message_t *me
     {
         if (message->points[i].quality != 0) // Filter some noisy data
         {
-            #ifdef LIDAR_COUNTER_CLOCKWISE
+#ifdef LIDAR_COUNTER_CLOCKWISE
             float point_angle = 360.0f - ((message->start_angle + step * i) + (CAMSENSE_CENTER_OFFSET_DEG + 180.0f));
-            #else
+#else
             float point_angle = (message->start_angle + step * i) + (CAMSENSE_CENTER_OFFSET_DEG + 180.0f);
-            #endif
+#endif
 
             uint8_t err_code = process_point(&obs_man_obj, message->points[i].distance, point_angle);
             if (err_code == 1) // 0 ok, 1 in front of robot, 2 outside table
@@ -182,5 +181,9 @@ static void obstacle_manager_task()
 }
 
 #if CONFIG_OBSTACLE_MANAGER_THREAD_ENABLED
-K_THREAD_DEFINE(obstacle_manager_task_name, CONFIG_OBSTACLE_MANAGER_THREAD_STACK, obstacle_manager_task, NULL, NULL, NULL, CONFIG_OBSTACLE_MANAGER_THREAD_PRIORITY, 0, 0);
+K_THREAD_DEFINE(obstacle_manager_task_name,
+                CONFIG_OBSTACLE_MANAGER_THREAD_STACK,
+                obstacle_manager_task,
+                NULL, NULL, NULL,
+                CONFIG_OBSTACLE_MANAGER_THREAD_PRIORITY, 0, 0);
 #endif

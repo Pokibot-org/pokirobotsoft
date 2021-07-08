@@ -96,5 +96,8 @@ K_THREAD_DEFINE(
         CONFIG_SPEED_CONTROL_THREAD_PRIORITY,
         0,
         0);
+#else
+const k_tid_t speed_control_task_name = {0};
+
 #endif
 

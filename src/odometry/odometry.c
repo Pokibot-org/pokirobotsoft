@@ -162,5 +162,7 @@ K_THREAD_DEFINE(
         CONFIG_ODOMETRY_THREAD_PRIORITY,
         0,
         0);
+#else
+    const k_tid_t odometry_task_name= {0};
 #endif
 

@@ -32,12 +32,13 @@ typedef struct strategy
     uint16_t nb_goals;
 } strategy_t;
 
-
-// #define STRATEGY_INIT(_obj_name, _nb_goals) \
-//     do { \
-//         goal_t goal_array__obj_name[_nb_goals] = {0}; \
-//         strategy_t _obj_name = {goal_array__obj_name, _nb_goals}; } \
-//     while(0)
+/*
+#define STRATEGY_INIT(_obj_name, _nb_goals) \
+    do { \
+        goal_t goal_array__obj_name[_nb_goals] = {0}; \
+        strategy_t _obj_name = {goal_array__obj_name, _nb_goals}; } \
+    while(0)
+*/
 
 #define STRATEGY_BUILD_INIT(_obj_name) goal_t goal_array__obj_name[] = {
 

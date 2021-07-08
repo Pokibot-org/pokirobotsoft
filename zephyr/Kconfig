@@ -44,6 +44,20 @@ config OBSTACLE_MANAGER_THREAD_PRIORITY
     default 10
 
 
+config THREAD_KILLER_THREAD_ENABLED
+    bool "Activate the thread killer"
+    default y
+    default n if ONE_THREAD_TESTING
+
+config THREAD_KILLER_THREAD_STACK
+    int "Stack size"
+    default 128
+
+config THREAD_KILLER_THREAD_PRIORITY
+    int "Thread priority"
+    default 1
+
+
 config PATH_MANAGER_THREAD_STACK
     int "Stack size"
     default 4096
