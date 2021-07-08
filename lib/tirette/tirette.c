@@ -15,7 +15,7 @@ uint8_t tirette_init()
     if(!k_mutex_lock(&tirette_mutex, K_NO_WAIT))
     {
         LOG_WRN("Tirette already init");
-        return 0;
+        // return 0; // FIXME: Find a way to init tirette in all threads 
     }
 
     gpio_port = device_get_binding(TIRETTE_GPIO_LABEL);

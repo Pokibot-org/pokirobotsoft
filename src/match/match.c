@@ -3,11 +3,24 @@
 #include "strategy.h"
 #include "logging/log.h"
 #include "tirette.h"
+#include "flag/flag.h"
+#include "kernel.h"
 
 LOG_MODULE_REGISTER(match);
 
-uint8_t go_to_lighthouse(const goal_t * gl)
+#define TIME_BEFORE_FLAG_RAISE_S 96
+
+static void flag_work_handler(struct k_work* work)
 {
+    LOG_INF("Raising flag");
+    raise_flag();
+}
+
+K_DELAYED_WORK_DEFINE(flag_work, flag_work_handler);
+
+uint8_t go_forward(const goal_t * gl)
+{
+
     return 0;
 }
 
@@ -26,14 +39,16 @@ static void match_task()
     LOG_INF("Init match task");
 
     tirette_init();
+    flag_init();
 
     while (!tirette_is_removed())
     {
         k_sleep(K_MSEC(1));
     }
+    k_delayed_work_submit(&flag_work, K_SECONDS(TIME_BEFORE_FLAG_RAISE_S));
 
     STRATEGY_BUILD_INIT(strat)
-    STRATEGY_BUILD_ADD(NULL, go_to_lighthouse, NULL, NULL, status_ready)
+    STRATEGY_BUILD_ADD(NULL, go_forward, NULL, NULL, status_ready)
     STRATEGY_BUILD_ADD(NULL, do_wait, NULL, NULL, status_always_ready)
     STRATEGY_BUILD_END(strat);
     strategy_run(&strat);
