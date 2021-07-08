@@ -67,7 +67,7 @@ uint8_t process_point(obstacle_manager_t *obj, distance_t point_distance, float 
 
     // LOG_INF("IN PROCEES POINT: angle: %f, distance: %d", point_angle, point_distance);
 
-    if (point_distance < robot_obj->radius_mm) // in robot do nothing
+    if (point_distance < robot_obj->radius_mm && (ABS(point_angle) > LIDAR_DETECTION_ANGLE/2)) // in robot do nothing
     {
         // LOG_INF("Point in robot");
         return 0;
