@@ -1,7 +1,8 @@
 #include "robot.h"
 
 static robot_t robot_obj = {
-    .radius_mm = 190,
+    .min_radius_mm = 95,
+    .max_radius_mm = 190,
     .position = {500,500},
     .angle_rad = 0,
 };
