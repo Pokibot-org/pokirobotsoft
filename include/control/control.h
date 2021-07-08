@@ -5,14 +5,24 @@
 
 #include "odometry.h"
 
+#define MIN_DUTY -30
+#define MAX_DUTY 30
+#define QUADRAMP_STEP 6
+
+#define CAP(_min, _max, _val) \
+    MIN(_max, MAX(_min, _val))
+
+#define QUADRAMP(_ref, _val, _step) \
+    CAP(_ref - _step, _ref + _step, _val)
+
 #define FREQ_CONTROL_HZ 100
 
 #define CONTROL_FF_L ((float)(1.0/448.0))
-#define CONTROL_P_L ((float)(-0.2/448.0/100.0))
-#define CONTROL_I_L 0.0f
+#define CONTROL_P_L ((float)(-0.5/448.0))
+#define CONTROL_I_L ((float)(-0.01/448.0))
 #define CONTROL_FF_R ((float)(1.0/448.0))
-#define CONTROL_P_R ((float)(-0.2/448.0/100.0))
-#define CONTROL_I_R 0.0f
+#define CONTROL_P_R ((float)(-0.5/448.0))
+#define CONTROL_I_R ((float)(-0.01/448.0))
 
 
 #define CONTROL_FIFO_DEPTH 100

@@ -6,7 +6,7 @@
 #include "logging/log.h"
 #include "robot.h"
 
-LOG_MODULE_REGISTER(path_manager);
+LOG_MODULE_REGISTER(path_manager, 2);
 
 typedef struct path_manager_object
 {

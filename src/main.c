@@ -17,17 +17,18 @@ int main(void) {
 
     LOG_INF("boot\n");
 
-    // test_wall_detector();
-    // test_tirette();
-    // test_servo();
-    // pathfinding_test_main();
-    // test_encoders();
-    // test_speed();
-    // test_pos();
-    // test_motors_speed();
+    //test_wall_detector();
+    //test_tirette();
+    //test_servo();
+    //pathfinding_test_main();
+    //test_encoders();
+    //test_speed();
+    //test_pos();
+    //test_motors_speed();
+    test_control();
     while (1)
     {
-        k_sleep(K_MSEC(1));
+        k_sleep(K_MSEC(1000));
     }
     return 0;
 

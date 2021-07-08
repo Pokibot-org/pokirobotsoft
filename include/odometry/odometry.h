@@ -7,14 +7,14 @@
 
 #define FREQ_ODOMETRY_HZ 1000
 
-#define SIGN_L  +
-#define SIGN_R  -
+#define SIGN_L  -
+#define SIGN_R  +
 #define RADS_PER_REV    (1.0/3821877.0) // 50*2^16 * (491/67) == 2*PI
 
 #define ENCODERS_SPI_DEV        DT_LABEL(DT_ALIAS(spi_as5047p))
 #define ENCODERS_CS_GPIO_DEV    DEVICE_DT_GET(DT_NODELABEL(gpioa))
-#define ENCODER_LEFT_CS_PIN     4
-#define ENCODER_RIGHT_CS_PIN    15
+#define ENCODER_LEFT_CS_PIN     15
+#define ENCODER_RIGHT_CS_PIN    4
 
 #define SPEED_FIFO_DEPTH    4
 
