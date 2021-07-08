@@ -139,7 +139,8 @@ void test_object_holder_relative_storing(){
             .x = 0,
             .y = 0
         },
-        .radius_mm = 150
+        .max_radius_mm = 150,
+        .min_radius_mm = 50
     };
     obstacle_t expected_result = {
         .type = obstacle_type_circle,

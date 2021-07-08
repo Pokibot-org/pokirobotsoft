@@ -42,10 +42,6 @@ uint8_t relative_obstacle_storing_lidar_points_relative_to_robot(obstacle_holder
 
         if (message->points[i].quality != 0) // Filter some noisy data
         {
-            // if (message->points[i].distance <= robot->radius_mm){
-            //     continue;
-            // }
-
             new_obstacle.data.circle.coordinates.x = robot->position.x + sinf(point_angle_absolute) * message->points[i].distance;
             new_obstacle.data.circle.coordinates.y = robot->position.y + cosf(point_angle_absolute) * message->points[i].distance;
             // Uncomment the following lines if you want to use tools/lidar_point_visualiser.py
