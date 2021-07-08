@@ -6,6 +6,7 @@
 #include "motors.h"
 #include "odometry.h"
 #include "tirette.h"
+#include "obstacle_manager.h"
 
 LOG_MODULE_REGISTER(control);
 
@@ -129,8 +130,13 @@ static void speed_control_task() {
         // TODO
         // - get desired speed from somewhere
         // - stop motors if there is an obstacle
+
         cmp_ctrl_step(&robot_ctrl_fifo);
         //LOG_DBG("%d", robot_ctrl_fifo.val_l);
+        if (obstacle_manager_is_there_an_obstacle()) {
+            robot_ctrl_fifo.val_l = 0;
+            robot_ctrl_fifo.val_r = 0;
+        }
         motor_set(MOTOR_L, robot_ctrl_fifo.val_l);
         motor_set(MOTOR_R, robot_ctrl_fifo.val_r);
         //motor_set(MOTOR_L, 20);

@@ -36,7 +36,7 @@ uint8_t tirette_init()
 
 uint8_t tirette_is_removed()
 {
-    return gpio_pin_get(gpio_port, TIRETTE_GPIO_PIN);
+    return !gpio_pin_get(gpio_port, TIRETTE_GPIO_PIN);
 }
 
 void test_tirette()

@@ -6,6 +6,8 @@
 #include "flag/flag.h"
 #include "kernel.h"
 
+#include "control.h"
+
 LOG_MODULE_REGISTER(match);
 
 #define TIME_BEFORE_FLAG_RAISE_S 96
@@ -20,7 +22,9 @@ K_DELAYED_WORK_DEFINE(flag_work, flag_work_handler);
 
 uint8_t go_forward(const goal_t * gl)
 {
-
+    set_robot_speed((speed_t){.sl=4000, .sr=4000});
+    k_sleep(K_MSEC(3000));
+    set_robot_speed((speed_t){.sl=0, .sr=0});
     return 0;
 }
 
@@ -37,7 +41,7 @@ uint8_t do_wait(const goal_t * gl)
 static void match_task()
 {
     LOG_INF("Init match task");
-
+    set_robot_speed((speed_t){0, 0});
     tirette_init();
     flag_init();
 
@@ -45,6 +49,7 @@ static void match_task()
     {
         k_sleep(K_MSEC(1));
     }
+    k_sleep(K_MSEC(1000));
     k_delayed_work_submit(&flag_work, K_SECONDS(TIME_BEFORE_FLAG_RAISE_S));
 
     STRATEGY_BUILD_INIT(strat)
