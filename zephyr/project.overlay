@@ -38,7 +38,7 @@
 &spi2 {
     status = "okay";
     pinctrl-0 = <&spi2_sck_pb13 &spi2_miso_pb14 &spi2_mosi_pb15>;
-    cs-gpios = <&gpiob 1 GPIO_ACTIVE_LOW>;
+    cs-gpios = <&gpiob 2 GPIO_ACTIVE_LOW>;
 
     display_l: spi-dev-display@0 {
         label = "DISPLAY";
