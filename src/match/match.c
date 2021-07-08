@@ -25,6 +25,12 @@ uint8_t go_forward(const goal_t * gl)
     set_robot_speed((speed_t){.sl=4000, .sr=4000});
     k_sleep(K_MSEC(3000));
     set_robot_speed((speed_t){.sl=0, .sr=0});
+    k_sleep(K_MSEC(3000));
+    set_robot_speed((speed_t){.sl=4000, .sr=-4000});
+    k_sleep(K_MSEC(3000));
+    set_robot_speed((speed_t){.sl=4000, .sr=4000});
+    k_sleep(K_MSEC(3000));
+    set_robot_speed((speed_t){.sl=0, .sr=0});
     return 0;
 }
 

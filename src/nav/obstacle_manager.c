@@ -23,7 +23,7 @@ K_SEM_DEFINE(obsacle_holder_lock, 1, 1);
 #define CAMSENSE_CENTER_OFFSET_DEG 16.0f
 #define LIDAR_COUNTER_CLOCKWISE
 #define LIDAR_DETECTION_DISTANCE_MM 250
-#define LIDAR_DETECTION_ANGLE 70
+#define LIDAR_DETECTION_ANGLE 100
 // FUNC
 
 void obstacle_manager_send_message(const obstacle_manager_message_t *msg)
