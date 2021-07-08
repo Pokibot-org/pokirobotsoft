@@ -20,7 +20,7 @@ int main(void) {
     // test_wall_detector();
     // test_tirette();
     // test_servo();
-    pathfinding_test_main();
+    // pathfinding_test_main();
     // test_encoders();
     // test_speed();
     // test_pos();

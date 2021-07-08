@@ -77,6 +77,7 @@ uint8_t go_to_lighthouse(const goal_t *gl)
     
 
     // do something with path;
+    return 0;
 }
 
 uint8_t do_wait(const goal_t *gl)
@@ -103,8 +104,9 @@ static void match_task()
     k_delayed_work_submit(&flag_work, K_SECONDS(TIME_BEFORE_FLAG_RAISE_S));
 
     STRATEGY_BUILD_INIT(strat)
-    STRATEGY_BUILD_ADD(NULL, go_forward, NULL, NULL, status_ready)
-    STRATEGY_BUILD_ADD(NULL, do_wait, NULL, NULL, status_always_ready)
+    // STRATEGY_BUILD_ADD(NULL, go_forward, NULL, status_ready)
+    STRATEGY_BUILD_ADD(NULL, go_to_lighthouse, NULL, status_ready)
+    STRATEGY_BUILD_ADD(NULL, do_wait, NULL, status_always_ready)
     STRATEGY_BUILD_END(strat);
     strategy_run(&strat);
 }
