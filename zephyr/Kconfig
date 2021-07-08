@@ -58,6 +58,19 @@ config THREAD_KILLER_THREAD_PRIORITY
     default 1
 
 
+config MATCH_THREAD_ENABLED
+    bool "Activate the thread killer"
+    default y
+    default n if ONE_THREAD_TESTING
+
+config MATCH_THREAD_STACK
+    int "Stack size"
+    default 1024
+
+config MATCH_THREAD_PRIORITY
+    int "Thread priority"
+    default 7
+
 config PATH_MANAGER_THREAD_STACK
     int "Stack size"
     default 4096
