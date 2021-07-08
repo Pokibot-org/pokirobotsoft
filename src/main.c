@@ -9,6 +9,7 @@
 #include "tirette.h"
 #include "control.h"
 #include "motors.h"
+#include "wall_detector.h"
 
 LOG_MODULE_REGISTER(main);
 
@@ -16,6 +17,7 @@ int main(void) {
 
     LOG_INF("boot\n");
 
+    // test_wall_detector();
     // test_tirette();
     // test_servo();
     // pathfinding_test_main();
