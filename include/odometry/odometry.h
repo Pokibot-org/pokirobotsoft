@@ -7,8 +7,8 @@
 
 #define FREQ_ODOMETRY_HZ 1000
 
-#define SIGN_L  -
-#define SIGN_R  +
+#define SIGN_L  +
+#define SIGN_R  -
 #define RADS_PER_REV    (1.0/3821877.0) // 50*2^16 * (491/67) == 2*PI
 
 #define ENCODERS_SPI_DEV        DT_LABEL(DT_ALIAS(spi_as5047p))
@@ -42,10 +42,10 @@ void test_encoders();
 void test_speed();
 void test_pos();
 
-speed_t get_speed();
-speed_t get_speed_latest();
-void set_pos(pos_t pos);
-pos_t get_pos();
+speed_t robot_get_speed();
+speed_t robot_get_speed_latest();
+void robot_set_pos(pos_t pos);
+pos_t robot_get_pos();
 
 #endif // ODOMETRY_H
 
