@@ -78,7 +78,7 @@ void test_encoders() {
 void test_speed() {
     LOG_INF("starting speed test");
     while (1) {
-        speed_t speed = get_speed_latest();
+        speed_t speed = robot_get_speed_latest();
         LOG_DBG("speed l: %d  ----  r: %d", speed.sl, speed.sr);
         k_sleep(K_MSEC(1000));
     }
@@ -86,26 +86,26 @@ void test_speed() {
 void test_pos() {
     LOG_INF("starting position test");
     while (1) {
-        pos_t pos = get_pos();
+        pos_t pos = robot_get_pos();
         LOG_DBG("pos x: %9d  ----  y: %9d  ----  a: %9d (%9d)",
                 pos.x, pos.y, pos.a, (int)(cosf(pos.a_rad)*1000.0f));
         k_sleep(K_MSEC(1000));
     }
 }
 
-speed_t get_speed() {
+speed_t robot_get_speed() {
     return robot_sfifo.mavg;
 }
 
-speed_t get_speed_latest() {
+speed_t robot_get_speed_latest() {
     return robot_sfifo.speeds[robot_sfifo.idx];
 }
 
-void set_pos(pos_t pos) {
+void robot_set_pos(pos_t pos) {
     robot_pos = pos;
 }
 
-pos_t get_pos() {
+pos_t robot_get_pos() {
     return robot_pos;
 }
 
@@ -128,7 +128,7 @@ static void odometry_task() {
                 ret_l, ret_r);
     }
     // TODO init pos relative to side
-    set_pos((pos_t){0, 0, 0, 0.0f});
+    robot_set_pos((pos_t){0, 0, 0, 0.0f});
     while(1) {
         uint16_t newval_l, newval_r;
         int ret_l = as5047p_transeive(&enc_l, 0xffff, &newval_l);

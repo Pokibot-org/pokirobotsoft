@@ -18,7 +18,7 @@
 #define DIR_L_PIN_FORWARD true // Edit here if motor turn the wrong way
 #define DIR_R_PIN_PORT	"GPIOC"
 #define DIR_R_PIN_NUM	1
-#define DIR_R_PIN_FORWARD true // Edit here if motor turn the wrong way
+#define DIR_R_PIN_FORWARD false // Edit here if motor turn the wrong way
 
 #define FREQUENCY_MOTORS 20000U
 #define PERIOD_MOTORS (USEC_PER_SEC / FREQUENCY_MOTORS)
