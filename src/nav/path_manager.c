@@ -6,7 +6,6 @@
 #include "logging/log.h"
 #include "robot_config.h"
 
-
 LOG_MODULE_REGISTER(path_manager);
 
 typedef struct path_manager_object
@@ -77,7 +76,8 @@ static void path_manager_task(void *p0, void *p1, void *p2)
         LOG_INF("Path found");
     }
     // TODO: handle err code
-    pbd(&pm_obj->pathfinding_obj);
+    // pbd(&pm_obj->pathfinding_obj);
+
     if (pm_obj->conf.found_path_clbk != NULL)
     {
         //LOG_INF("Calling found_path_clbk %d", pm_obj->conf.found_path_clbk);
@@ -110,21 +110,19 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
     pm_obj.start = start;
     pm_obj.end = end;
     pm_obj.conf = config;
-    
+
     memset(&pm_obj.pathfinding_obj, 0, sizeof(pm_obj.pathfinding_obj));
-    
-    #ifdef TEST
+
+#ifdef TEST
+#warning COMMENT TEST define in path_manager
     memset(&pm_obj.obstacle_hold, 0, sizeof(pm_obj.obstacle_hold)); // TODO: Reactivate get snapshot obstacle manager
     obstacle_t obs = {
         .type = obstacle_type_circle,
         .data.circle = {
             .coordinates = {
                 .x = 1500,
-                .y = 10
-            },
-            .radius = 0
-        }
-    };
+                .y = 10},
+            .radius = 0}};
     for (size_t i = 0; i < 120; i++)
     {
         obstacle_holder_push(&pm_obj.obstacle_hold, &obs);
@@ -138,16 +136,16 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
         obstacle_holder_push(&pm_obj.obstacle_hold, &obs);
         obs.data.circle.coordinates.y -= 10;
     }
-    #else
+#else
     obstacle_manager_get_obstacle_snapshot(&pm_obj.obstacle_hold);
-    #endif
+#endif
     pathfinding_configuration_t pathfinding_config;
-    pathfinding_config.field_boundaries.min_x = 0; 
+    pathfinding_config.field_boundaries.min_x = 0;
     pathfinding_config.field_boundaries.min_y = 0;
-    pathfinding_config.field_boundaries.max_x = 3000; // 3m
-    pathfinding_config.field_boundaries.max_y = 2000; // 2m
-    pathfinding_config.delta_distance = 200;          // jump of Xmm
-    pathfinding_config.radius_of_security = ROBOT_MAX_RADIUS_MM;      // 300 mm
+    pathfinding_config.field_boundaries.max_x = 3000;            // 3m
+    pathfinding_config.field_boundaries.max_y = 2000;            // 2m
+    pathfinding_config.delta_distance = 200;                     // jump of Xmm
+    pathfinding_config.radius_of_security = ROBOT_MAX_RADIUS_MM; // 300 mm
     pathfinding_object_configure(&pm_obj.pathfinding_obj, &pathfinding_config);
 
     path_manager_tid = k_thread_create(&path_manager_thread_data, path_manager_stack_area,
@@ -157,7 +155,38 @@ uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_mana
                                        CONFIG_PATH_MANAGER_THREAD_PRIORITY, 0, K_NO_WAIT);
     if (path_manager_tid == NULL)
     {
+        LOG_ERR("Cant start path manager thread");
         return -1;
     }
     return 0;
+}
+
+/**
+ * @brief To be used by the user when path is found
+ * Permit to retrieve all the path nodes in an array
+ * 
+ * @param array array provided by the user where the final path will be stored
+ * @param array_size size of the provided array
+ * @param ptr_array_start return a ptr to the beginning of the path
+ * @param end_node end node found by the pathfinding
+ * @return int16_t return the copied path length
+ */
+int16_t path_manager_retrieve_path(coordinates_t *array, uint32_t array_size,
+                                  coordinates_t **ptr_array_start, path_node_t *end_node)
+{
+    path_node_t * current_node = end_node;
+    for (int32_t i = array_size - 1; i >= 0; i--)
+    {
+        array[i] = (coordinates_t){.x = current_node->coordinate.x, .y = current_node->coordinate.y};
+        if (current_node->parent_node == NULL)
+        {
+            if (ptr_array_start)
+            {
+                *ptr_array_start = &array[i];
+            }
+            return array_size - i;
+        }
+        current_node = current_node->parent_node;
+    }
+    return -1;
 }
