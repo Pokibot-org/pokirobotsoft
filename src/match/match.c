@@ -113,7 +113,7 @@ uint8_t do_match(const goal_t * gl)
     set_angle_dest(M_PI/2);
     while (!is_angle_ok())
     {
-        k_sleep(M_MSEC(10));
+        k_sleep(K_MSEC(10));
     }
     recalibration_front(6000);
     move(-100);
@@ -121,7 +121,7 @@ uint8_t do_match(const goal_t * gl)
     set_angle_dest(0);
     while (!is_angle_ok())
     {
-        k_sleep(M_MSEC(10));
+        k_sleep(K_MSEC(10));
     }
     
     servos_set(servo_front_l, 180);

@@ -26,7 +26,7 @@ int main(void) {
     //test_pos();
     //test_motors_speed();
     //test_control();
-    test_angle();
+    // test_angle();
     while (1)
     {
         k_sleep(K_MSEC(1000));
