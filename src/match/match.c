@@ -11,6 +11,7 @@
 #include "display.h"
 #include "common_types.h"
 #include "path_manager.h"
+#include "obstacle_manager.h"
 
 #include "control.h"
 #include "wall_detector.h"
@@ -53,8 +54,17 @@ void move(int32_t dist_mm)
 {
     int8_t sign = dist_mm >= 0 ? 1: -1;
     int16_t motor_speed = sign * 4000;
-    set_robot_speed((speed_t){.sl=motor_speed, .sr=motor_speed});
-    k_sleep(K_MSEC((int16_t)(abs(dist_mm) * 2.5)));
+    int64_t time_start = k_uptime_get();
+    int32_t time_to_wait = abs(dist_mm) * 2.5;
+    while (k_uptime_get() - time_start < time_to_wait)
+    {
+        set_robot_speed((speed_t){.sl=motor_speed, .sr=motor_speed});
+        k_sleep(K_MSEC(10));
+        if (obstacle_manager_is_there_an_obstacle())
+        {
+            set_robot_speed((speed_t){.sl=0, .sr=0});
+        }
+    }
     set_robot_speed((speed_t){.sl=0, .sr=0});
 }
 
@@ -126,14 +136,25 @@ uint8_t do_match(const goal_t * gl)
     recalibration_front(6000);
     move(-150);
 
+    
+    servos_set(servo_front_l, 40);
+    k_sleep(K_MSEC(500));
+
     set_angle_dest(0);
     while (!is_angle_ok())
     {
         k_sleep(K_MSEC(10));
     }
-    
-    servos_set(servo_front_l, 70);
-    move(500); 
+    move(800); 
+
+    set_angle_dest(-2*M_PI/3);
+    while (!is_angle_ok())
+    {
+        k_sleep(K_MSEC(10));
+    }
+
+    recalibration_front(6000);
+
 
     all_servos_up();
     return 0;
