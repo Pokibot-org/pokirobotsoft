@@ -51,7 +51,7 @@ config THREAD_KILLER_THREAD_ENABLED
 
 config THREAD_KILLER_THREAD_STACK
     int "Stack size"
-    default 128
+    default 512
 
 config THREAD_KILLER_THREAD_PRIORITY
     int "Thread priority"
