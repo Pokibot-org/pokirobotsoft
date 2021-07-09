@@ -24,12 +24,28 @@ config SPEED_CONTROL_THREAD_ENABLED
     bool "Activate the speed closed control loop thread"
     default y
     default n if ONE_THREAD_TESTING
+
 config SPEED_CONTROL_THREAD_STACK
     int "Stack size"
     default 2048
+
 config SPEED_CONTROL_THREAD_PRIORITY
     int "Thread priority"
+    default 5
+
+config POS_CONTROL_THREAD_ENABLED
+    bool "Activate the speed closed control loop thread"
+    default y
+    default n if ONE_THREAD_TESTING
+
+config POS_CONTROL_THREAD_STACK
+    int "Stack size"
+    default 2048
+
+config POS_CONTROL_THREAD_PRIORITY
+    int "Thread priority"
     default 4
+
 
 
 config OBSTACLE_MANAGER_THREAD_ENABLED
