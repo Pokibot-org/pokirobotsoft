@@ -25,7 +25,7 @@ Format of frames:
     A package always starts with <0x55><0xAA><0x03><0x08>
 */
 
-LOG_MODULE_REGISTER(camsense_x1_driver);
+LOG_MODULE_REGISTER(camsense_x1_driver, 2);
 
 // DEFINES
 #define CAMSENSE_X1_FRAME_SIZE 36

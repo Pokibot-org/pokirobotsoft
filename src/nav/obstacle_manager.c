@@ -12,7 +12,7 @@
 #define M_PI_4 0.78539816339744830962f
 #endif
 
-LOG_MODULE_REGISTER(obstacle_manager);
+LOG_MODULE_REGISTER(obstacle_manager, 2);
 
 K_MSGQ_DEFINE(obstacle_manager_msgq, sizeof(obstacle_manager_message_t), 10, 1);
 

@@ -35,23 +35,33 @@ static void cmp_ctrl_step(control_fifo_t* ctrl_fifo) {
     ctrl_fifo->err_fsum_r -= ctrl_fifo->errs_r[ctrl_fifo->idx];
     ctrl_fifo->errs_l[ctrl_fifo->idx] = err_l;
     ctrl_fifo->errs_r[ctrl_fifo->idx] = err_r;
-    ctrl_fifo->err_fsum_l += err_l;
-    ctrl_fifo->err_fsum_r += err_r;
+    //if (ctrl_fifo->val_l > MIN_DUTY && ctrl_fifo->val_l < MAX_DUTY) {
+        ctrl_fifo->err_fsum_l += err_l;
+        //ctrl_fifo->err_fsum_l += err_r;
+    //}
+    //if (ctrl_fifo->val_r > MIN_DUTY && ctrl_fifo->val_r < MAX_DUTY) {
+        ctrl_fifo->err_fsum_r += err_r;
+        //ctrl_fifo->err_fsum_r += err_r;
+    //}
 
-    //ctrl_fifo->val_l = 20;
-    //ctrl_fifo->val_r = 20;
-    ctrl_fifo->val_l = MIN(50, MAX(-50,
-            CONTROL_FF_L * (float)ctrl_fifo->set_speed.sl
+    int16_t new_val_l =
+        CONTROL_FF_L * (float)ctrl_fifo->set_speed.sl
             + CONTROL_P_L * (float)err_l
-            //+ CONTROL_P_L * (float)err_l
-        ));
-                        //+ CONTROL_I_L * ctrl_fifo->err_fsum_l;
-    ctrl_fifo->val_r = MIN(50, MAX(-50,
-            CONTROL_FF_R * (float)ctrl_fifo->set_speed.sr
+            + CONTROL_I_L * (float)ctrl_fifo->err_fsum_l;
+    int16_t new_val_r =
+        CONTROL_FF_R * (float)ctrl_fifo->set_speed.sr
             + CONTROL_P_R * (float)err_r
-            //+ CONTROL_P_R * (float)err_r
-        ));
-                        //+ CONTROL_I_R * ctrl_fifo->err_fsum_r;
+            + CONTROL_I_R * (float)ctrl_fifo->err_fsum_r;
+    ctrl_fifo->val_l = new_val_l;
+    ctrl_fifo->val_r = new_val_r;
+    //ctrl_fifo->val_l = CAP(
+    //        MIN_DUTY,
+    //        MAX_DUTY,
+    //        QUADRAMP(ctrl_fifo->val_l, new_val_l, QUADRAMP_STEP));
+    //ctrl_fifo->val_r = CAP(
+    //        MIN_DUTY,
+    //        MAX_DUTY,
+    //        QUADRAMP(ctrl_fifo->val_r, new_val_r, QUADRAMP_STEP));
 }
 
 
@@ -88,7 +98,7 @@ void test_motors_speed() {
 
 void test_control_step(speed_t set_speed, uint16_t duration) {
     set_robot_speed(set_speed);
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 5; i++) {
         LOG_DBG("left duty: %d  set: %d  err: %d  ----  "
                 "right duty: %d  set: %d err: %d",
                 robot_ctrl_fifo.val_l,
@@ -103,14 +113,17 @@ void test_control_step(speed_t set_speed, uint16_t duration) {
 
 void test_control() {
     while(1) {
+        for (int i = 0; i<12000; i+=1000) {
+            test_control_step((speed_t){.sl=i, .sr=i}, 2000);
+        }
+        test_control_step((speed_t){.sl=0, .sr=0}, 500);
+        test_control_step((speed_t){.sl=-12000, .sr=-12000}, 3000);
+        test_control_step((speed_t){.sl=0, .sr=0}, 500);
+        test_control_step((speed_t){.sl=-8000, .sr=-8000}, 3000);
         test_control_step((speed_t){.sl=0, .sr=0}, 1000);
-        test_control_step((speed_t){.sl=4000, .sr=4000}, 1000);
-        test_control_step((speed_t){.sl=12000, .sr=12000}, 1000);
-        test_control_step((speed_t){.sl=20000, .sr=20000}, 1000);
+        test_control_step((speed_t){.sl=-8000, .sr=0}, 1000);
         test_control_step((speed_t){.sl=0, .sr=0}, 1000);
-        test_control_step((speed_t){.sl=-4000, .sr=-4000}, 1000);
-        test_control_step((speed_t){.sl=-12000, .sr=0}, 1000);
-        test_control_step((speed_t){.sl=-12000, .sr=12000}, 1000);
+        test_control_step((speed_t){.sl=-6000, .sr=6000}, 1000);
     }
 }
 
@@ -123,24 +136,20 @@ static void speed_control_task() {
 
     while (!tirette_is_removed())
     {
-        k_sleep(K_MSEC(1));
+        k_sleep(K_MSEC(10));
     }
 
     while(1) {
         // TODO
         // - get desired speed from somewhere
         // - stop motors if there is an obstacle
-
         cmp_ctrl_step(&robot_ctrl_fifo);
-        //LOG_DBG("%d", robot_ctrl_fifo.val_l);
         if (obstacle_manager_is_there_an_obstacle()) {
             robot_ctrl_fifo.val_l = 0;
             robot_ctrl_fifo.val_r = 0;
         }
         motor_set(MOTOR_L, robot_ctrl_fifo.val_l);
         motor_set(MOTOR_R, robot_ctrl_fifo.val_r);
-        //motor_set(MOTOR_L, 20);
-        //motor_set(MOTOR_R, 20);
         k_sleep(K_USEC(1000000 / FREQ_CONTROL_HZ));
     }
 }
@@ -158,6 +167,39 @@ K_THREAD_DEFINE(
         0);
 #else
 const k_tid_t speed_control_task_name = {0};
-
 #endif
+
+//static void pos_control_task() {
+//    LOG_INF("starting pos_control task");
+//    init_motors();
+//    tirette_init();
+//
+//    while (!tirette_is_removed())
+//    {
+//        k_sleep(K_MSEC(10));
+//    }
+//
+//    while(1) {
+//        // TODO
+//        // - get desired speed from somewhere
+//        // - stop motors if there is an obstacle
+//        cmp_pos_ctrl_step(&robot_ctrl_fifo);
+//        k_sleep(K_USEC(1000000 / FREQ_CONTROL_HZ));
+//    }
+//}
+//
+//#if CONFIG_POS_CONTROL_THREAD_ENABLED
+//K_THREAD_DEFINE(
+//        speed_control_task_name,
+//        CONFIG_POS_CONTROL_THREAD_STACK,
+//        pos_control_task,
+//        NULL,
+//        NULL,
+//        NULL,
+//        CONFIG_POS_CONTROL_THREAD_PRIORITY,
+//        0,
+//        0);
+//#else
+//const k_tid_t speed_control_task_name = {0};
+
 
