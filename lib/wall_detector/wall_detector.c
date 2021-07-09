@@ -49,6 +49,29 @@ uint8_t wd_get_collision_bitmask()
     return bitmask;
 }
 
+
+uint8_t wd_front_is_touching()
+{
+    uint8_t bitmask = wd_get_collision_bitmask();
+    return (bitmask & 0x3) == 0x3;
+}
+
+uint8_t wd_back_is_touching()
+{
+    uint8_t bitmask = wd_get_collision_bitmask();
+    return (bitmask & 0xC) == 0xC;
+}
+
+uint8_t wd_is_activated(wd_name_t name)
+{
+    if (gpio_port == NULL)
+    {
+        LOG_ERR("Wall detector not initialised");
+        return 255;
+    }
+    return gpio_pin_get(gpio_port, wd_pins[(uint8_t)name]);
+}
+
 void test_wall_detector()
 {
     wall_detector_init();
