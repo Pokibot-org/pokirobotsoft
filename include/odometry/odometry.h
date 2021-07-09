@@ -9,7 +9,7 @@
 
 #define SIGN_L  -
 #define SIGN_R  +
-#define REVS_PER_RAD    3821877 // 50*2^16 * (491/67) == 2*PI
+#define REVS_PER_RAD    4669000 // 3649892 //3821877 // 50*2^16 * (491/67) == 2*PI
 #define RADS_PER_REV    ((float)(1.0/(double)REVS_PER_RAD)) // 50*2^16 * (491/67) == 2*PI
 #define DEGS_PER_REV(a) (int32_t)((float)a*RADS_PER_REV*180.0f/3.1415f)
 
