@@ -41,7 +41,10 @@ typedef struct control_fifo {
 void test_motors_speed();
 void test_control();
 
+void is_angle_ok();
+
 void set_robot_speed(speed_t speed);
+void set_angle_dest();
 
 #endif // CONTROL_H
 
