@@ -18,6 +18,12 @@
 
 LOG_MODULE_REGISTER(match);
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846f
+#define M_PI_2 1.57079632679489661923f
+#define M_PI_4 0.78539816339744830962f
+#endif
+
 #define TIME_BEFORE_FLAG_RAISE_S 96
 
 static coordinates_t path_storage[1024];
@@ -104,11 +110,20 @@ uint8_t do_match(const goal_t * gl)
 {    
     recalibration_back(3000);
     move(100);
-    // rotate
+    set_angle_dest(M_PI/2);
+    while (!is_angle_ok())
+    {
+        k_sleep(M_MSEC(10));
+    }
     recalibration_front(6000);
     move(-100);
 
-    // rotate
+    set_angle_dest(0);
+    while (!is_angle_ok())
+    {
+        k_sleep(M_MSEC(10));
+    }
+    
     servos_set(servo_front_l, 180);
     move(500); 
 
@@ -185,6 +200,7 @@ static void match_task()
 
     k_sleep(K_MSEC(500));
     all_servos_up();
+    set_angle_dest(0);
 
     STRATEGY_BUILD_INIT(strat)
     STRATEGY_BUILD_ADD(NULL, do_match, NULL, status_ready)
