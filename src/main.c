@@ -15,7 +15,8 @@ LOG_MODULE_REGISTER(main);
 
 int main(void) {
 
-    LOG_INF("boot\n");
+	display_init();
+	int score = 0;
 
     // test_wall_detector();
     // test_tirette();

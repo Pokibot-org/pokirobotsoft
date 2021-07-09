@@ -1,8 +1,9 @@
-
+﻿
 / {
     aliases {
             camsense-uart-1 = &usart1;
             spi-as5047p = &spi1;
+            spi-display = &spi2;
     };
 
 };
@@ -31,6 +32,18 @@
         label = "AS5047P_R";
         reg = <1>;
         spi-max-frequency = <10000000>;
+    };
+};
+
+&spi2 {
+    status = "okay";
+    pinctrl-0 = <&spi2_sck_pb13 &spi2_miso_pb14 &spi2_mosi_pb15>;
+    cs-gpios = <&gpiob 2 GPIO_ACTIVE_LOW>;
+
+    display_l: spi-dev-display@0 {
+        label = "DISPLAY";
+        reg = <0>;
+        spi-max-frequency = <200000>;
     };
 };
 
