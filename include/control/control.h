@@ -2,12 +2,18 @@
 #define CONTROL_H
 
 #include <zephyr.h>
+#include <math.h>
 
 #include "odometry.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846f
+#endif
 
 #define MIN_DUTY -30
 #define MAX_DUTY 30
 #define QUADRAMP_STEP 6
+#define ANGLE_THRESHOLD (REVS_PER_RAD/360*5)
 
 #define CAP(_min, _max, _val) \
     MIN(_max, MAX(_min, _val))
@@ -40,11 +46,12 @@ typedef struct control_fifo {
 
 void test_motors_speed();
 void test_control();
+void test_angle();
 
-void is_angle_ok();
+uint8_t is_angle_ok();
 
 void set_robot_speed(speed_t speed);
-void set_angle_dest();
+void set_angle_dest(float a_rad);
 
 #endif // CONTROL_H
 
