@@ -9,10 +9,10 @@
 #define DT_ALIAS_PWMS_SERVOS "PWMS_SERVOS"
 
 typedef enum {
-    servo_front_r,
-    servo_front_l,
-    servo_back_r,
-    servo_back_l
+    servo_front_r = 0,
+    servo_front_l = 1,
+    servo_back_r = 2,
+    servo_back_l = 3
 } servo_names_t;
 
 typedef struct servo {

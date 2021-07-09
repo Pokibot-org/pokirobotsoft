@@ -42,8 +42,8 @@ uint8_t wd_get_collision_bitmask()
     uint8_t bitmask = 0;
     for (size_t i = 0; i < NUMBER_OF_WD; i++)
     {
-        bitmask |= gpio_pin_get(gpio_port, wd_pins[i]) & 0x01;
         bitmask = bitmask << 1;
+        bitmask |= gpio_pin_get(gpio_port, wd_pins[i]) & 0x01;
     }
     
     return bitmask;
@@ -53,13 +53,13 @@ uint8_t wd_get_collision_bitmask()
 uint8_t wd_front_is_touching()
 {
     uint8_t bitmask = wd_get_collision_bitmask();
-    return (bitmask & 0x3) == 0x3;
+    return (bitmask & 0xC) == 0xC;
 }
 
 uint8_t wd_back_is_touching()
 {
     uint8_t bitmask = wd_get_collision_bitmask();
-    return (bitmask & 0xC) == 0xC;
+    return (bitmask & 0x3) == 0x3;
 }
 
 uint8_t wd_is_activated(wd_name_t name)

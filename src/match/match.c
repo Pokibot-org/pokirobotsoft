@@ -34,7 +34,7 @@ path_node_t end_node = {0};
 
 void all_servos_up()
 {
-    int degree = 20;
+    int degree = 180/2;
     servos_set(servo_front_l, degree);
     servos_set(servo_front_r, degree);
     servos_set(servo_back_l, degree);
@@ -54,7 +54,7 @@ void move(int32_t dist_mm)
     int8_t sign = dist_mm >= 0 ? 1: -1;
     int16_t motor_speed = sign * 4000;
     set_robot_speed((speed_t){.sl=motor_speed, .sr=motor_speed});
-    k_sleep(K_MSEC((int16_t)(abs(dist_mm) * 1)));
+    k_sleep(K_MSEC((int16_t)(abs(dist_mm) * 2.5)));
     set_robot_speed((speed_t){.sl=0, .sr=0});
 }
 
@@ -67,6 +67,7 @@ uint8_t recalibration_back(int32_t timeout_ms)
         if (wd_back_is_touching())
         {
             set_robot_speed((speed_t){.sl=0, .sr=0});
+            LOG_INF("Back recal ok");
             return 0;
         }
         speed_t sp = {0};
@@ -79,6 +80,9 @@ uint8_t recalibration_back(int32_t timeout_ms)
         set_robot_speed(sp);
         k_sleep(K_MSEC(10));
     }
+
+    LOG_WRN("Back recal timeout");
+
     return 1;
 }
 
@@ -91,6 +95,7 @@ uint8_t recalibration_front(int32_t timeout_ms)
         if (wd_front_is_touching())
         {
             set_robot_speed((speed_t){.sl=0, .sr=0});
+            LOG_INF("Front recal ok");
             return 0;
         }
         speed_t sp = {0};
@@ -103,20 +108,23 @@ uint8_t recalibration_front(int32_t timeout_ms)
         set_robot_speed(sp);
         k_sleep(K_MSEC(10));
     }
+
+    LOG_WRN("Front recal timeout");
+
     return 1;
 }
 
 uint8_t do_match(const goal_t * gl)
 {    
     recalibration_back(3000);
-    move(100);
+    move(150);
     set_angle_dest(M_PI/2);
     while (!is_angle_ok())
     {
         k_sleep(K_MSEC(10));
     }
     recalibration_front(6000);
-    move(-100);
+    move(-150);
 
     set_angle_dest(0);
     while (!is_angle_ok())
@@ -124,7 +132,7 @@ uint8_t do_match(const goal_t * gl)
         k_sleep(K_MSEC(10));
     }
     
-    servos_set(servo_front_l, 180);
+    servos_set(servo_front_l, 70);
     move(500); 
 
     all_servos_up();
