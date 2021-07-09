@@ -18,11 +18,11 @@
 #define FREQ_CONTROL_HZ 100
 
 #define CONTROL_FF_L ((float)(1.0/448.0))
-#define CONTROL_P_L ((float)(-0.5/448.0))
-#define CONTROL_I_L ((float)(-0.01/448.0))
+#define CONTROL_P_L ((float)(-0.8/448.0))
+#define CONTROL_I_L ((float)(-0.08/448.0))
 #define CONTROL_FF_R ((float)(1.0/448.0))
-#define CONTROL_P_R ((float)(-0.5/448.0))
-#define CONTROL_I_R ((float)(-0.01/448.0))
+#define CONTROL_P_R ((float)(-0.8/448.0))
+#define CONTROL_I_R ((float)(-0.08/448.0))
 
 
 #define CONTROL_FIFO_DEPTH 100
