@@ -47,6 +47,7 @@ void test_pos();
 speed_t robot_get_speed();
 speed_t robot_get_speed_latest();
 void robot_set_pos(pos_t pos);
+void robot_set_angle(float rad);
 pos_t robot_get_pos();
 
 #endif // ODOMETRY_H

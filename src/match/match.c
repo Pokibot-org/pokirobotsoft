@@ -42,6 +42,16 @@ void all_servos_up()
     servos_set(servo_back_r, degree);
 }
 
+void all_servos_closed()
+{
+    int degree = 140;
+    servos_set(servo_front_l, degree);
+    servos_set(servo_front_r, 180-degree);
+    servos_set(servo_back_l, degree);
+    servos_set(servo_back_r, 180-degree);
+}
+
+
 static void flag_work_handler(struct k_work *work)
 {
     LOG_INF("Raising flag");
@@ -77,6 +87,7 @@ uint8_t recalibration_back(int32_t timeout_ms)
         if (wd_back_is_touching())
         {
             set_robot_speed((speed_t){.sl=0, .sr=0});
+            k_sleep(K_MSEC(50));
             LOG_INF("Back recal ok");
             return 0;
         }
@@ -105,6 +116,7 @@ uint8_t recalibration_front(int32_t timeout_ms)
         if (wd_front_is_touching())
         {
             set_robot_speed((speed_t){.sl=0, .sr=0});
+            k_sleep(K_MSEC(50));
             LOG_INF("Front recal ok");
             return 0;
         }
@@ -126,7 +138,9 @@ uint8_t recalibration_front(int32_t timeout_ms)
 
 uint8_t do_match(const goal_t * gl)
 {    
+    all_servos_closed();
     recalibration_back(3000);
+    robot_set_angle(0);
     move(150);
     set_angle_dest(M_PI/2);
     while (!is_angle_ok())
@@ -134,10 +148,51 @@ uint8_t do_match(const goal_t * gl)
         k_sleep(K_MSEC(10));
     }
     recalibration_front(6000);
-    move(-150);
+    robot_set_angle(M_PI/2);
+    move(-180);
 
-    
-    servos_set(servo_front_l, 40);
+    // callage gauche
+
+    servos_set(servo_front_l, 35);
+    servos_set(servo_front_r, 180-35);
+    k_sleep(K_MSEC(500));
+
+    set_angle_dest(M_PI/50);
+    while (!is_angle_ok())
+    {
+        k_sleep(K_MSEC(10));
+    }
+    move(800); 
+
+    // ok action 1
+
+    set_angle_dest(-4*M_PI/5);
+    while (!is_angle_ok())
+    {
+        k_sleep(K_MSEC(10));
+    }
+
+    recalibration_front(6000);
+    robot_set_angle(-M_PI);
+
+    move(-210);
+
+    set_angle_dest(-M_PI/2);
+    while (!is_angle_ok())
+    {
+        k_sleep(K_MSEC(10));
+    }
+
+    // zone depart go droite 
+
+    set_robot_speed(    (speed_t){.sl=4000, .sr=4100});
+    k_sleep(K_MSEC(3000));
+
+    recalibration_front(7000);
+    robot_set_angle(-M_PI/2);
+
+    move(-180);
+
     k_sleep(K_MSEC(500));
 
     set_angle_dest(0);
@@ -147,16 +202,6 @@ uint8_t do_match(const goal_t * gl)
     }
     move(800); 
 
-    set_angle_dest(-2*M_PI/3);
-    while (!is_angle_ok())
-    {
-        k_sleep(K_MSEC(10));
-    }
-
-    recalibration_front(6000);
-
-
-    all_servos_up();
     return 0;
 }
 
@@ -228,7 +273,6 @@ static void match_task()
     k_delayed_work_submit(&flag_work, K_SECONDS(TIME_BEFORE_FLAG_RAISE_S));
 
     k_sleep(K_MSEC(500));
-    all_servos_up();
     set_angle_dest(0);
 
     STRATEGY_BUILD_INIT(strat)

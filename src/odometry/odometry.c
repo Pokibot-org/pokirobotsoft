@@ -105,6 +105,13 @@ void robot_set_pos(pos_t pos) {
     robot_pos = pos;
 }
 
+void robot_set_angle(float rad)
+{
+    robot_pos.a_rad = rad;
+    robot_pos.a=(int32_t)(rad*REVS_PER_RAD);
+}
+
+
 pos_t robot_get_pos() {
     return robot_pos;
 }
@@ -165,4 +172,3 @@ K_THREAD_DEFINE(
 #else
     const k_tid_t odometry_task_name= {0};
 #endif
-
