@@ -47,8 +47,8 @@ void all_servos_closed()
     int degree = 140;
     servos_set(servo_front_l, degree);
     servos_set(servo_front_r, 180-degree);
-    servos_set(servo_back_l, degree);
-    servos_set(servo_back_r, 180-degree);
+    servos_set(servo_back_l, 180-degree);
+    servos_set(servo_back_r, degree);
 }
 
 
@@ -163,7 +163,8 @@ uint8_t do_match(const goal_t * gl)
         k_sleep(K_MSEC(10));
     }
     move(800); 
-
+    
+    all_servos_closed();
     // ok action 1
 
     set_angle_dest(-4*M_PI/5);
@@ -193,6 +194,9 @@ uint8_t do_match(const goal_t * gl)
 
     move(-180);
 
+    servos_set(servo_front_l, 35);
+    servos_set(servo_front_r, 180-35);
+
     k_sleep(K_MSEC(500));
 
     set_angle_dest(0);
@@ -201,6 +205,9 @@ uint8_t do_match(const goal_t * gl)
         k_sleep(K_MSEC(10));
     }
     move(800); 
+
+    display_init();
+    display_send(48);
 
     return 0;
 }
