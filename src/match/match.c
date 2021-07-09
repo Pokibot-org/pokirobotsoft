@@ -206,6 +206,17 @@ uint8_t do_match(const goal_t * gl)
     }
     move(800); 
 
+    // ok act 2
+
+    set_angle_dest(4*M_PI/5);
+    while (!is_angle_ok())
+    {
+        k_sleep(K_MSEC(10));
+    }
+
+    recalibration_front(6000);
+    
+
     display_init();
     display_send(48);
 
