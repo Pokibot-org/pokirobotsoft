@@ -5,7 +5,6 @@
 
 LOG_MODULE_REGISTER(pathfinding_test);
 
-
 static uint32_t time_start;
 void tmp_clbk(const path_node_t * node, void * ucfg){
     uint32_t diff =  k_uptime_get_32() - time_start;

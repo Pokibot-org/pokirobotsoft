@@ -9,6 +9,9 @@
 #include "tirette.h"
 #include "flag/flag.h"
 #include "display.h"
+#include "common_types.h"
+#include "path_manager.h"
+
 #include "control.h"
 #include "wall_detector.h"
 #include "servos.h"
@@ -16,6 +19,12 @@
 LOG_MODULE_REGISTER(match);
 
 #define TIME_BEFORE_FLAG_RAISE_S 96
+
+static coordinates_t path_storage[1024];
+static uint8_t path_is_found = {0};
+path_node_t end_node = {0};
+
+
 
 void all_servos_up()
 {
@@ -26,7 +35,7 @@ void all_servos_up()
     servos_set(servo_back_r, degree);
 }
 
-static void flag_work_handler(struct k_work* work)
+static void flag_work_handler(struct k_work *work)
 {
     LOG_INF("Raising flag");
     raise_flag();
@@ -107,7 +116,47 @@ uint8_t do_match(const goal_t * gl)
     return 0;
 }
 
-uint8_t do_wait(const goal_t * gl)
+// void pathfindig_callback(const path_node_t *node, void *ucfg)
+// {
+//     end_node = *node;
+//     path_is_found = 1;
+// }
+
+// uint8_t go_to_lighthouse(const goal_t *gl)
+// {
+//     coordinates_t *found_path;
+//     pos_t robot_pos = robot_get_pos();
+//     coordinates_t dest_pos = {.x = 25, .y = 25};
+
+//     path_manager_config_t cfg = {
+//         .found_path_clbk = pathfindig_callback,
+//         .found_updated_path_clbk = NULL,
+//         .user_config = NULL,
+//     };
+
+//     path_manager_find_path((coordinates_t){.x = robot_pos.x, .y = robot_pos.y}, dest_pos, cfg);
+//     while (!path_is_found)
+//     {
+//         k_sleep(K_MSEC(50));
+//     }
+//     path_is_found = 0;
+
+//     uint16_t nb_crd_in_path = path_manager_retrieve_path(path_storage,
+//                                                          ARRAY_SIZE(path_storage),
+//                                                          &found_path,
+//                                                          &end_node);
+
+//     for (size_t i = 0; i < nb_crd_in_path; i++)
+//     {
+//         LOG_INF("Node x:%d | y:%d", found_path[i].x, found_path[i].y);
+//     }
+    
+
+//     // do something with path;
+//     return 0;
+// }
+
+uint8_t do_wait(const goal_t *gl)
 {
     while (1)
     {
@@ -115,7 +164,6 @@ uint8_t do_wait(const goal_t * gl)
     }
     return 0;
 }
-
 
 static void match_task()
 {
@@ -139,8 +187,8 @@ static void match_task()
     all_servos_up();
 
     STRATEGY_BUILD_INIT(strat)
-    STRATEGY_BUILD_ADD(NULL, do_match, NULL, NULL, status_ready)
-    STRATEGY_BUILD_ADD(NULL, do_wait, NULL, NULL, status_always_ready)
+    STRATEGY_BUILD_ADD(NULL, do_match, NULL, status_ready)
+    STRATEGY_BUILD_ADD(NULL, do_wait, NULL, status_always_ready)
     STRATEGY_BUILD_END(strat);
     strategy_run(&strat);
 }

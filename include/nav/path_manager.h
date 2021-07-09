@@ -23,5 +23,6 @@ typedef struct path_manager_config
 
 
 uint8_t path_manager_find_path(coordinates_t start, coordinates_t end, path_manager_config_t config);
-
+int16_t path_manager_retrieve_path(coordinates_t *array, uint32_t array_size,
+                                  coordinates_t **ptr_array_start, path_node_t *end_node);
 #endif

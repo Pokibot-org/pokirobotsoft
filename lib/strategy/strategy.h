@@ -13,15 +13,13 @@ typedef enum status {
 
 
 typedef uint8_t (*action_fun_t)(const struct goal *);
-typedef uint32_t (*cost_fun_t)(const struct goal *);
-typedef uint32_t (*reward_fun_t)(const struct goal *);
+typedef uint32_t (*score_fun_t)(const struct goal *);
 
 
 typedef struct goal
 {
-    cost_fun_t cost_callback;
+    score_fun_t score_callback;
     action_fun_t action_callback;
-    reward_fun_t reward;
     void * user_data;
     status_t status;
 } goal_t;
@@ -42,8 +40,8 @@ typedef struct strategy
 
 #define STRATEGY_BUILD_INIT(_obj_name) goal_t goal_array__obj_name[] = {
 
-#define STRATEGY_BUILD_ADD(cost_clbk, action_clbk, reward_clbk, user_data, status) \
-    {cost_clbk, action_clbk, reward_clbk, user_data, status},
+#define STRATEGY_BUILD_ADD(score_clbk, action_clbk, user_data, status) \
+    {score_clbk, action_clbk, user_data, status},
 
 #define STRATEGY_BUILD_END(_obj_name) \
     }; \

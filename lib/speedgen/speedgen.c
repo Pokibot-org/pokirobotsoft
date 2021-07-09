@@ -25,7 +25,8 @@ vector_t find_path_point(speedgen_obj_t * obj)
 {
     vector_t vect;
 
-    vector_t robot_v = utils_vector_from_points(&obj->current_section->begin_pos,&obj->robot->position);
+    //FIXME: REPLACE THE NULL
+    vector_t robot_v = utils_vector_from_points(&obj->current_section->begin_pos, NULL);
     uint32_t robot_dist = utils_vector_norm(&robot_v);
     float theta = utils_get_vector_angle(&obj->current_section->end_pos,&robot_v);
     //Projection of robot position on section
