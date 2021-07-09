@@ -15,9 +15,6 @@ LOG_MODULE_REGISTER(main);
 
 int main(void) {
 
-	display_init();
-	int score = 0;
-
     // test_wall_detector();
     // test_tirette();
     // test_servo();

@@ -5,7 +5,7 @@
 #include "tirette.h"
 #include "flag/flag.h"
 #include "kernel.h"
-
+#include "display.h"
 #include "control.h"
 
 LOG_MODULE_REGISTER(match);
@@ -50,7 +50,9 @@ static void match_task()
     set_robot_speed((speed_t){0, 0});
     tirette_init();
     flag_init();
-
+    display_init();
+    display_send(33);
+    
     while (!tirette_is_removed())
     {
         k_sleep(K_MSEC(1));
