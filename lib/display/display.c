@@ -24,7 +24,11 @@ int display_init(){
 	if (!spi_display) {
 		return -1;
 	}
-	display_spi_init(&dev_display, spi_display, 0, DISPLAY_CS_GPIO_DEV, DISPLAY_CS_PIN);
+	int err = display_spi_init(&dev_display, spi_display, 0, DISPLAY_CS_GPIO_DEV, DISPLAY_CS_PIN);
+	if (err)
+	{
+		LOG_ERR("Problem with the spi init");
+	}
 }
 
 

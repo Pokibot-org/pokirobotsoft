@@ -216,6 +216,7 @@ uint8_t do_match(const goal_t * gl)
 
     recalibration_front(6000);
     
+    set_robot_speed((speed_t){.sl=0, .sr=0});
 
     display_init();
     display_send(48);
