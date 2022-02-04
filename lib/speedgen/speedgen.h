@@ -2,7 +2,6 @@
 #define SPEEDGEN_H
 #include "stdint.h" 
 #include "common_types.h"
-#include "robot.h"
 #include "vector.h"
 #include "frame.h"
 
@@ -22,7 +21,6 @@ typedef struct speedgen_obj
 {
     coordinates_t current_path[SPEEDGEN_PATH_MAX_LEN];
     uint16_t path_len;
-    robot_t *robot;
     section_t *current_section;  //A section of a path is composed of two consecutive Waypoints
 
 }speedgen_obj_t;

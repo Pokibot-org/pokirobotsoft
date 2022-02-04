@@ -3,6 +3,7 @@
 #include "logging/log.h"
 #include "tirette.h"
 #include "control.h"
+#include "motors.h"
 
 LOG_MODULE_REGISTER(thread_killer);
 
@@ -40,6 +41,8 @@ static void thread_killer_task()
         k_thread_abort(*threads_to_kill[i]);
     }
     set_robot_speed((speed_t){.sl=0,.sr=0});
+    motor_set(MOTOR_L, 0);
+    motor_set(MOTOR_R, 0);
     LOG_INF("Killing necessary threads done");
 }
 

@@ -1,10 +1,11 @@
 #include <zephyr.h>
 #include <logging/log.h>
+#include <math.h>
 #include "lidar.h"
 #include "relative_obstacle_storing.h"
-#include "robot.h"
 #include "nav/obstacle_manager.h"
-#include "math.h"
+#include "robot_config.h"
+#include "odometry.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f
@@ -59,29 +60,30 @@ void on_rotation_lidar_callback()
 uint8_t process_point(obstacle_manager_t *obj, distance_t point_distance, float point_angle)
 {
     uint8_t return_code = 0;
-    robot_t *robot_obj = robot_get_obj();
     obstacle_t new_obstacle = {
         .type = obstacle_type_circle,
         .data.circle.radius = 0 // FIXME: remove the magic number
     };
 
+    pos_t actual_robot_pos = robot_get_pos();
+
     // LOG_INF("IN PROCEES POINT: angle: %f, distance: %d", point_angle, point_distance);
 
-    if (((point_distance < robot_obj->max_radius_mm) && (ABS(point_angle) > LIDAR_DETECTION_ANGLE / 2)) ||
-        (point_distance < robot_obj->min_radius_mm)) // in robot do nothing
+    if (((point_distance < ROBOT_MAX_RADIUS_MM) && (ABS(point_angle) > LIDAR_DETECTION_ANGLE / 2)) ||
+        (point_distance < ROBOT_MIN_RADIUS_MM)) // in robot do nothing
     {
         // LOG_INF("Point in robot");
         return 0;
     }
 
     // if it is a near obstacle change return code
-    if ((point_distance < robot_obj->max_radius_mm + LIDAR_DETECTION_DISTANCE_MM) && (ABS(point_angle) < LIDAR_DETECTION_ANGLE / 2))
+    if ((point_distance < ROBOT_MAX_RADIUS_MM + LIDAR_DETECTION_DISTANCE_MM) && (ABS(point_angle) < LIDAR_DETECTION_ANGLE / 2))
     {
         LOG_DBG("Obstacle detected | angle: %.3hi, distance: %.5hu", (int16_t)(point_angle), point_distance);
         return_code = 1;
     }
 
-    float point_angle_absolute = ((point_angle * (M_PI / 180.0f)) + robot_obj->angle_rad);
+    float point_angle_absolute = ((point_angle * (M_PI / 180.0f)) + actual_robot_pos.a_rad);
     if (point_angle_absolute < -M_PI_2)
     {
         point_angle_absolute += M_PI;
@@ -91,9 +93,9 @@ uint8_t process_point(obstacle_manager_t *obj, distance_t point_distance, float 
         point_angle_absolute -= M_PI;
     }
 
-    new_obstacle.data.circle.coordinates.x = robot_obj->position.x +
+    new_obstacle.data.circle.coordinates.x = actual_robot_pos.x +
                                              sinf(point_angle_absolute) * point_distance;
-    new_obstacle.data.circle.coordinates.y = robot_obj->position.y +
+    new_obstacle.data.circle.coordinates.y = actual_robot_pos.y +
                                              cosf(point_angle_absolute) * point_distance;
 
     if (new_obstacle.data.circle.coordinates.x < 0 ||
